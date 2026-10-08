@@ -1,5 +1,7 @@
 # Fuga de la Prisión: planificación y documentación base
 
+> Antecedente de planificación. El avance vigente está en `02_informe_parcial.md` y en el informe de la carpeta `entrega`. Varias propuestas de esta versión ya se implementaron; se conserva el contenido original para distinguir planificación de ejecución.
+
 **Versión:** 0.1, 8 de octubre de 2026.  
 **Curso:** Programación Orientada a Objetos, ciclo 2026-2.  
 **Lenguaje confirmado:** Python.  
