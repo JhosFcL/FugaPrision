@@ -1,0 +1,25 @@
+test_actualizacion_polimorfica (tests.test_juego.PruebasJuego.test_actualizacion_polimorfica) ... ok
+test_camara_detecta (tests.test_juego.PruebasJuego.test_camara_detecta) ... ok
+test_colision_con_cuatro_bordes (tests.test_juego.PruebasJuego.test_colision_con_cuatro_bordes) ... ok
+test_colision_muro_interior_sin_atravesarlo (tests.test_juego.PruebasJuego.test_colision_muro_interior_sin_atravesarlo) ... ok
+test_cono_y_muro_bloquean_vision (tests.test_juego.PruebasJuego.test_cono_y_muro_bloquean_vision) ... ok
+test_contacto_por_detras_captura (tests.test_juego.PruebasJuego.test_contacto_por_detras_captura) ... ok
+test_derrota_tiene_prioridad (tests.test_juego.PruebasJuego.test_derrota_tiene_prioridad) ... ok
+test_guardia_detecta_y_patrulla (tests.test_juego.PruebasJuego.test_guardia_detecta_y_patrulla) ... ok
+test_habilidad_aumenta_velocidad_sin_cruzar_muros (tests.test_juego.PruebasJuego.test_habilidad_aumenta_velocidad_sin_cruzar_muros) ... ok
+test_habilidad_duracion_recarga_y_activacion (tests.test_juego.PruebasJuego.test_habilidad_duracion_recarga_y_activacion) ... ok
+test_llave_puntua_una_vez (tests.test_juego.PruebasJuego.test_llave_puntua_una_vez) ... ok
+test_observer_suscripcion_unica_y_retiro (tests.test_juego.PruebasJuego.test_observer_suscripcion_unica_y_retiro) ... ok
+test_pausa_congela_todo_y_reanuda (tests.test_juego.PruebasJuego.test_pausa_congela_todo_y_reanuda) ... ok
+test_personaje_es_abstracto (tests.test_juego.PruebasJuego.test_personaje_es_abstracto) ... ok
+test_puntaje_rechaza_valores_invalidos (tests.test_juego.PruebasJuego.test_puntaje_rechaza_valores_invalidos) ... ok
+test_reinicio_restaura_nivel_puntaje_y_habilidad (tests.test_juego.PruebasJuego.test_reinicio_restaura_nivel_puntaje_y_habilidad) ... ok
+test_ruta_completa_sin_teletransportes (tests.test_juego.PruebasJuego.test_ruta_completa_sin_teletransportes) ... ok
+test_salida_exige_llave_y_no_duplica_premio (tests.test_juego.PruebasJuego.test_salida_exige_llave_y_no_duplica_premio) ... ok
+test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invalido_y_demoras) ... ok
+test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.319s
+
+OK

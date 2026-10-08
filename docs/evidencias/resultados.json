@@ -1,0 +1,15 @@
+{
+  "fecha": "2026-10-08",
+  "python": "3.12.14",
+  "pygame": "2.6.1",
+  "pruebas": 20,
+  "fallos": 0,
+  "errores": 0,
+  "ruta_completa": true,
+  "fotogramas_ruta": 872,
+  "tiempo_simulado_segundos": 7.267,
+  "puntaje_victoria": 600,
+  "capturas": 4,
+  "integracion_eventos": "P, ESC, perdida de foco, R y cierre comprobados",
+  "modo_grafico": "SDL dummy; renderizado real Pygame, sin sesión humana interactiva"
+}
