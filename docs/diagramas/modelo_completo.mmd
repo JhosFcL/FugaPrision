@@ -1,0 +1,67 @@
+classDiagram
+class Personaje {
+  <<abstract>>
+  -_x
+  -_y
+  -_velocidad
+  +mover(dx, dy)
+  +update()*
+}
+class Prisionero {
+  +update()
+  +recoger_llave()
+}
+class Guardia {
+  +update()
+  +puede_detectar(prisionero)
+}
+class HabilidadCarrera {
+  +activar()
+  +actualizar(dt)
+}
+class EstadoJuego {
+  <<abstract>>
+  +manejar_entrada(tecla)*
+  +actualizar(dt, teclas)*
+}
+class Puntaje {
+  -_valor
+  -_observadores
+  +suscribir(observador)
+  +desuscribir(observador)
+  +sumar(cantidad)
+  +reiniciar()
+  -_notificar()
+}
+class ObservadorPuntaje {
+  <<abstract>>
+  +actualizar_puntaje(valor)*
+}
+class PanelPuntaje {
+  +valor
+  +actualizar_puntaje(valor)
+}
+Juego "1" *-- "1" Nivel
+Juego "1" *-- "1" Puntaje
+Juego "1" *-- "1" PanelPuntaje
+Juego "1" --> "1" EstadoJuego
+EstadoJuego --> Juego : contexto
+Nivel "1" *-- "2" Personaje
+Nivel --> Puntaje : referencia compartida
+Personaje --> Nivel : contexto
+Nivel "1" *-- "1" Camara
+Nivel "1" *-- "1" Llave
+Nivel "1" *-- "1" PuertaSalida
+Personaje <|-- Prisionero
+Personaje <|-- Guardia
+Prisionero "1" *-- "1" HabilidadCarrera
+PuertaSalida ..> Prisionero : parametro
+Camara ..> Prisionero : parametro
+Llave ..> Prisionero : parametro
+EstadoJuego <|-- Jugando
+EstadoJuego <|-- Pausa
+EstadoJuego <|-- Derrota
+EstadoJuego <|-- Victoria
+Puntaje "1" --> "0..*" ObservadorPuntaje : notifica
+ObservadorPuntaje <|-- PanelPuntaje
+Vista ..> Juego : dibujar
