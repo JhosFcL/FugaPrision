@@ -1,4 +1,5 @@
 test_actualizacion_polimorfica (tests.test_juego.PruebasJuego.test_actualizacion_polimorfica) ... ok
+test_atajo_superior_bloqueado (tests.test_juego.PruebasJuego.test_atajo_superior_bloqueado) ... ok
 test_camara_detecta (tests.test_juego.PruebasJuego.test_camara_detecta) ... ok
 test_colision_con_cuatro_bordes (tests.test_juego.PruebasJuego.test_colision_con_cuatro_bordes) ... ok
 test_colision_muro_interior_sin_atravesarlo (tests.test_juego.PruebasJuego.test_colision_muro_interior_sin_atravesarlo) ... ok
@@ -21,6 +22,6 @@ test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invali
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
 
 ----------------------------------------------------------------------
-Ran 21 tests in 0.304s
+Ran 22 tests in 0.599s
 
 OK

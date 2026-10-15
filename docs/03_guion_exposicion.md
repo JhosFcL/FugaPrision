@@ -40,9 +40,9 @@ Mostrar `src/puntuacion.py` y la suscripción en `src/juego.py`. No afirmar que 
 4. Recoger la llave y señalar los 100 puntos.
 5. Llegar a la salida y señalar los 600 puntos finales.
 
-Ruta de ensayo para ganar: pasillo izquierdo hacia la llave, fila transitable superior hacia la derecha, pasar por encima de la cámara y bajar a la salida. No se necesita una opción especial ni modificar el código.
+Ruta de ensayo para ganar: subir por el lado izquierdo y entrar al cuarto de la llave. Regresar por la misma entrada, bajar hasta el muro que separa al guardia y esperar cubierto a que cambie de dirección. Cruzar por el pasillo inferior de la zona central, rodear los obstáculos de la derecha y subir a la salida. La línea superior está bloqueada y no permite el atajo anterior.
 
-“Ejecutamos veintiuna pruebas automatizadas. Comprueban colisiones, visión, puntaje, pausa, reinicio, habilidad, el setter validado y una ruta completa. Los resultados están en la carpeta de evidencias. La ruta automatizada completó el nivel con 600 puntos.”
+“Ejecutamos veintidós pruebas automatizadas. Comprueban colisiones, visión, puntaje, pausa, reinicio, habilidad, el setter validado, el bloqueo del atajo y una ruta completa. Los resultados están en la carpeta de evidencias. La ruta automatizada completó el nivel con 600 puntos.”
 
 Mostrar `docs/evidencias/pruebas.txt`. Las capturas se obtuvieron con Pygame en modo sin ventana; no presentarlas como evidencia de una sesión humana. Antes de exponer, realizar y registrar ese ensayo con teclado.
 
