@@ -24,6 +24,25 @@ class Vista:
     def punto(self, posicion):
         return round(posicion[0] + ORIGEN[0]), round(posicion[1] + ORIGEN[1])
 
+    def _dibujar_stickman(self, posicion, color, paso=0):
+        x, y = posicion
+        pygame.draw.ellipse(self.pantalla, (15, 25, 33), (x - 11, y + 12, 22, 6))
+
+        cabeza = (x, y - 11)
+        torso = ((x, y - 5), (x, y + 5))
+        brazo_izquierdo = ((x, y - 2), (x - 9, y + 3))
+        brazo_derecho = ((x, y - 2), (x + 9, y + 3))
+        pierna_izquierda = ((x, y + 5), (x - 7 + paso, y + 15))
+        pierna_derecha = ((x, y + 5), (x + 7 - paso, y + 15))
+
+        for inicio, fin in (torso, brazo_izquierdo, brazo_derecho,
+                            pierna_izquierda, pierna_derecha):
+            pygame.draw.line(self.pantalla, (14, 27, 35), inicio, fin, 7)
+            pygame.draw.line(self.pantalla, color, inicio, fin, 4)
+
+        pygame.draw.circle(self.pantalla, (14, 27, 35), cabeza, 7)
+        pygame.draw.circle(self.pantalla, color, cabeza, 5)
+
     def _dibujar_vision(self, origen, angulo, alcance, apertura, muros, color):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         puntos = [self.punto(origen)]
@@ -76,13 +95,11 @@ class Vista:
             pygame.draw.rect(self.pantalla, (244, 190, 93), (x - 9, y - 7, 18, 14), border_radius=3)
             pygame.draw.circle(self.pantalla, (40, 43, 40), (x, y + 3), 4)
         gx, gy = self.punto(guardia.get_posicion())
-        pygame.draw.circle(self.pantalla, (242, 102, 113), (gx, gy), guardia.radio + 2)
-        punta = (gx + math.cos(guardia.angulo) * 17, gy + math.sin(guardia.angulo) * 17)
-        pygame.draw.line(self.pantalla, (255, 213, 216), (gx, gy), punta, 3)
+        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
+        self._dibujar_stickman((gx, gy), (242, 102, 113), paso_guardia)
         px, py = self.punto(nivel.prisionero.get_posicion())
-        pygame.draw.circle(self.pantalla, (24, 82, 82), (px, py), 15)
-        pygame.draw.circle(self.pantalla, (101, 234, 204), (px, py), nivel.prisionero.radio)
-        pygame.draw.circle(self.pantalla, (227, 255, 248), (px - 3, py - 3), 3)
+        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
+        self._dibujar_stickman((px, py), (101, 234, 204), paso_prisionero)
         self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa", 69, 680, fuente=self.pequena)
         self.texto("Evita las zonas de visión. Los muros te ocultan. Contactar al guardia también te captura.", 69, 709, (139, 159, 178), self.pequena)
         if juego.estado.nombre != "JUGANDO":

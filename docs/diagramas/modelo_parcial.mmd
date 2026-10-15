@@ -1,0 +1,69 @@
+classDiagram
+direction TB
+
+class Juego {
+  +nivel: Nivel
+  +puntaje: Puntaje
+  +estado: EstadoJuego
+  +iniciar_partida() void
+  +actualizar(dt, teclas) void
+}
+class Nivel {
+  +personajes: Personaje[]
+  +puntaje: Puntaje
+  +camaras: Camara[]
+  +actualizar(dt, teclas) Optional~str~
+  +resolver_interacciones() Optional~str~
+}
+class Puntaje {
+  #_valor: int
+  +get_valor() int
+  +set_valor(valor) void
+  +sumar(cantidad) void
+}
+class Personaje {
+  <<abstract>>
+  #_x: float
+  #_y: float
+  +get_posicion() tuple
+  +mover(dx, dy) void
+  +update() void
+}
+class Prisionero {
+  #_tiene_llave: bool
+  +carrera: HabilidadCarrera
+  +tiene_llave() bool
+  +update() void
+}
+class Guardia {
+  +ruta: tuple[]
+  +angulo: float
+  +update() void
+  +puede_detectar(prisionero) bool
+}
+class Camara {
+  +posicion: tuple
+  +angulo: float
+  +detectar(prisionero, muros) bool
+}
+class Llave {
+  +disponible: bool
+  +recoger(prisionero) bool
+}
+class PuertaSalida {
+  +posicion: tuple
+  +puede_salir(prisionero) bool
+}
+
+Personaje <|-- Prisionero
+Personaje <|-- Guardia
+Juego "1" *-- "1" Nivel
+Juego "1" *-- "1" Puntaje
+Nivel "1" *-- "1" Prisionero
+Nivel "1" *-- "1" Guardia
+Nivel "1" *-- "1" Camara
+Nivel "1" *-- "1" Llave
+Nivel "1" *-- "1" PuertaSalida
+Nivel "1" o-- "1" Puntaje
+Personaje --> Nivel
+Camara ..> Prisionero
