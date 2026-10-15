@@ -22,6 +22,6 @@ test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invali
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.606s
+Ran 22 tests in 0.417s
 
 OK

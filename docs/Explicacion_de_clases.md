@@ -19,6 +19,8 @@ Los bloques de abajo muestran clases aisladas para estudiar. Para ejecutar el ju
 - cambiar_estado reemplaza el estado actual; manejar_entrada entrega la orden del teclado a ese estado.
 - actualizar rechaza tiempos inválidos, limita una demora grande a 0,05 segundos y deja que el estado actual actualice la partida.
 
+**POO que demuestra:** Composición: crea Puntaje, PanelPuntaje y Nivel. Polimorfismo: llama manejar_entrada y actualizar del estado actual, cualquiera que sea su clase concreta. Patrón State: cambia el objeto que representa ese estado.
+
 **Clase completa en el código:**
 
 ```python
@@ -59,6 +61,8 @@ class Juego:
 - __init__ guarda el juego para que el estado pueda cambiarlo o consultar su nivel.
 - manejar_entrada y actualizar son métodos abstractos: Jugando, Pausa, Derrota y Victoria deben definirlos.
 
+**POO que demuestra:** Abstracción: define las operaciones comunes que deben implementar los estados. Asociación: guarda una referencia al Juego recibido; no lo crea.
+
 **Clase completa en el código:**
 
 ```python
@@ -87,6 +91,8 @@ class EstadoJuego(ABC):
 
 - manejar_entrada cambia a Pausa cuando llega la orden pausa; con carrera intenta activar la habilidad del prisionero.
 - actualizar llama al nivel. Si el nivel devuelve derrota o victoria, cambia al estado correspondiente.
+
+**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: implementa manejar_entrada y actualizar con el comportamiento propio de la partida activa.
 
 **Clase completa en el código:**
 
@@ -119,6 +125,8 @@ class Jugando(EstadoJuego):
 - manejar_entrada regresa a Jugando cuando recibe la orden pausa.
 - actualizar contiene pass a propósito: no mueve personajes ni aumenta el tiempo mientras está en pausa.
 
+**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: responde a los mismos métodos que Jugando, pero detiene la actualización del nivel.
+
 **Clase completa en el código:**
 
 ```python
@@ -144,6 +152,8 @@ class Pausa(EstadoJuego):
 - manejar_entrada crea una partida nueva cuando recibe reiniciar.
 - actualizar no hace nada: el nivel queda detenido hasta que el usuario reinicie.
 
+**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: su manejo de entrada permite reiniciar y su actualización no mueve el nivel.
+
 **Clase completa en el código:**
 
 ```python
@@ -168,6 +178,8 @@ class Derrota(EstadoJuego):
 
 - manejar_entrada crea una partida nueva cuando recibe reiniciar.
 - actualizar no hace nada: la partida ganada permanece en pantalla hasta el reinicio.
+
+**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: su manejo de entrada permite reiniciar y su actualización no mueve el nivel.
 
 **Clase completa en el código:**
 
@@ -196,6 +208,8 @@ class Victoria(EstadoJuego):
 - posicion_valida comprueba que un personaje no salga de los límites ni atraviese un muro.
 - actualizar guarda el tiempo y las teclas, llama a update de cada personaje y después revisa las interacciones. Si el nivel ya terminó, no continúa.
 - resolver_interacciones comprueba primero la detección: si ocurre, devuelve derrota. Si no, permite recoger la llave por 100 puntos y, al llegar con ella a la salida, suma 500 y devuelve victoria.
+
+**POO que demuestra:** Composición: crea al Prisionero, al Guardia, la Camara, la Llave y la PuertaSalida. Agregación: recibe un Puntaje creado por Juego y lo utiliza sin crearlo. Polimorfismo: actualiza a Prisionero y Guardia mediante el mismo método update.
 
 **Clase completa en el código:**
 
@@ -286,6 +300,8 @@ class Nivel:
 - mover divide el desplazamiento en pasos pequeños y pregunta al nivel si cada paso es válido. Así no cruza muros por moverse rápido.
 - update es abstracto: cada clase hija decide cómo se mueve en su propia versión.
 
+**POO que demuestra:** Abstracción: define la base común y exige implementar update. Encapsulación: guarda posición y velocidad en atributos con guion bajo y ofrece get_posicion y mover. Asociación: conserva una referencia al Nivel que recibe.
+
 **Clase completa en el código:**
 
 ```python
@@ -328,6 +344,8 @@ class Personaje(ABC):
 - tiene_llave consulta si ya consiguió la llave; recoger_llave cambia ese dato a verdadero.
 - update lee las direcciones guardadas por Nivel, normaliza el movimiento diagonal para no ganar velocidad extra, aplica la carrera si está activa y actualiza su duración o recarga.
 
+**POO que demuestra:** Herencia: deriva de Personaje. Polimorfismo: implementa update para el movimiento del jugador. Composición: crea y conserva su HabilidadCarrera. Encapsulación: consulta y cambia _tiene_llave mediante métodos.
+
 **Clase completa en el código:**
 
 ```python
@@ -365,6 +383,8 @@ class Prisionero(Personaje):
 - __init__ recibe la ruta, se coloca en su primer punto y define velocidad, ángulo, alcance y apertura visual.
 - update camina hacia el siguiente punto de la ruta, gira hacia donde se mueve y vuelve al inicio cuando termina el recorrido.
 - puede_detectar devuelve verdadero si toca al prisionero o si este está dentro de su campo visual sin un muro de por medio.
+
+**POO que demuestra:** Herencia: deriva de Personaje. Polimorfismo: implementa update con su propia patrulla, mientras Nivel puede tratarlo como otro Personaje.
 
 **Clase completa en el código:**
 
@@ -413,6 +433,8 @@ class Guardia(Personaje):
 - get_multiplicador devuelve 1,5 mientras corre y 1,0 en los demás casos.
 - get_estado prepara el texto que la pantalla muestra: activa, recargando o lista.
 
+**POO que demuestra:** Encapsulación: mantiene _duracion y _recarga y ofrece métodos para activar, actualizar y consultar el efecto. Composición: Prisionero crea su instancia de esta clase.
+
 **Clase completa en el código:**
 
 ```python
@@ -460,6 +482,8 @@ class HabilidadCarrera:
 - __init__ guarda su posición y define hacia dónde mira, hasta dónde alcanza y cuánto abre su visión.
 - detectar usa los cálculos de geometria.py para saber si ve al prisionero; los muros pueden bloquear la visión.
 
+**POO que demuestra:** Composición: Nivel crea y conserva la cámara. Dependencia: detectar recibe al Prisionero para comprobar si está en su campo de visión.
+
 **Clase completa en el código:**
 
 ```python
@@ -485,6 +509,8 @@ class Camara:
 
 - __init__ guarda su lugar en el mapa y la deja disponible.
 - recoger comprueba que todavía exista y que el prisionero esté cerca. Si la recoge, la desactiva, avisa al prisionero y devuelve verdadero. Así no puede recogerse dos veces.
+
+**POO que demuestra:** Composición: Nivel crea y conserva la llave. Dependencia: recoger recibe al Prisionero para entregarle la llave cuando se acercan.
 
 **Clase completa en el código:**
 
@@ -513,6 +539,8 @@ class Llave:
 - __init__ guarda la posición de la puerta.
 - puede_salir devuelve verdadero únicamente si el prisionero tiene la llave y está cerca de la salida.
 
+**POO que demuestra:** Composición: Nivel crea y conserva la salida. Dependencia: puede_salir consulta al Prisionero recibido para decidir si tiene la llave y está cerca.
+
 **Clase completa en el código:**
 
 ```python
@@ -537,6 +565,8 @@ class PuertaSalida:
 - suscribir registra un observador una sola vez y le envía el valor actual; desuscribir lo retira.
 - sumar acepta solo cantidades enteras positivas y usa set_valor para actualizar; reiniciar vuelve a cero.
 - _notificar llama a actualizar_puntaje en cada observador. Usa una copia de la lista para recorrerla de forma segura.
+
+**POO que demuestra:** Encapsulación: mantiene _valor como atributo interno y lo cambia mediante set_valor, sumar y reiniciar. Asociación: guarda observadores suscritos y les avisa al cambiar el puntaje. Patrón Observer: actúa como el objeto observado.
 
 **Clase completa en el código:**
 
@@ -588,6 +618,8 @@ class Puntaje:
 
 - actualizar_puntaje es el método que una clase hija debe implementar para recibir el valor nuevo.
 
+**POO que demuestra:** Abstracción: exige implementar actualizar_puntaje. Herencia: sirve como clase base para PanelPuntaje.
+
 **Clase completa en el código:**
 
 ```python
@@ -607,6 +639,8 @@ class ObservadorPuntaje(ABC):
 
 - __init__ empieza con valor cero.
 - actualizar_puntaje recibe el nuevo número desde Puntaje y lo guarda. Vista lee después juego.panel.valor para dibujarlo.
+
+**POO que demuestra:** Herencia: deriva de ObservadorPuntaje. Polimorfismo: implementa actualizar_puntaje y puede recibir el aviso que Puntaje envía a cualquier observador. Patrón Observer: actúa como observador concreto.
 
 **Clase completa en el código:**
 
@@ -633,6 +667,8 @@ class PanelPuntaje(ObservadorPuntaje):
 - _dibujar_vision dibuja el cono transparente del guardia o la cámara y lo corta donde hay muros.
 - dibujar arma la pantalla completa: título, puntos, tiempo, mapa, muros, visión, llave, salida, cámara, guardia y prisionero.
 - _dibujar_panel_estado coloca encima el mensaje de pausa, victoria o derrota con la tecla para continuar.
+
+**POO que demuestra:** Dependencia: dibujar recibe Juego para leer el estado de la partida y mostrarlo; Vista no crea ni guarda ese Juego.
 
 **Clase completa en el código:**
 
