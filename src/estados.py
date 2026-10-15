@@ -31,6 +31,8 @@ class Jugando(EstadoJuego):
             self.juego.cambiar_estado(Derrota(self.juego))
         elif resultado == "victoria":
             self.juego.cambiar_estado(Victoria(self.juego))
+        elif resultado == "nivel_completado":
+            self.juego.cambiar_estado(NivelCompletado(self.juego))
 
 
 class Pausa(EstadoJuego):
@@ -49,6 +51,8 @@ class Derrota(EstadoJuego):
 
     def manejar_entrada(self, tecla):
         if tecla == "reiniciar":
+            self.juego.reintentar_nivel()
+        elif tecla == "nueva_partida":
             self.juego.iniciar_partida()
 
     def actualizar(self, dt, teclas):
@@ -60,6 +64,19 @@ class Victoria(EstadoJuego):
 
     def manejar_entrada(self, tecla):
         if tecla == "reiniciar":
+            self.juego.iniciar_partida()
+
+    def actualizar(self, dt, teclas):
+        pass
+
+
+class NivelCompletado(EstadoJuego):
+    nombre = "NIVEL_COMPLETADO"
+
+    def manejar_entrada(self, tecla):
+        if tecla == "continuar":
+            self.juego.siguiente_nivel()
+        elif tecla == "nueva_partida":
             self.juego.iniciar_partida()
 
     def actualizar(self, dt, teclas):
