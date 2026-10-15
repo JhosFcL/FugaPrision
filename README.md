@@ -36,4 +36,4 @@ Para ejecutar las pruebas después de instalar las dependencias:
 
 ## Estado de entrega
 
-El primer nivel tiene movimiento, colisiones, guardia, cámara, llave, salida, puntaje, pausa y reinicio. State y Observer están implementados. El informe está en `entrega/` y el UML en `docs/diagramas/`. Las 21 pruebas automáticas pasan. Aún faltan la prueba manual en el equipo de exposición y los aportes reales de Git de los demás integrantes; el historial actual no demuestra trabajo en equipo al 100 %.
+El primer nivel tiene movimiento, colisiones, guardia, cámara, llave, salida, puntaje, pausa y reinicio. El mapa exige buscar la llave en un cuarto cerrado, cruzar una zona vigilada y rodear obstáculos hasta la salida. State y Observer están implementados. El informe está en `entrega/` y el UML en `docs/diagramas/`. Las 22 pruebas automáticas pasan. Aún faltan la prueba manual en el equipo de exposición y los aportes reales de Git de los demás integrantes; el historial actual no demuestra trabajo en equipo al 100 %.

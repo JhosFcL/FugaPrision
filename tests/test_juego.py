@@ -6,7 +6,7 @@ from src.estados import Jugando, Pausa, Derrota, Victoria
 from src.personajes import Personaje, HabilidadCarrera
 from src.puntuacion import Puntaje, ObservadorPuntaje
 from src.geometria import dentro_de_vision
-from src.nivel import centro
+from src.nivel import centro, TAMANO
 
 
 def ubicar(personaje, posicion):
@@ -16,9 +16,13 @@ def ubicar(personaje, posicion):
 
 
 def recorrer_ruta(juego):
-    objetivos = [centro(2, 2), centro(3, 2), centro(3, 1), centro(21, 1), centro(21, 2)]
+    casillas = [(2, 7), (3, 7), (3, 4), (4, 4), (4, 3), (8, 3), (8, 2),
+                (8, 3), (4, 3), (4, 4), (3, 4), (3, 6), (4, 6),
+                (4, 7), (7, 7), (7, 8), (20, 8), (20, 6),
+                (22, 6), (22, 3), (21, 3), (21, 2)]
     fotogramas = 0
-    for objetivo in objetivos:
+    for casilla in casillas:
+        objetivo = centro(*casilla)
         for _ in range(3000):
             x, y = juego.nivel.prisionero.get_posicion()
             dx = objetivo[0] - x
@@ -36,6 +40,13 @@ def recorrer_ruta(juego):
                 raise AssertionError("La ruta de validación terminó en captura.")
         else:
             raise AssertionError("La ruta no alcanzó su siguiente punto.")
+        if casilla == (7, 7):
+            # El muro protege al jugador mientras el guardia cambia de dirección.
+            for _ in range(420):
+                juego.actualizar(1 / 120, set())
+                fotogramas += 1
+                if isinstance(juego.estado, Derrota):
+                    raise AssertionError("El escondite no protegió al jugador.")
     return fotogramas
 
 
@@ -99,6 +110,12 @@ class PruebasJuego(unittest.TestCase):
         ubicar(otro_juego.nivel.prisionero, centro(15, 3))
         otro_juego.actualizar(0, set())
         self.assertIsInstance(otro_juego.estado, Jugando)
+
+    def test_atajo_superior_bloqueado(self):
+        prisionero = self.juego.nivel.prisionero
+        ubicar(prisionero, centro(8, 2))
+        prisionero.mover(400, 0)
+        self.assertLess(prisionero.get_posicion()[0], 10 * TAMANO)
 
     def test_guardia_detecta_y_patrulla(self):
         nivel = self.juego.nivel
