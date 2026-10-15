@@ -12,9 +12,10 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 import pygame
 from src.juego import Juego
-from src.estados import Pausa, Jugando, Victoria, Derrota
+from src.estados import Pausa, Jugando, Victoria, Derrota, NivelCompletado
 from src.vista import Vista, ANCHO, ALTO
 from tests.test_juego import recorrer_ruta, ubicar
+from tests.test_campana import caminar, vencer_alcaide, escapar_arena
 from main import procesar_eventos
 
 
@@ -48,18 +49,48 @@ def ejecutar():
     assert isinstance(juego.estado, Pausa)
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_p)])
     fotogramas = recorrer_ruta(juego)
-    assert isinstance(juego.estado, Victoria)
+    assert isinstance(juego.estado, NivelCompletado)
+    captura("09_nivel_completado.png")
+    procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
+    assert juego.indice_nivel == 1 and juego.panel.valor == 600
+    captura("05_lavanderia.png")
+    caminar(juego, [(2, 1), (22, 1), (22, 11), (21, 11), (22, 11), (22, 2), (21, 2)])
+    procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
+    assert juego.indice_nivel == 2 and juego.panel.valor == 1200
+    captura("06_patio.png")
+    caminar(juego, [(2, 2), (3, 2), (2, 2), (2, 1), (22, 1), (22, 11), (21, 11)])
+    procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
+    assert juego.indice_nivel == 3 and juego.panel.valor == 1800
+    captura("07_jefe.png")
+    capturadas = set()
+
+    def observar(partida):
+        combate = partida.nivel.combate
+        if combate.jefe.aviso > 0 and "aviso" not in capturadas:
+            captura("08_jefe_aviso.png")
+            capturadas.add("aviso")
+        lagrimas = [p for p in combate.proyectiles if p.enemigo and
+                    ((p.x - combate.jefe.x) ** 2 + (p.y - combate.jefe.y) ** 2) > 45 ** 2]
+        if combate.jefe.fase == 2 and len(lagrimas) > 10 and "fase2" not in capturadas:
+            captura("10_jefe_fase2.png")
+            capturadas.add("fase2")
+
+    combate_frames = vencer_alcaide(juego, observar)
+    assert juego.nivel.combate.jefe.derrotado and juego.nivel.combate.vida > 0
+    escapar_arena(juego)
+    assert isinstance(juego.estado, Victoria) and juego.panel.valor == 3400
     captura("03_victoria.png")
-    tiempo = juego.nivel.tiempo
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_r)])
-    assert isinstance(juego.estado, Jugando) and juego.panel.valor == 0
+    assert isinstance(juego.estado, Jugando) and juego.panel.valor == 0 and juego.indice_nivel == 0
     ubicar(juego.nivel.prisionero, juego.nivel.guardia.get_posicion())
     juego.actualizar(0, set())
     assert isinstance(juego.estado, Derrota)
     captura("04_derrota.png")
     assert not procesar_eventos(juego, [pygame.event.Event(pygame.QUIT)])
     pygame.quit()
-    print(f"{resultado.testsRun} pruebas sin fallos; ruta de {fotogramas} fotogramas en {tiempo:.3f} s; 4 capturas generadas.")
+    assert capturadas == {"aviso", "fase2"}
+    print(f"{resultado.testsRun} pruebas sin fallos; campaña completa de 4 niveles, "
+          f"ruta inicial de {fotogramas} fotogramas y jefe vencido en {combate_frames / 60:.2f} s; 10 capturas generadas.")
 
 
 if __name__ == "__main__":

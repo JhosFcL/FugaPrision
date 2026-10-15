@@ -59,22 +59,25 @@ class Vista:
         nivel = juego.nivel
         self.pantalla.fill((13, 21, 31))
         self.texto("FUGA DE LA PRISIÓN", 68, 24, fuente=self.titulo)
-        self.texto("PROTOTIPO PARCIAL  /  PABELLÓN 01", 70, 66, (139, 159, 178), self.pequena)
+        self.texto(f"NIVEL {nivel.indice + 1} / {nivel.total_niveles}  ·  {nivel.nombre.upper()}",
+                   70, 66, (139, 159, 178), self.pequena)
         self.texto(f"PUNTOS  {juego.panel.valor:04d}", 738, 28, (111, 226, 188), self.mediana)
         self.texto(f"TIEMPO  {nivel.tiempo:05.1f} s", 740, 62, (139, 159, 178), self.pequena)
         llave = "LLAVE OBTENIDA · BUSCA LA SALIDA" if nivel.prisionero.tiene_llave() else "OBJETIVO · CONSIGUE LA LLAVE Y ESCAPA"
+        if nivel.combate and not nivel.combate.jefe.derrotado:
+            llave = "DERROTA AL ALCAIDE · ESPACIO o IJKL para disparar"
         self.texto(llave, 70, 110, (236, 205, 117), self.pequena)
         self.texto("CARRERA  " + nivel.prisionero.carrera.get_estado(), 651, 110, (164, 201, 232), self.pequena)
         area = pygame.Rect(*ORIGEN, COLUMNAS * TAMANO, FILAS * TAMANO)
-        pygame.draw.rect(self.pantalla, (28, 42, 53), area)
+        pygame.draw.rect(self.pantalla, (45, 31, 43) if nivel.es_final else (28, 42, 53), area)
         for fila in range(FILAS):
             for columna in range(COLUMNAS):
                 rect = pygame.Rect(ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO, TAMANO, TAMANO)
                 pygame.draw.rect(self.pantalla, (33, 48, 60), rect, 1)
         for camara in nivel.camaras:
             self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.muros, (241, 184, 79))
-        guardia = nivel.guardia
-        self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
+        for guardia in nivel.guardias:
+            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
         for muro in nivel.muros:
             rect = pygame.Rect(muro[0] + ORIGEN[0], muro[1] + ORIGEN[1], muro[2], muro[3])
             pygame.draw.rect(self.pantalla, (62, 78, 90), rect)
@@ -97,22 +100,73 @@ class Vista:
             pygame.draw.circle(self.pantalla, (37, 43, 48), (x, y + 2), 5)
             pygame.draw.circle(self.pantalla, (101, 159, 180), (x, y + 2), 2)
             self.texto("CÁMARA", x - 30, y - 42, (244, 190, 93), self.pequena)
-        gx, gy = self.punto(guardia.get_posicion())
         paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
-        self._dibujar_stickman((gx, gy), (242, 102, 113), paso_guardia)
+        for guardia in nivel.guardias:
+            self._dibujar_stickman(self.punto(guardia.get_posicion()), (242, 102, 113), paso_guardia)
+        if nivel.combate:
+            self._dibujar_combate(nivel)
         px, py = self.punto(nivel.prisionero.get_posicion())
         paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
-        self._dibujar_stickman((px, py), (101, 234, 204), paso_prisionero)
-        self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa", 69, 680, fuente=self.pequena)
-        self.texto("Evita las zonas de visión. Los muros te ocultan. Contactar al guardia también te captura.", 69, 709, (139, 159, 178), self.pequena)
+        if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
+            self._dibujar_stickman((px, py), (101, 234, 204), paso_prisionero)
+        self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa" +
+                   ("     ESPACIO / IJKL  Disparar" if nivel.es_final else ""), 69, 680, fuente=self.pequena)
+        consejo = "Evita las zonas de visión. Los muros te ocultan. Contactar al guardia también te captura."
+        if nivel.es_final:
+            consejo = "Espacio apunta al jefe; IJKL fija la dirección. Esquiva los avisos rojos. Tras vencerlo, recoge la llave."
+        self.texto(consejo, 69, 709, (139, 159, 178), self.pequena)
         if juego.estado.nombre != "JUGANDO":
             self._dibujar_panel_estado(juego)
+
+    def _dibujar_combate(self, nivel):
+        combate = nivel.combate
+        jefe = combate.jefe
+        self.texto(f"VIDA  {combate.vida} / {combate.vida_maxima}", 70, 86, (255, 147, 161), self.pequena)
+        self.texto("ALCAIDE" if not jefe.derrotado else "DERROTADO", 360, 86, (216, 167, 198), self.pequena)
+        pygame.draw.rect(self.pantalla, (65, 42, 60), (452, 91, 480, 10), border_radius=5)
+        ancho = round(480 * jefe.vida / jefe.vida_maxima)
+        if ancho:
+            pygame.draw.rect(self.pantalla, (240, 100, 133), (452, 91, ancho, 10), border_radius=5)
+        if not jefe.derrotado:
+            x, y = self.punto(jefe.posicion)
+            if jefe.aviso > 0:
+                color = (255, 178, 104)
+                pygame.draw.circle(self.pantalla, color, (x, y), jefe.radio + 12, 2)
+                if jefe.patron % 3 == 2:
+                    destino = self.punto(jefe.objetivo)
+                    pygame.draw.line(self.pantalla, (243, 96, 122), (x, y), destino, 3)
+                    pygame.draw.circle(self.pantalla, color, destino, 23, 2)
+                self.texto(jefe.ataque, 360, 661, color, self.pequena)
+            else:
+                self.texto(f"FASE {jefe.fase} / 2  ·  " + ("¡EMBESTIDA!" if jefe.destino else "EL ALCAIDE"),
+                           360, 661, (216, 167, 198), self.pequena)
+            # Un alcaide monstruoso original: gorra, lágrimas y uniforme de rayas.
+            pygame.draw.ellipse(self.pantalla, (20, 17, 27), (x - 36, y + 20, 72, 16))
+            piel = (255, 230, 232) if jefe.golpe > 0 else ((190, 111, 147) if jefe.fase == 1 else (227, 105, 128))
+            pygame.draw.ellipse(self.pantalla, (28, 22, 38), (x - 29, y - 12, 58, 49))
+            pygame.draw.ellipse(self.pantalla, piel, (x - 27, y - 33, 54, 54))
+            for lado in (-1, 1):
+                pygame.draw.circle(self.pantalla, (23, 22, 38), (x + lado * 11, y - 10), 7)
+                pygame.draw.line(self.pantalla, (106, 194, 226), (x + lado * 11, y - 4), (x + lado * 14, y + 12), 4)
+                pygame.draw.circle(self.pantalla, (239, 218, 227), (x + lado * 12, y - 12), 2)
+                pygame.draw.circle(self.pantalla, piel, (x + lado * 30, y + 12), 9)
+            pygame.draw.ellipse(self.pantalla, (49, 22, 39), (x - 7, y + 4, 14, 10))
+            pygame.draw.rect(self.pantalla, (39, 49, 71), (x - 27, y - 38, 54, 13), border_radius=4)
+            pygame.draw.rect(self.pantalla, (226, 190, 102), (x - 5, y - 36, 10, 8), border_radius=2)
+            for fila in range(3):
+                pygame.draw.line(self.pantalla, (141, 146, 171), (x - 18, y + 20 + fila * 6), (x + 18, y + 20 + fila * 6), 3)
+        for tiro in combate.proyectiles:
+            x, y = self.punto(tiro.posicion)
+            color = (255, 112, 145) if tiro.enemigo else (109, 234, 244)
+            pygame.draw.circle(self.pantalla, (22, 17, 33), (x, y), round(tiro.radio + 2))
+            pygame.draw.circle(self.pantalla, color, (x, y), round(tiro.radio))
+            pygame.draw.circle(self.pantalla, (255, 235, 240), (x - 2, y - 2), 2)
 
     def _dibujar_panel_estado(self, juego):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         capa.fill((5, 10, 18, 195))
         self.pantalla.blit(capa, (0, 0))
-        pygame.draw.rect(self.pantalla, (26, 40, 53), (245, 250, 510, 235), border_radius=16)
+        pygame.draw.rect(self.pantalla, (26, 40, 53), (220, 250, 560, 250), border_radius=16)
         nombre = juego.estado.nombre
         if nombre == "PAUSA":
             titulo = "PARTIDA EN PAUSA"
@@ -120,16 +174,21 @@ class Vista:
             accion = "P o ESC para continuar"
             color = (182, 212, 242)
         elif nombre == "VICTORIA":
-            titulo = "¡ESCAPASTE DEL PABELLÓN!"
-            detalle = f"Nivel completado · {juego.panel.valor} puntos"
+            titulo = "¡ERES LIBRE!"
+            detalle = f"4 niveles y el Alcaide vencidos · {juego.panel.valor} puntos"
             accion = "R para volver a jugar"
             color = (111, 226, 188)
+        elif nombre == "NIVEL_COMPLETADO":
+            titulo = f"¡NIVEL {juego.indice_nivel + 1} COMPLETADO!"
+            detalle = f"Siguiente: {juego.nivel.configuracion_siguiente}"
+            accion = "ENTER para continuar · N para empezar de cero"
+            color = (111, 226, 188)
         else:
-            titulo = "TE HAN DETECTADO"
-            detalle = "Busca otra ruta y observa la vigilancia."
-            accion = "R para intentarlo de nuevo"
+            titulo = "EL ALCAIDE TE DERROTÓ" if juego.nivel.es_final else "TE HAN DETECTADO"
+            detalle = "Esquiva los avisos y usa la carrera." if juego.nivel.es_final else "Busca otra ruta y observa la vigilancia."
+            accion = "R: reintentar este nivel · N: empezar de cero"
             color = (250, 142, 147)
-        self.texto(titulo, 275, 286, color, self.mediana)
-        self.texto(detalle, 275, 343)
-        self.texto(accion, 275, 398, (236, 205, 117))
-        self.texto("Cierra la ventana para salir", 275, 438, (139, 159, 178), self.pequena)
+        self.texto(titulo, 247, 286, color, self.mediana)
+        self.texto(detalle, 247, 343)
+        self.texto(accion, 247, 398, (236, 205, 117), self.pequena)
+        self.texto("Cierra la ventana para salir", 247, 448, (139, 159, 178), self.pequena)

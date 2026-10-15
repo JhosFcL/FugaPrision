@@ -2,7 +2,7 @@ import math
 import unittest
 from unittest.mock import patch
 from src.juego import Juego
-from src.estados import Jugando, Pausa, Derrota, Victoria
+from src.estados import Jugando, Pausa, Derrota, Victoria, NivelCompletado
 from src.personajes import Personaje, HabilidadCarrera
 from src.puntuacion import Puntaje, ObservadorPuntaje
 from src.geometria import dentro_de_vision
@@ -27,7 +27,7 @@ def recorrer_ruta(juego):
             x, y = juego.nivel.prisionero.get_posicion()
             dx = objetivo[0] - x
             dy = objetivo[1] - y
-            if math.hypot(dx, dy) < 2 or isinstance(juego.estado, Victoria):
+            if math.hypot(dx, dy) < 2 or isinstance(juego.estado, (Victoria, NivelCompletado)):
                 break
             teclas = set()
             if abs(dx) > 1.3:
@@ -150,7 +150,7 @@ class PruebasJuego(unittest.TestCase):
         ubicar(nivel.prisionero, nivel.salida.posicion)
         for _ in range(3):
             self.juego.actualizar(0, set())
-        self.assertIsInstance(self.juego.estado, Victoria)
+        self.assertIsInstance(self.juego.estado, NivelCompletado)
         self.assertEqual(self.juego.panel.valor, 600)
 
     def test_derrota_tiene_prioridad(self):
@@ -260,7 +260,7 @@ class PruebasJuego(unittest.TestCase):
     def test_ruta_completa_sin_teletransportes(self):
         fotogramas = recorrer_ruta(self.juego)
         self.assertGreater(fotogramas, 100)
-        self.assertIsInstance(self.juego.estado, Victoria)
+        self.assertIsInstance(self.juego.estado, NivelCompletado)
         self.assertEqual(self.juego.panel.valor, 600)
 
 

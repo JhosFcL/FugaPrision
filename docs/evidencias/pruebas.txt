@@ -1,3 +1,12 @@
+test_dano_inmunidad_y_derrota (tests.test_campana.PruebasCampana.test_dano_inmunidad_y_derrota) ... ok
+test_disparos_reales_derrotan_jefe_y_desbloquean_victoria (tests.test_campana.PruebasCampana.test_disparos_reales_derrotan_jefe_y_desbloquean_victoria) ... ok
+test_mapas_conectados_y_entidades_en_suelo (tests.test_campana.PruebasCampana.test_mapas_conectados_y_entidades_en_suelo) ... ok
+test_patrones_fase_dos_y_aviso_antes_de_atacar (tests.test_campana.PruebasCampana.test_patrones_fase_dos_y_aviso_antes_de_atacar) ... ok
+test_pausa_congela_jefe_disparos_vida_y_recargas (tests.test_campana.PruebasCampana.test_pausa_congela_jefe_disparos_vida_y_recargas) ... ok
+test_proyectiles_rapidos_no_atraviesan_jugador_ni_muros (tests.test_campana.PruebasCampana.test_proyectiles_rapidos_no_atraviesan_jugador_ni_muros) ... ok
+test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias (tests.test_campana.PruebasCampana.test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias) ... ok
+test_salida_bloqueada_hasta_matar_jefe (tests.test_campana.PruebasCampana.test_salida_bloqueada_hasta_matar_jefe) ... ok
+test_transicion_conserva_puntos_y_no_avanza_dos_veces (tests.test_campana.PruebasCampana.test_transicion_conserva_puntos_y_no_avanza_dos_veces) ... ok
 test_actualizacion_polimorfica (tests.test_juego.PruebasJuego.test_actualizacion_polimorfica) ... ok
 test_atajo_superior_bloqueado (tests.test_juego.PruebasJuego.test_atajo_superior_bloqueado) ... ok
 test_camara_detecta (tests.test_juego.PruebasJuego.test_camara_detecta) ... ok
@@ -22,6 +31,6 @@ test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invali
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.417s
+Ran 31 tests in 3.025s
 
 OK

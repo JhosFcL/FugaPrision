@@ -20,13 +20,17 @@ def procesar_eventos(juego, eventos):
                 juego.manejar_entrada("carrera")
             elif evento.key == pygame.K_r:
                 juego.manejar_entrada("reiniciar")
+            elif evento.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                juego.manejar_entrada("continuar")
+            elif evento.key == pygame.K_n:
+                juego.manejar_entrada("nueva_partida")
     return True
 
 
 def ejecutar():
     pygame.init()
     pantalla = pygame.display.set_mode((ANCHO, ALTO))
-    pygame.display.set_caption("Fuga de la Prisión | POO 2026-2")
+    pygame.display.set_caption("Fuga de la Prisión | La última fuga")
     reloj = pygame.time.Clock()
     juego = Juego()
     vista = Vista(pantalla)
@@ -46,6 +50,11 @@ def ejecutar():
             teclas.add("izquierda")
         if pulsadas[pygame.K_d] or pulsadas[pygame.K_RIGHT]:
             teclas.add("derecha")
+        for tecla, accion in ((pygame.K_i, "tiro_arriba"), (pygame.K_k, "tiro_abajo"),
+                              (pygame.K_j, "tiro_izquierda"), (pygame.K_l, "tiro_derecha"),
+                              (pygame.K_SPACE, "disparar")):
+            if pulsadas[tecla]:
+                teclas.add(accion)
         juego.actualizar(dt, teclas)
         vista.dibujar(juego)
         pygame.display.flip()
