@@ -55,9 +55,10 @@ Mostrar los resultados de las pruebas y una captura. Las capturas automáticas n
 - **¿Por qué el guardia y la cámara no heredan de la misma clase?** La cámara se modeló como dispositivo de vigilancia. La jerarquía Personaje representa a los actores que se actualizan polimórficamente.
 - **¿Qué pasa si se alcanza la salida al ser detectado?** Se procesa primero la detección y se pierde, sin conceder el premio de salida.
 - **¿Cuántos niveles hay?** Uno implementado en el parcial. La ampliación multinivel está pendiente para el final.
+- **¿Por qué no aparecen todas las clases en el UML?** El código tiene dieciocho clases y el diagrama muestra nueve clases clave para que las relaciones se lean con claridad. Las otras son los estados, la habilidad de correr, el observador del puntaje y la vista. La rúbrica pide ocho o más clases principales, no un inventario de todas.
 
 ## Antes de entregar
 
 - Ensayar en el equipo donde se presentará; comprobar teclado, legibilidad y ventana de 1000 por 760 píxeles.
-- Registrar los aportes y commits reales de cada integrante; los seis commits revisados muestran un solo autor configurado.
+- Registrar los aportes reales de cada integrante. Los ocho commits revisados muestran dos nombres de autor configurados; por sí solos no identifican el trabajo de los cuatro integrantes.
 - Si cambia el juego o el UML, actualizar también las capturas y el informe antes de subir la entrega.
