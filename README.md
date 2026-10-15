@@ -1,8 +1,8 @@
-# Fuga de la Prisión — proyecto parcial
+# Fuga de la Prisión — proyecto parcial.
 
 Prototipo 2D en Python y Pygame. El prisionero y el guardia se dibujan como stickmen.
 
-## Ejecutar
+## Ejecutar.
 
 Desde esta carpeta, en PowerShell:
 
@@ -14,7 +14,7 @@ python -m venv .venv
 
 Controles: WASD o flechas para mover; Shift para correr; P o Escape para pausar; R para reiniciar después de ganar o perder.
 
-## Material del parcial
+## Material del parcial.
 
 - `entrega/Informe_Parcial_Fuga_Prision.pdf`: informe para presentar.
 - `docs/diagramas/modelo_parcial.mmd` y `modelo_parcial.png`: UML de nueve clases, en Mermaid y como imagen.
