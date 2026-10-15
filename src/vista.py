@@ -92,8 +92,11 @@ class Vista:
             self.texto("LLAVE", x - 22, y + 18, (246, 210, 102), self.pequena)
         for camara in nivel.camaras:
             x, y = self.punto(camara.posicion)
-            pygame.draw.rect(self.pantalla, (244, 190, 93), (x - 9, y - 7, 18, 14), border_radius=3)
-            pygame.draw.circle(self.pantalla, (40, 43, 40), (x, y + 3), 4)
+            pygame.draw.line(self.pantalla, (152, 169, 179), (x, y - 18), (x, y - 7), 3)
+            pygame.draw.rect(self.pantalla, (244, 190, 93), (x - 10, y - 8, 20, 12), border_radius=3)
+            pygame.draw.circle(self.pantalla, (37, 43, 48), (x, y + 2), 5)
+            pygame.draw.circle(self.pantalla, (101, 159, 180), (x, y + 2), 2)
+            self.texto("CÁMARA", x - 30, y - 42, (244, 190, 93), self.pequena)
         gx, gy = self.punto(guardia.get_posicion())
         paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
         self._dibujar_stickman((gx, gy), (242, 102, 113), paso_guardia)

@@ -56,7 +56,8 @@ class Nivel:
         self.prisionero = Prisionero(self, *centro(2, 11))
         self.guardia = Guardia(self, [centro(9, 7), centro(19, 7)])
         self.personajes = [self.prisionero, self.guardia]
-        self.camaras = [Camara(centro(18, 2))]
+        # Montada bajo el muro horizontal: vigila el pasillo central.
+        self.camaras = [Camara(centro(15, 5))]
         self.llave = Llave(centro(3, 2))
         self.salida = PuertaSalida(centro(21, 2))
 
