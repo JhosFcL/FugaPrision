@@ -18,7 +18,7 @@ def ubicar(personaje, posicion):
 def recorrer_ruta(juego):
     casillas = [(2, 7), (3, 7), (3, 4), (4, 4), (4, 3), (8, 3), (8, 2),
                 (8, 3), (4, 3), (4, 4), (3, 4), (3, 6), (4, 6),
-                (4, 7), (7, 7), (7, 8), (20, 8), (20, 6),
+                (4, 7), (7, 7), (7, 8.2), (20, 8.2), (20, 6),
                 (22, 6), (22, 3), (21, 3), (21, 2)]
     fotogramas = 0
     for casilla in casillas:
@@ -37,7 +37,8 @@ def recorrer_ruta(juego):
             juego.actualizar(1 / 120, teclas)
             fotogramas += 1
             if isinstance(juego.estado, Derrota):
-                raise AssertionError("La ruta de validación terminó en captura.")
+                raise AssertionError(f"Captura hacia {casilla}: jugador {juego.nivel.prisionero.get_posicion()}, "
+                                     f"guardia {juego.nivel.guardias[0].get_posicion()}, tiempo {juego.nivel.tiempo:.2f}.")
         else:
             raise AssertionError("La ruta no alcanzó su siguiente punto.")
         if casilla == (7, 7):
@@ -119,16 +120,16 @@ class PruebasJuego(unittest.TestCase):
 
     def test_guardia_detecta_y_patrulla(self):
         nivel = self.juego.nivel
-        posicion = nivel.guardia.get_posicion()
+        posicion = nivel.guardias[0].get_posicion()
         self.juego.actualizar(0.05, set())
-        self.assertNotEqual(posicion, nivel.guardia.get_posicion())
+        self.assertNotEqual(posicion, nivel.guardias[0].get_posicion())
         ubicar(nivel.prisionero, centro(11, 7))
         self.juego.actualizar(0, set())
         self.assertIsInstance(self.juego.estado, Derrota)
 
     def test_contacto_por_detras_captura(self):
         nivel = self.juego.nivel
-        x, y = nivel.guardia.get_posicion()
+        x, y = nivel.guardias[0].get_posicion()
         ubicar(nivel.prisionero, (x - 15, y))
         self.juego.actualizar(0, set())
         self.assertIsInstance(self.juego.estado, Derrota)
@@ -157,7 +158,7 @@ class PruebasJuego(unittest.TestCase):
         nivel = self.juego.nivel
         nivel.prisionero.recoger_llave()
         ubicar(nivel.prisionero, nivel.salida.posicion)
-        ubicar(nivel.guardia, nivel.salida.posicion)
+        ubicar(nivel.guardias[0], nivel.salida.posicion)
         self.juego.actualizar(0, set())
         self.assertIsInstance(self.juego.estado, Derrota)
         self.assertEqual(self.juego.panel.valor, 0)
@@ -166,11 +167,11 @@ class PruebasJuego(unittest.TestCase):
         self.juego.manejar_entrada("carrera")
         self.juego.manejar_entrada("pausa")
         nivel = self.juego.nivel
-        antes = (nivel.prisionero.get_posicion(), nivel.guardia.get_posicion(), nivel.tiempo,
+        antes = (nivel.prisionero.get_posicion(), nivel.guardias[0].get_posicion(), nivel.tiempo,
                  nivel.prisionero.carrera.get_estado())
         for _ in range(120):
             self.juego.actualizar(0.05, {"arriba"})
-        despues = (nivel.prisionero.get_posicion(), nivel.guardia.get_posicion(), nivel.tiempo,
+        despues = (nivel.prisionero.get_posicion(), nivel.guardias[0].get_posicion(), nivel.tiempo,
                    nivel.prisionero.carrera.get_estado())
         self.assertEqual(antes, despues)
         self.assertIsInstance(self.juego.estado, Pausa)
@@ -220,7 +221,7 @@ class PruebasJuego(unittest.TestCase):
     def test_actualizacion_polimorfica(self):
         nivel = self.juego.nivel
         with patch.object(nivel.prisionero, "update", wraps=nivel.prisionero.update) as principal:
-            with patch.object(nivel.guardia, "update", wraps=nivel.guardia.update) as secundario:
+            with patch.object(nivel.guardias[0], "update", wraps=nivel.guardias[0].update) as secundario:
                 self.juego.actualizar(0.01, set())
                 principal.assert_called_once_with()
                 secundario.assert_called_once_with()

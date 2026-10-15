@@ -7,6 +7,8 @@ test_proyectiles_rapidos_no_atraviesan_jugador_ni_muros (tests.test_campana.Prue
 test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias (tests.test_campana.PruebasCampana.test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias) ... ok
 test_salida_bloqueada_hasta_matar_jefe (tests.test_campana.PruebasCampana.test_salida_bloqueada_hasta_matar_jefe) ... ok
 test_transicion_conserva_puntos_y_no_avanza_dos_veces (tests.test_campana.PruebasCampana.test_transicion_conserva_puntos_y_no_avanza_dos_veces) ... ok
+test_guia_contiene_el_codigo_actual_completo_de_cada_clase (tests.test_documentacion.PruebasDocumentacion.test_guia_contiene_el_codigo_actual_completo_de_cada_clase) ... ok
+test_uml_incluye_clases_atributos_metodos_y_relaciones_reales (tests.test_documentacion.PruebasDocumentacion.test_uml_incluye_clases_atributos_metodos_y_relaciones_reales) ... ok
 test_actualizacion_polimorfica (tests.test_juego.PruebasJuego.test_actualizacion_polimorfica) ... ok
 test_atajo_superior_bloqueado (tests.test_juego.PruebasJuego.test_atajo_superior_bloqueado) ... ok
 test_camara_detecta (tests.test_juego.PruebasJuego.test_camara_detecta) ... ok
@@ -29,8 +31,15 @@ test_salida_exige_llave_y_no_duplica_premio (tests.test_juego.PruebasJuego.test_
 test_setter_puntaje_valida_y_notifica (tests.test_juego.PruebasJuego.test_setter_puntaje_valida_y_notifica) ... ok
 test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invalido_y_demoras) ... ok
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
+test_alerta_cercana_detecta_a_los_lados_y_por_detras (tests.test_vigilancia.PruebasVigilancia.test_alerta_cercana_detecta_a_los_lados_y_por_detras) ... ok
+test_alerta_y_vision_frontal_respetan_muros (tests.test_vigilancia.PruebasVigilancia.test_alerta_y_vision_frontal_respetan_muros) ... ok
+test_camara_detecta_cuerpo_parcialmente_dentro_del_cono (tests.test_vigilancia.PruebasVigilancia.test_camara_detecta_cuerpo_parcialmente_dentro_del_cono) ... ok
+test_cuerpo_que_toca_alerta_tambien_se_detecta (tests.test_vigilancia.PruebasVigilancia.test_cuerpo_que_toca_alerta_tambien_se_detecta) ... ok
+test_espalda_fuera_de_alerta_sigue_permitiendo_sigilo (tests.test_vigilancia.PruebasVigilancia.test_espalda_fuera_de_alerta_sigue_permitiendo_sigilo) ... ok
+test_patrulla_comienza_mirando_hacia_su_ruta (tests.test_vigilancia.PruebasVigilancia.test_patrulla_comienza_mirando_hacia_su_ruta) ... ok
+test_poligono_de_alerta_no_atraviesa_muros (tests.test_vigilancia.PruebasVigilancia.test_poligono_de_alerta_no_atraviesa_muros) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 3.025s
+Ran 40 tests in 2.297s
 
 OK

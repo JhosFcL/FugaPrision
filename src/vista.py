@@ -1,7 +1,7 @@
 """Vista Pygame. Las reglas se conservan fuera de esta clase."""
 import math
 import pygame
-from .geometria import extremo_visible
+from .geometria import poligono_vision
 from .nivel import TAMANO, COLUMNAS, FILAS
 
 ANCHO = 1000
@@ -45,12 +45,8 @@ class Vista:
 
     def _dibujar_vision(self, origen, angulo, alcance, apertura, muros, color):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
-        puntos = [self.punto(origen)]
-        for indice in range(61):
-            direccion = angulo - apertura / 2 + apertura * indice / 60
-            destino = (origen[0] + math.cos(direccion) * alcance,
-                       origen[1] + math.sin(direccion) * alcance)
-            puntos.append(self.punto(extremo_visible(origen, destino, muros)))
+        puntos = [self.punto(punto) for punto in
+                  poligono_vision(origen, angulo, alcance, apertura, muros)]
         pygame.draw.polygon(capa, (*color, 55), puntos)
         pygame.draw.lines(capa, (*color, 120), False, puntos[1:], 1)
         self.pantalla.blit(capa, (0, 0))
@@ -58,6 +54,26 @@ class Vista:
     def dibujar(self, juego):
         nivel = juego.nivel
         self.pantalla.fill((13, 21, 31))
+        self._dibujar_encabezado(juego)
+        self._dibujar_mapa(nivel)
+        self._dibujar_objetivos(nivel)
+        for camara in nivel.camaras:
+            self._dibujar_camara(camara)
+        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
+        for guardia in nivel.guardias:
+            self._dibujar_stickman(self.punto(guardia.get_posicion()), (242, 102, 113), paso_guardia)
+        if nivel.combate:
+            self._dibujar_combate(nivel)
+        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
+        if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
+            self._dibujar_stickman(self.punto(nivel.prisionero.get_posicion()),
+                                  (101, 234, 204), paso_prisionero)
+        self._dibujar_controles(nivel)
+        if juego.estado.nombre != "JUGANDO":
+            self._dibujar_panel_estado(juego)
+
+    def _dibujar_encabezado(self, juego):
+        nivel = juego.nivel
         self.texto("FUGA DE LA PRISIÓN", 68, 24, fuente=self.titulo)
         self.texto(f"NIVEL {nivel.indice + 1} / {nivel.total_niveles}  ·  {nivel.nombre.upper()}",
                    70, 66, (139, 159, 178), self.pequena)
@@ -68,6 +84,8 @@ class Vista:
             llave = "DERROTA AL ALCAIDE · ESPACIO o IJKL para disparar"
         self.texto(llave, 70, 110, (236, 205, 117), self.pequena)
         self.texto("CARRERA  " + nivel.prisionero.carrera.get_estado(), 651, 110, (164, 201, 232), self.pequena)
+
+    def _dibujar_mapa(self, nivel):
         area = pygame.Rect(*ORIGEN, COLUMNAS * TAMANO, FILAS * TAMANO)
         pygame.draw.rect(self.pantalla, (45, 31, 43) if nivel.es_final else (28, 42, 53), area)
         for fila in range(FILAS):
@@ -77,12 +95,16 @@ class Vista:
         for camara in nivel.camaras:
             self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.muros, (241, 184, 79))
         for guardia in nivel.guardias:
+            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.radio_alerta,
+                                 math.tau, nivel.muros, (242, 102, 113))
             self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
         for muro in nivel.muros:
             rect = pygame.Rect(muro[0] + ORIGEN[0], muro[1] + ORIGEN[1], muro[2], muro[3])
             pygame.draw.rect(self.pantalla, (62, 78, 90), rect)
             pygame.draw.rect(self.pantalla, (77, 94, 107), rect, 1)
             pygame.draw.line(self.pantalla, (90, 104, 116), rect.topleft, rect.topright)
+
+    def _dibujar_objetivos(self, nivel):
         salida = self.punto(nivel.salida.posicion)
         color_salida = (103, 222, 176) if nivel.prisionero.tiene_llave() else (93, 126, 117)
         pygame.draw.rect(self.pantalla, color_salida, (salida[0] - 14, salida[1] - 15, 28, 30), 3, border_radius=3)
@@ -93,30 +115,23 @@ class Vista:
             pygame.draw.line(self.pantalla, (246, 210, 102), (x, y), (x + 13, y), 4)
             pygame.draw.line(self.pantalla, (246, 210, 102), (x + 10, y), (x + 10, y + 6), 3)
             self.texto("LLAVE", x - 22, y + 18, (246, 210, 102), self.pequena)
-        for camara in nivel.camaras:
-            x, y = self.punto(camara.posicion)
-            pygame.draw.line(self.pantalla, (152, 169, 179), (x, y - 18), (x, y - 7), 3)
-            pygame.draw.rect(self.pantalla, (244, 190, 93), (x - 10, y - 8, 20, 12), border_radius=3)
-            pygame.draw.circle(self.pantalla, (37, 43, 48), (x, y + 2), 5)
-            pygame.draw.circle(self.pantalla, (101, 159, 180), (x, y + 2), 2)
-            self.texto("CÁMARA", x - 30, y - 42, (244, 190, 93), self.pequena)
-        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
-        for guardia in nivel.guardias:
-            self._dibujar_stickman(self.punto(guardia.get_posicion()), (242, 102, 113), paso_guardia)
-        if nivel.combate:
-            self._dibujar_combate(nivel)
-        px, py = self.punto(nivel.prisionero.get_posicion())
-        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
-        if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
-            self._dibujar_stickman((px, py), (101, 234, 204), paso_prisionero)
+
+    def _dibujar_camara(self, camara):
+        x, y = self.punto(camara.posicion)
+        dx, dy = math.cos(camara.angulo), math.sin(camara.angulo)
+        lente = (round(x + dx * 9), round(y + dy * 9))
+        pygame.draw.circle(self.pantalla, (244, 190, 93), (x, y), 10)
+        pygame.draw.line(self.pantalla, (37, 43, 48), (x, y), lente, 9)
+        pygame.draw.circle(self.pantalla, (101, 159, 180), lente, 3)
+        self.texto("CÁMARA", x - 30, y - 34, (244, 190, 93), self.pequena)
+
+    def _dibujar_controles(self, nivel):
         self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa" +
                    ("     ESPACIO / IJKL  Disparar" if nivel.es_final else ""), 69, 680, fuente=self.pequena)
-        consejo = "Evita las zonas de visión. Los muros te ocultan. Contactar al guardia también te captura."
+        consejo = "Cono: visión frontal. Círculo: alerta cercana en todas direcciones. Los muros te ocultan."
         if nivel.es_final:
             consejo = "Espacio apunta al jefe; IJKL fija la dirección. Esquiva los avisos rojos. Tras vencerlo, recoge la llave."
         self.texto(consejo, 69, 709, (139, 159, 178), self.pequena)
-        if juego.estado.nombre != "JUGANDO":
-            self._dibujar_panel_estado(juego)
 
     def _dibujar_combate(self, nivel):
         combate = nivel.combate

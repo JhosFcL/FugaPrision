@@ -18,6 +18,13 @@ class Proyectil:
     def posicion(self):
         return self.x, self.y
 
+    def avanzar(self, dt):
+        inicio = self.posicion
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+        self.duracion -= dt
+        return inicio, self.posicion
+
 
 def contacto_segmento(inicio, fin, centro, radio):
     """Fracción del primer impacto; los tiros rápidos no atraviesan objetivos."""
@@ -166,9 +173,7 @@ class Combate:
             self.recarga = 0.18
         vivos = []
         for tiro in self.proyectiles:
-            inicio = tiro.posicion
-            fin = (tiro.x + tiro.vx * dt, tiro.y + tiro.vy * dt)
-            tiro.duracion -= dt
+            inicio, fin = tiro.avanzar(dt)
             # Se expande cada muro por el radio del proyectil.
             muro = min((fraccion_interseccion(inicio, fin,
                         (x - tiro.radio, y - tiro.radio, w + 2 * tiro.radio, h + 2 * tiro.radio))
@@ -185,6 +190,5 @@ class Combate:
                 continue
             if muro < 1.0 or tiro.duracion <= 0:
                 continue
-            tiro.x, tiro.y = fin
             vivos.append(tiro)
         self.proyectiles = [] if self.jefe.derrotado else vivos

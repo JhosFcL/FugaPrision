@@ -45,16 +45,18 @@ python -m venv .venv
 En la arena, los muros bloquean proyectiles y dispones de un breve período de
 inmunidad tras recibir daño. La pausa y la pérdida de foco detienen toda la simulación.
 
-## Material del parcial original
+Los guardias tienen visión frontal y un círculo de alerta cercana de 32 píxeles:
+acercarte por un lado o por detrás también puede provocar la captura. Los muros
+bloquean ambas zonas. La detección considera el cuerpo del prisionero, por lo que
+debes mantenerlo completo fuera de las zonas de vigilancia.
 
-El informe y los documentos de clases y diagramas conservan la descripción del
-prototipo original de un nivel; este README describe la campaña ampliada.
+## Material del parcial
 
 - `entrega/Informe_Parcial_Fuga_Prision.pdf`: informe para presentar.
-- `docs/diagramas/modelo_parcial.mmd` y `modelo_parcial.png`: UML de nueve clases clave de las dieciocho del código, en Mermaid y como imagen.
-- `docs/evidencias/`: capturas de inicio, pausa, victoria y derrota, salida de pruebas e historial Git revisado.
+- `docs/diagramas/modelo_parcial.mmd` y `modelo_parcial.png`: UML de las 22 clases del juego, en Mermaid y como imagen generada desde el mismo modelo.
+- `docs/evidencias/`: diez capturas de la campaña, salida de las 40 pruebas e historial Git revisado.
 - `docs/03_guion_exposicion.md`: apoyo para la explicación oral.
-- `docs/Explicacion_de_clases.md`: explicación de las 18 clases, cada una seguida de su código completo.
+- `docs/Explicacion_de_clases.md`: explicación de las 22 clases, sus conceptos POO y su código completo; también explica los símbolos del UML.
 - `main.py` y `src/`: juego y clases.
 - `tests/` y `tools/verificar.py`: pruebas de regresión, campaña y combate, y
   generación reproducible de diez capturas con una campaña jugada mediante

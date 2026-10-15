@@ -88,12 +88,15 @@ class Prisionero(Personaje):
 
 class Guardia(Personaje):
     def __init__(self, nivel, ruta):
+        if len(ruta) < 2:
+            raise ValueError("La patrulla necesita al menos dos posiciones.")
         super().__init__(nivel, ruta[0][0], ruta[0][1], 65)
         self.ruta = ruta
         self._objetivo = 1
-        self.angulo = 0.0
+        self.angulo = math.atan2(ruta[1][1] - ruta[0][1], ruta[1][0] - ruta[0][0])
         self.alcance = 155
         self.apertura = math.radians(65)
+        self.radio_alerta = 32
 
     def update(self):
         objetivo = self.ruta[self._objetivo]
@@ -110,7 +113,11 @@ class Guardia(Personaje):
             self.mover(dx / largo * avance, dy / largo * avance)
 
     def puede_detectar(self, prisionero):
-        if distancia(self.get_posicion(), prisionero.get_posicion()) <= self.radio + prisionero.radio:
+        posicion = self.get_posicion()
+        objetivo = prisionero.get_posicion()
+        # Cerca del guardia no se puede permanecer a su lado ni a su espalda.
+        if dentro_de_vision(posicion, objetivo, self.angulo, self.radio_alerta,
+                            math.tau, self.nivel.muros, prisionero.radio):
             return True
-        return dentro_de_vision(self.get_posicion(), prisionero.get_posicion(),
-                               self.angulo, self.alcance, self.apertura, self.nivel.muros)
+        return dentro_de_vision(posicion, objetivo, self.angulo, self.alcance,
+                               self.apertura, self.nivel.muros, prisionero.radio)
