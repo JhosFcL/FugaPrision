@@ -16,10 +16,11 @@ test_puntaje_rechaza_valores_invalidos (tests.test_juego.PruebasJuego.test_punta
 test_reinicio_restaura_nivel_puntaje_y_habilidad (tests.test_juego.PruebasJuego.test_reinicio_restaura_nivel_puntaje_y_habilidad) ... ok
 test_ruta_completa_sin_teletransportes (tests.test_juego.PruebasJuego.test_ruta_completa_sin_teletransportes) ... ok
 test_salida_exige_llave_y_no_duplica_premio (tests.test_juego.PruebasJuego.test_salida_exige_llave_y_no_duplica_premio) ... ok
+test_setter_puntaje_valida_y_notifica (tests.test_juego.PruebasJuego.test_setter_puntaje_valida_y_notifica) ... ok
 test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invalido_y_demoras) ... ok
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 0.319s
+Ran 21 tests in 0.313s
 
 OK

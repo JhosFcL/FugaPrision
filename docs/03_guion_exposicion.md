@@ -8,7 +8,7 @@ Duración sugerida: 6 a 8 minutos. El reparto siguiente es una propuesta para en
 
 “Nuestro proyecto se llama Fuga de la Prisión y corresponde a la temática 13. Es un videojuego 2D en Python. El jugador debe recoger una llave y escapar sin ser detectado por un guardia o una cámara. Para este parcial implementamos un primer nivel completo. La llave da 100 puntos y escapar suma 500 más.”
 
-Mostrar la pantalla inicial. Identificar al prisionero verde, el guardia rojo, la cámara amarilla, la llave y la salida. Aclarar que se trata del avance de un nivel y que se agregarán niveles para el final.
+Mostrar la pantalla inicial. Identificar al prisionero stickman verde, el guardia stickman rojo, la cámara amarilla, la llave y la salida. Aclarar que se trata del avance de un nivel y que se agregarán niveles para el final.
 
 ## 2 Clases y relaciones
 
@@ -16,7 +16,7 @@ Mostrar la pantalla inicial. Identificar al prisionero verde, el guardia rojo, l
 
 “Personaje es una clase abstracta. Prisionero y Guardia heredan de ella, pero cada uno implementa update de forma diferente. Nivel recorre los personajes y hace la misma llamada a ambos. Esa diferencia de comportamiento es el polimorfismo.”
 
-Abrir `src/personajes.py` y el bucle de `src/nivel.py`. Mostrar que `Nivel` crea los objetos de su mapa y `Prisionero` crea `HabilidadCarrera`: son ejemplos de composición. Explicar la dependencia de `PuertaSalida.puede_salir(prisionero)`, que consulta al objeto recibido sin guardarlo.
+Abrir `src/personajes.py` y el bucle de `src/nivel.py`. Mostrar la asociación `Personaje`-`Nivel`: cada personaje guarda una referencia a su nivel. Mostrar la agregación `Nivel`-`Puntaje`: recibe un puntaje creado por `Juego`. `Nivel` crea los objetos del mapa y `Prisionero` crea `HabilidadCarrera`: son ejemplos de composición. Explicar la dependencia de `PuertaSalida.puede_salir(prisionero)`, que consulta al objeto recibido sin guardarlo.
 
 ## 3 Patrones de diseño
 
@@ -42,7 +42,7 @@ Mostrar `src/puntuacion.py` y la suscripción en `src/juego.py`. No afirmar que 
 
 Ruta de ensayo para ganar: pasillo izquierdo hacia la llave, fila transitable superior hacia la derecha, pasar por encima de la cámara y bajar a la salida. No se necesita una opción especial ni modificar el código.
 
-“Ejecutamos veinte pruebas automatizadas. Comprueban colisiones, visión, puntaje, pausa, reinicio, habilidad y una ruta completa. Los resultados están en la carpeta de evidencias. La ruta automatizada completó el nivel con 600 puntos.”
+“Ejecutamos veintiuna pruebas automatizadas. Comprueban colisiones, visión, puntaje, pausa, reinicio, habilidad, el setter validado y una ruta completa. Los resultados están en la carpeta de evidencias. La ruta automatizada completó el nivel con 600 puntos.”
 
 Mostrar `docs/evidencias/pruebas.txt`. Las capturas se obtuvieron con Pygame en modo sin ventana; no presentarlas como evidencia de una sesión humana. Antes de exponer, realizar y registrar ese ensayo con teclado.
 
@@ -58,6 +58,8 @@ Mostrar `docs/evidencias/pruebas.txt`. Las capturas se obtuvieron con Pygame en 
 ## Antes de entregar
 
 - Ensayar en el equipo donde se presentará; comprobar teclado, legibilidad y ventana de 1000 por 760 píxeles.
+- Registrar aportes y commits reales de cada integrante; el historial actual solo identifica a un autor.
+- Revisar el informe Word y PDF de `entrega/` después de cualquier cambio posterior en código, UML o capturas para que todas las evidencias sigan correspondiendo a la misma versión.
 - Confirmar con el docente el alcance específico del parcial y la obligatoriedad de la API.
 - Añadir sección y docente a la portada si la presentación del curso lo exige; no se proporcionaron esos datos.
 - Conservar el informe, código y evidencias de la misma versión.

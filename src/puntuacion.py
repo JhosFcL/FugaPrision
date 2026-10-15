@@ -23,6 +23,13 @@ class Puntaje:
     def get_valor(self):
         return self._valor
 
+    def set_valor(self, valor):
+        """Cambia el puntaje sin permitir valores inválidos y avisa al panel."""
+        if type(valor) is not int or valor < 0:
+            raise ValueError("El puntaje debe ser un entero no negativo.")
+        self._valor = valor
+        self._notificar()
+
     def suscribir(self, observador):
         if observador not in self._observadores:
             self._observadores.append(observador)
@@ -35,12 +42,10 @@ class Puntaje:
     def sumar(self, cantidad):
         if type(cantidad) is not int or cantidad <= 0:
             raise ValueError("Los puntos deben ser un entero positivo.")
-        self._valor += cantidad
-        self._notificar()
+        self.set_valor(self._valor + cantidad)
 
     def reiniciar(self):
-        self._valor = 0
-        self._notificar()
+        self.set_valor(0)
 
     def _notificar(self):
         for observador in tuple(self._observadores):

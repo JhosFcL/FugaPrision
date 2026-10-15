@@ -186,6 +186,15 @@ class PruebasJuego(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.juego.puntaje.sumar(valor)
 
+    def test_setter_puntaje_valida_y_notifica(self):
+        for valor in [-1, 1.5, True, "100"]:
+            with self.assertRaises(ValueError):
+                self.juego.puntaje.set_valor(valor)
+        self.assertEqual(self.juego.puntaje.get_valor(), 0)
+        self.juego.puntaje.set_valor(250)
+        self.assertEqual(self.juego.puntaje.get_valor(), 250)
+        self.assertEqual(self.juego.panel.valor, 250)
+
     def test_actualizacion_polimorfica(self):
         nivel = self.juego.nivel
         with patch.object(nivel.prisionero, "update", wraps=nivel.prisionero.update) as principal:

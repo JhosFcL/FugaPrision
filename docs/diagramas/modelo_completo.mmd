@@ -1,67 +1,95 @@
 classDiagram
+direction TB
+
+class Juego {
+  +nivel: Nivel
+  +puntaje: Puntaje
+  +estado: EstadoJuego
+  +iniciar_partida() void
+  +cambiar_estado(estado: EstadoJuego) void
+  +actualizar(dt: float, teclas: set) void
+}
+class Nivel {
+  +personajes: Personaje[]
+  +camaras: Camara[]
+  +puntaje: Puntaje
+  +actualizar(dt: float, teclas: set) Optional~str~
+  +resolver_interacciones() Optional~str~
+  +posicion_valida(x: float, y: float, radio: int) bool
+}
 class Personaje {
   <<abstract>>
-  -_x
-  -_y
-  -_velocidad
-  +mover(dx, dy)
-  +update()*
+  #_x: float
+  #_y: float
+  #_velocidad: int
+  +get_posicion() tuple
+  +mover(dx: float, dy: float) void
+  +update() void
 }
 class Prisionero {
-  +update()
-  +recoger_llave()
+  #_tiene_llave: bool
+  +carrera: HabilidadCarrera
+  +tiene_llave() bool
+  +recoger_llave() void
+  +update() void
 }
 class Guardia {
-  +update()
-  +puede_detectar(prisionero)
+  +ruta: tuple[]
+  +alcance: int
+  +angulo: float
+  +update() void
+  +puede_detectar(prisionero: Prisionero) bool
+}
+class Camara {
+  +posicion: tuple
+  +alcance: int
+  +angulo: float
+  +detectar(prisionero: Prisionero, muros: tuple[]) bool
+}
+class Llave {
+  +posicion: tuple
+  +disponible: bool
+  +recoger(prisionero: Prisionero) bool
+}
+class PuertaSalida {
+  +posicion: tuple
+  +puede_salir(prisionero: Prisionero) bool
 }
 class HabilidadCarrera {
-  +activar()
-  +actualizar(dt)
-}
-class EstadoJuego {
-  <<abstract>>
-  +manejar_entrada(tecla)*
-  +actualizar(dt, teclas)*
+  #_duracion: float
+  #_recarga: float
+  +activar() bool
+  +actualizar(dt: float) void
+  +get_estado() str
 }
 class Puntaje {
-  -_valor
-  -_observadores
-  +suscribir(observador)
-  +desuscribir(observador)
-  +sumar(cantidad)
-  +reiniciar()
-  -_notificar()
+  #_valor: int
+  #_observadores: ObservadorPuntaje[]
+  +get_valor() int
+  +set_valor(valor: int) void
+  +sumar(cantidad: int) void
+  +reiniciar() void
 }
-class ObservadorPuntaje {
-  <<abstract>>
-  +actualizar_puntaje(valor)*
+class Vista {
+  +pantalla: Surface
+  +dibujar(juego: Juego) void
+  -_dibujar_stickman(posicion: tuple, color: tuple, paso: int) void
 }
-class PanelPuntaje {
-  +valor
-  +actualizar_puntaje(valor)
-}
+
+Personaje <|-- Prisionero
+Personaje <|-- Guardia
 Juego "1" *-- "1" Nivel
 Juego "1" *-- "1" Puntaje
-Juego "1" *-- "1" PanelPuntaje
-Juego "1" --> "1" EstadoJuego
-EstadoJuego --> Juego : contexto
-Nivel "1" *-- "2" Personaje
-Nivel --> Puntaje : referencia compartida
-Personaje --> Nivel : contexto
+Nivel "1" *-- "1" Prisionero
+Nivel "1" *-- "1" Guardia
 Nivel "1" *-- "1" Camara
 Nivel "1" *-- "1" Llave
 Nivel "1" *-- "1" PuertaSalida
-Personaje <|-- Prisionero
-Personaje <|-- Guardia
 Prisionero "1" *-- "1" HabilidadCarrera
-PuertaSalida ..> Prisionero : parametro
-Camara ..> Prisionero : parametro
-Llave ..> Prisionero : parametro
-EstadoJuego <|-- Jugando
-EstadoJuego <|-- Pausa
-EstadoJuego <|-- Derrota
-EstadoJuego <|-- Victoria
-Puntaje "1" --> "0..*" ObservadorPuntaje : notifica
-ObservadorPuntaje <|-- PanelPuntaje
-Vista ..> Juego : dibujar
+Nivel "1" o-- "1" Puntaje
+Personaje --> Nivel
+Guardia ..> Prisionero
+Camara ..> Prisionero
+Llave ..> Prisionero
+PuertaSalida ..> Prisionero
+Vista ..> Juego
