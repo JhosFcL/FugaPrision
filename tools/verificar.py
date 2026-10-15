@@ -4,8 +4,6 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ["SDL_AUDIODRIVER"] = "dummy"
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import io
-import json
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
 import unittest
@@ -61,15 +59,7 @@ def ejecutar():
     captura("04_derrota.png")
     assert not procesar_eventos(juego, [pygame.event.Event(pygame.QUIT)])
     pygame.quit()
-    fecha_lima = datetime.now(timezone(timedelta(hours=-5))).date().isoformat()
-    datos = {"fecha": fecha_lima, "python": sys.version.split()[0], "pygame": pygame.version.ver,
-             "pruebas": resultado.testsRun, "fallos": len(resultado.failures), "errores": len(resultado.errors),
-             "ruta_completa": True, "fotogramas_ruta": fotogramas, "tiempo_simulado_segundos": round(tiempo, 3),
-             "puntaje_victoria": 600, "capturas": 4,
-             "integracion_eventos": "P, ESC, perdida de foco, R y cierre comprobados",
-             "modo_grafico": "SDL dummy; renderizado real Pygame, sin sesión humana interactiva"}
-    (evidencias / "resultados.json").write_text(json.dumps(datos, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(json.dumps(datos, indent=2, ensure_ascii=False))
+    print(f"{resultado.testsRun} pruebas sin fallos; ruta de {fotogramas} fotogramas en {tiempo:.3f} s; 4 capturas generadas.")
 
 
 if __name__ == "__main__":

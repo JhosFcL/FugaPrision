@@ -1,6 +1,6 @@
-# Evidencia Git comprobada
+# Historial Git observado
 
-Verificado el 15 de octubre de 2026 en este repositorio local. El historial disponible en `master` contiene:
+Revisión del 15 de octubre de 2026. Hasta el commit `a3dd71c`, el repositorio tenía estos seis commits:
 
 | Commit | Fecha | Autor configurado | Mensaje |
 | --- | --- | --- | --- |
@@ -9,7 +9,6 @@ Verificado el 15 de octubre de 2026 en este repositorio local. El historial disp
 | `f3cd9fe` | 2026-10-08 | JhosFcL | Completar informe parcial verificado diagramas y guion de exposicion |
 | `c6a22ca` | 2026-10-15 | JhosFcL | Preparar entrega parcial |
 | `d3b84c6` | 2026-10-15 | JhosFcL | Cambios |
+| `a3dd71c` | 2026-10-15 | JhosFcL | Cambios |
 
-Este historial demuestra que se usó Git en varias etapas. **No demuestra aportes de los cuatro integrantes**: los cinco commits muestran un mismo autor. La rúbrica del parcial pide uso correcto de Git en equipos y evidencia al 100 % para la máxima puntuación del criterio III. La participación restante debe constar en contribuciones y commits reales de cada integrante; no puede acreditarse con nombres añadidos al informe ni con commits fabricados.
-
-La carpeta actual también tiene cambios de trabajo aún sin commit. Antes de entregar, revisen `git status`, incorporen únicamente los archivos definitivos y registren aportes reales con mensajes claros. Este archivo no afirma que el historial esté completo.
+Los seis commits muestran el mismo autor configurado. Por eso el historial demuestra uso de Git, pero todavía no acredita aportes identificables de los cuatro integrantes. La rúbrica pide evidencia del trabajo en equipo para obtener el máximo del criterio de resultados parciales. Los futuros aportes deben quedar registrados por quienes los realicen.

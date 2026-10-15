@@ -12,11 +12,13 @@ Mostrar la pantalla inicial. Identificar al prisionero stickman verde, el guardi
 
 ## 2 Clases y relaciones
 
-**Mickele Carlos Torres Velazco, aproximadamente 1 minuto y medio.**
+**Mickele Carlos Torres Velazco, aproximadamente 2 minutos.**
 
-“Personaje es una clase abstracta. Prisionero y Guardia heredan de ella, pero cada uno implementa update de forma diferente. Nivel recorre los personajes y hace la misma llamada a ambos. Esa diferencia de comportamiento es el polimorfismo.”
+“Personaje reúne la posición y el movimiento. Prisionero y Guardia heredan de ella. El prisionero lee las teclas y el guardia patrulla. Nivel llama `update()` a ambos sin preguntar cuál es; cada uno responde a su manera. Eso es polimorfismo.”
 
-Abrir `src/personajes.py` y el bucle de `src/nivel.py`. Mostrar la asociación `Personaje`-`Nivel`: cada personaje guarda una referencia a su nivel. Mostrar la agregación `Nivel`-`Puntaje`: recibe un puntaje creado por `Juego`. `Nivel` crea los objetos del mapa y `Prisionero` crea `HabilidadCarrera`: son ejemplos de composición. Explicar la dependencia de `PuertaSalida.puede_salir(prisionero)`, que consulta al objeto recibido sin guardarlo.
+“En la asociación, cada personaje guarda una referencia a su nivel. En la agregación, Nivel recibe el puntaje que Juego ya creó. En la composición, Nivel crea su prisionero, guardia, cámara, llave y salida. Hay dependencia cuando la cámara usa al prisionero para comprobar si lo ve, sin guardarlo. Para encapsular, el puntaje se cambia mediante un método que rechaza valores inválidos. Personaje es abstracta porque no se puede crear un personaje genérico sin definir cómo actúa.”
+
+Mostrar el diagrama, las tres líneas del primer anexo, el bucle de `nivel.py` y el método `set_valor()` de `puntuacion.py`. Señalar el símbolo de cada relación sin leer todos los atributos de las nueve cajas.
 
 ## 3 Patrones de diseño
 
@@ -24,11 +26,11 @@ Abrir `src/personajes.py` y el bucle de `src/nivel.py`. Mostrar la asociación `
 
 “State separa Jugando, Pausa, Derrota y Victoria. Juego delega la entrada y la actualización en el estado activo. Por eso, en pausa no se actualizan posiciones ni temporizadores.”
 
-Pausar con P y reanudar con Escape. Mostrar `src/estados.py`.
+Pausar con P y reanudar con Escape. Mostrar `estados.py`.
 
 “Observer comunica los cambios del puntaje. Puntaje notifica a PanelPuntaje cuando sumamos puntos o reiniciamos. La clase Puntaje no conoce el dibujo de la pantalla. El panel se suscribe una sola vez.”
 
-Mostrar `src/puntuacion.py` y la suscripción en `src/juego.py`. No afirmar que se implementó Factory Method: los dos patrones elegidos son State y Observer.
+Mostrar `puntuacion.py` y la suscripción en `juego.py`. Los dos patrones implementados son State y Observer.
 
 ## 4 Demostración y pruebas
 
@@ -42,9 +44,9 @@ Mostrar `src/puntuacion.py` y la suscripción en `src/juego.py`. No afirmar que 
 
 Ruta de ensayo para ganar: subir por el lado izquierdo y entrar al cuarto de la llave. Regresar por la misma entrada, bajar hasta el muro que separa al guardia y esperar cubierto a que cambie de dirección. Cruzar por el pasillo inferior de la zona central, rodear los obstáculos de la derecha y subir a la salida. La línea superior está bloqueada y no permite el atajo anterior.
 
-“Ejecutamos veintidós pruebas automatizadas. Comprueban colisiones, visión, puntaje, pausa, reinicio, habilidad, el setter validado, el bloqueo del atajo y una ruta completa. Los resultados están en la carpeta de evidencias. La ruta automatizada completó el nivel con 600 puntos.”
+“Ejecutamos veintidós pruebas automáticas. Revisan los muros, la visión del guardia y la cámara, el puntaje, la pausa y una ruta completa. La ruta llegó a la salida con 600 puntos. También falta hacer la prueba manual con teclado antes de exponer.”
 
-Mostrar `docs/evidencias/pruebas.txt`. Las capturas se obtuvieron con Pygame en modo sin ventana; no presentarlas como evidencia de una sesión humana. Antes de exponer, realizar y registrar ese ensayo con teclado.
+Mostrar los resultados de las pruebas y una captura. Las capturas automáticas no sustituyen el ensayo con teclado.
 
 ## Preguntas que deben poder responder
 
@@ -53,13 +55,9 @@ Mostrar `docs/evidencias/pruebas.txt`. Las capturas se obtuvieron con Pygame en 
 - **¿Por qué el guardia y la cámara no heredan de la misma clase?** La cámara se modeló como dispositivo de vigilancia. La jerarquía Personaje representa a los actores que se actualizan polimórficamente.
 - **¿Qué pasa si se alcanza la salida al ser detectado?** Se procesa primero la detección y se pierde, sin conceder el premio de salida.
 - **¿Cuántos niveles hay?** Uno implementado en el parcial. La ampliación multinivel está pendiente para el final.
-- **¿Usan API?** Todavía no. Debe aclararse la contradicción entre el encabezado “sugerencia” y la redacción de la consigna.
 
 ## Antes de entregar
 
 - Ensayar en el equipo donde se presentará; comprobar teclado, legibilidad y ventana de 1000 por 760 píxeles.
-- Registrar aportes y commits reales de cada integrante; el historial actual solo identifica a un autor.
-- Revisar el informe Word y PDF de `entrega/` después de cualquier cambio posterior en código, UML o capturas para que todas las evidencias sigan correspondiendo a la misma versión.
-- Confirmar con el docente el alcance específico del parcial y la obligatoriedad de la API.
-- Añadir sección y docente a la portada si la presentación del curso lo exige; no se proporcionaron esos datos.
-- Conservar el informe, código y evidencias de la misma versión.
+- Registrar los aportes y commits reales de cada integrante; los seis commits revisados muestran un solo autor configurado.
+- Si cambia el juego o el UML, actualizar también las capturas y el informe antes de subir la entrega.
