@@ -91,9 +91,14 @@ class PruebasJuego(unittest.TestCase):
 
     def test_camara_detecta(self):
         nivel = self.juego.nivel
-        ubicar(nivel.prisionero, centro(18, 3))
+        ubicar(nivel.prisionero, centro(15, 6))
         self.juego.actualizar(0, set())
         self.assertIsInstance(self.juego.estado, Derrota)
+
+        otro_juego = Juego()
+        ubicar(otro_juego.nivel.prisionero, centro(15, 3))
+        otro_juego.actualizar(0, set())
+        self.assertIsInstance(otro_juego.estado, Jugando)
 
     def test_guardia_detecta_y_patrulla(self):
         nivel = self.juego.nivel
