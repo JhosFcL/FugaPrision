@@ -1,52 +1,80 @@
+---
+config:
+  theme: neutral
+  layout: dagre
+  htmlLabels: false
+  themeVariables:
+    fontFamily: Arial
+    fontSize: 16px
+  class:
+    hideEmptyMembersBox: false
+    htmlLabels: false
+    useMaxWidth: false
+---
 classDiagram
 direction TB
 
+%% juego.py
 class Juego {
+  +puntaje: Puntaje
+  +panel: PanelPuntaje
+  +indice_nivel: int
+  +puntos_inicio_nivel: int
   +nivel: Nivel
-  +puntaje: Puntaje
   +estado: EstadoJuego
-  +iniciar_partida() void
-  +actualizar(dt, teclas) void
+  +iniciar_partida() None
+  #_cargar_nivel() None
+  +siguiente_nivel() None
+  +reintentar_nivel() None
+  +cambiar_estado(estado) None
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
 }
-class Nivel {
-  +personajes: Personaje[]
-  +puntaje: Puntaje
-  +camaras: Camara[]
-  +actualizar(dt, teclas) Optional~str~
-  +resolver_interacciones() Optional~str~
-}
-class Puntaje {
-  #_valor: int
-  +get_valor() int
-  +set_valor(valor) void
-  +sumar(cantidad) void
-}
-class Personaje {
+
+%% estados.py
+class EstadoJuego {
   <<abstract>>
-  #_x: float
-  #_y: float
-  +get_posicion() tuple
-  +mover(dx, dy) void
-  +update() void
+  +nombre: str
+  +juego: Juego
+  +manejar_entrada(tecla) None*
+  +actualizar(dt, teclas) None*
 }
-class Prisionero {
-  #_tiene_llave: bool
-  +carrera: HabilidadCarrera
-  +tiene_llave() bool
-  +update() void
+class Jugando {
+  +nombre: str
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
 }
-class Guardia {
-  +ruta: tuple[]
-  +angulo: float
-  +update() void
-  +puede_detectar(prisionero) bool
+class Pausa {
+  +nombre: str
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
 }
+class Derrota {
+  +nombre: str
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
+}
+class Victoria {
+  +nombre: str
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
+}
+class NivelCompletado {
+  +nombre: str
+  +manejar_entrada(tecla) None
+  +actualizar(dt, teclas) None
+}
+
+%% nivel.py
 class Camara {
   +posicion: tuple
   +angulo: float
+  +alcance: float
+  +apertura: float
   +detectar(prisionero, muros) bool
 }
 class Llave {
+  +posicion: tuple
   +disponible: bool
   +recoger(prisionero) bool
 }
@@ -54,16 +82,190 @@ class PuertaSalida {
   +posicion: tuple
   +puede_salir(prisionero) bool
 }
+class Nivel {
+  +total_niveles: int
+  +configuracion_siguiente: str
+  +indice: int
+  +configuracion: dict
+  +nombre: str
+  +es_final: bool
+  +puntaje: Puntaje
+  +dt: float
+  +tiempo: float
+  +teclas: set
+  +terminado: bool
+  +muros: list~tuple~
+  +prisionero: Prisionero
+  +guardias: list~Guardia~
+  +personajes: list~Personaje~
+  +camaras: list~Camara~
+  +llave: Llave
+  +salida: PuertaSalida
+  +combate: Optional~Combate~
+  #_crear_muros() None
+  +posicion_valida(x, y, radio) bool
+  +actualizar(dt, teclas) Optional~str~
+  +resolver_interacciones() Optional~str~
+}
 
+%% personajes.py
+class HabilidadCarrera {
+  #_duracion: float
+  #_recarga: float
+  +activar() bool
+  +actualizar(dt) None
+  +get_multiplicador() float
+  +get_estado() str
+}
+class Personaje {
+  <<abstract>>
+  +nivel: Nivel
+  #_x: float
+  #_y: float
+  #_velocidad: float
+  +radio: float
+  +get_posicion() tuple
+  +mover(dx, dy) None
+  +update() None*
+}
+class Prisionero {
+  #_tiene_llave: bool
+  +carrera: HabilidadCarrera
+  +tiene_llave() bool
+  +recoger_llave() None
+  +update() None
+}
+class Guardia {
+  +ruta: list~tuple~
+  #_objetivo: int
+  +angulo: float
+  +alcance: float
+  +apertura: float
+  +radio_alerta: float
+  +update() None
+  +puede_detectar(prisionero) bool
+}
+
+%% puntuacion.py
+class ObservadorPuntaje {
+  <<abstract>>
+  +actualizar_puntaje(valor) None*
+}
+class PanelPuntaje {
+  +valor: int
+  +actualizar_puntaje(valor) None
+}
+class Puntaje {
+  #_valor: int
+  #_observadores: list~ObservadorPuntaje~
+  +get_valor() int
+  +set_valor(valor) None
+  +suscribir(observador) None
+  +desuscribir(observador) None
+  +sumar(cantidad) None
+  +reiniciar() None
+  #_notificar() None
+}
+
+%% combate.py
+class Proyectil {
+  <<dataclass>>
+  +x: float
+  +y: float
+  +vx: float
+  +vy: float
+  +enemigo: bool
+  +radio: float
+  +duracion: float
+  +posicion: tuple
+  +avanzar(dt) tuple
+}
+class Alcaide {
+  +nombre: str
+  +vida_maxima: int
+  +radio: float
+  +x: float
+  +y: float
+  +vida: int
+  +espera: float
+  +aviso: float
+  +patron: int
+  +objetivo: tuple
+  +destino: Optional~tuple~
+  +golpe: float
+  +posicion: tuple
+  +derrotado: bool
+  +fase: int
+  +ataque: str
+  +actualizar(combate, dt) None
+  #_atacar(combate) None
+}
+class Combate {
+  +vida_maxima: int
+  +nivel: Nivel
+  +jefe: Alcaide
+  +proyectiles: list~Proyectil~
+  +vida: int
+  +inmune: float
+  +recarga: float
+  +premiado: bool
+  +emitir(origen, angulo, velocidad, enemigo) None
+  +recibir_dano() None
+  +actualizar(dt, teclas) None
+}
+
+%% vista.py
+class Vista {
+  +pantalla: Surface
+  +fuente: Font
+  +pequena: Font
+  +titulo: Font
+  +mediana: Font
+  +texto(texto, x, y, color, fuente) None
+  +punto(posicion) tuple
+  #_dibujar_stickman(posicion, color, paso) None
+  #_dibujar_vision(origen, angulo, alcance, apertura, muros, color) None
+  +dibujar(juego) None
+  #_dibujar_encabezado(juego) None
+  #_dibujar_mapa(nivel) None
+  #_dibujar_objetivos(nivel) None
+  #_dibujar_camara(camara) None
+  #_dibujar_controles(nivel) None
+  #_dibujar_combate(nivel) None
+  #_dibujar_panel_estado(juego) None
+}
+
+Juego "1" *-- "1" Nivel : nivel
+Juego "1" *-- "1" Puntaje : puntaje
+Juego "1" *-- "1" PanelPuntaje : panel
+Juego "1" *-- "1" EstadoJuego : estado
+EstadoJuego "1" --> "1" Juego : juego
+EstadoJuego <|-- Jugando
+EstadoJuego <|-- Pausa
+EstadoJuego <|-- Derrota
+EstadoJuego <|-- Victoria
+EstadoJuego <|-- NivelCompletado
+Nivel "1" *-- "1" Prisionero : prisionero
+Nivel "1" *-- "0..*" Guardia : guardias
+Nivel "1" *-- "0..*" Camara : camaras
+Nivel "1" *-- "1" Llave : llave
+Nivel "1" *-- "1" PuertaSalida : salida
+Nivel "1" *-- "0..1" Combate : combate
+Nivel "0..1" o-- "1" Puntaje : puntaje
+Personaje "1..*" --> "1" Nivel : nivel
 Personaje <|-- Prisionero
 Personaje <|-- Guardia
-Juego "1" *-- "1" Nivel
-Juego "1" *-- "1" Puntaje
-Nivel "1" *-- "1" Prisionero
-Nivel "1" *-- "1" Guardia
-Nivel "1" *-- "1" Camara
-Nivel "1" *-- "1" Llave
-Nivel "1" *-- "1" PuertaSalida
-Nivel "1" o-- "1" Puntaje
-Personaje --> Nivel
-Camara ..> Prisionero
+Prisionero "1" *-- "1" HabilidadCarrera : carrera
+Puntaje "1" o-- "0..*" ObservadorPuntaje : _observadores
+ObservadorPuntaje <|-- PanelPuntaje
+Combate "1" *-- "1" Alcaide : jefe
+Combate "1" *-- "0..*" Proyectil : proyectiles
+Combate "0..1" --> "1" Nivel : nivel
+Alcaide ..> Combate : usa
+Guardia ..> Prisionero : detecta
+Camara ..> Prisionero : detecta
+Llave ..> Prisionero : entrega
+PuertaSalida ..> Prisionero : consulta
+Vista ..> Juego : dibuja
+Vista ..> Nivel : dibuja
+Vista ..> Camara : dibuja

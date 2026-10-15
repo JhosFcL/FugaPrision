@@ -1,64 +1,69 @@
 # Guion de exposición del parcial
 
-Duración sugerida: 6 a 8 minutos. El reparto siguiente es una propuesta para ensayar; todos deben comprender las clases y ejecutar el juego.
+Duración sugerida: 6 a 8 minutos. El reparto es una propuesta para ensayar; todos deben comprender el código y ejecutar el juego.
 
-## 1 Presentación y objetivo
+## 1. Presentación y objetivo
 
 **Jose Fernando Chavez Lozano, aproximadamente 1 minuto.**
 
-“Nuestro proyecto se llama Fuga de la Prisión y corresponde a la temática 13. Es un videojuego 2D en Python. El jugador debe recoger una llave y escapar sin ser detectado por un guardia o una cámara. Para este parcial implementamos un primer nivel completo. La llave da 100 puntos y escapar suma 500 más.”
+“Nuestro proyecto es Fuga de la Prisión, temática 13. Es un videojuego 2D en Python y Pygame. El prisionero debe conseguir una llave y escapar evitando guardias y cámaras. La versión actual tiene tres zonas de sigilo y una arena final contra el Alcaide.”
 
-Mostrar la pantalla inicial. Identificar al prisionero stickman verde, el guardia stickman rojo, la cámara amarilla, la llave y la salida. Aclarar que se trata del avance de un nivel y que se agregarán niveles para el final.
+Mostrar el primer nivel y sus controles. Señalar al prisionero verde, al guardia rojo, la cámara amarilla, la llave y la salida. El cono representa visión frontal; el círculo rojo alrededor del guardia representa alerta cercana en todas direcciones. Los muros bloquean la vigilancia y la detección considera el cuerpo del prisionero, no solo su centro.
 
-## 2 Clases y relaciones
+## 2. Clases y fundamentos POO
 
 **Mickele Carlos Torres Velazco, aproximadamente 2 minutos.**
 
-“Personaje reúne la posición y el movimiento. Prisionero y Guardia heredan de ella. El prisionero lee las teclas y el guardia patrulla. Nivel llama `update()` a ambos sin preguntar cuál es; cada uno responde a su manera. Eso es polimorfismo.”
+“El juego tiene 22 clases y todas aparecen en el UML. Cada caja presenta nombre, atributos y métodos. Los tipos de los atributos indican qué objetos guarda una clase: por ejemplo, Nivel guarda guardias de tipo Guardia y Combate guarda un jefe de tipo Alcaide.”
 
-“En la asociación, cada personaje guarda una referencia a su nivel. En la agregación, Nivel recibe el puntaje que Juego ya creó. En la composición, Nivel crea su prisionero, guardia, cámara, llave y salida. Hay dependencia cuando la cámara usa al prisionero para comprobar si lo ve, sin guardarlo. Para encapsular, el puntaje se cambia mediante un método que rechaza valores inválidos. Personaje es abstracta porque no se puede crear un personaje genérico sin definir cómo actúa.”
+- **Asociación:** Personaje recibe y guarda su Nivel.
+- **Agregación:** Nivel utiliza el Puntaje que Juego creó. El mismo objeto se conserva cuando cambia el nivel.
+- **Composición:** Nivel crea sus personajes, cámaras, llave, salida y, en la arena, Combate. Prisionero crea HabilidadCarrera; Combate crea Alcaide y Proyectil.
+- **Herencia:** Prisionero y Guardia derivan de Personaje. Los cinco estados concretos derivan de EstadoJuego. PanelPuntaje deriva de ObservadorPuntaje.
+- **Polimorfismo:** Nivel llama `personaje.update()` sin distinguir si es Prisionero o Guardia. Juego hace lo mismo con las operaciones de su estado actual.
+- **Encapsulamiento:** Puntaje consulta y cambia `_valor` mediante métodos que validan el dato. El guion bajo indica uso interno por convención de Python.
 
-Mostrar el diagrama, las tres líneas del primer anexo, el bucle de `nivel.py` y el método `set_valor()` de `puntuacion.py`. Señalar el símbolo de cada relación sin leer todos los atributos de las nueve cajas.
+Mostrar los rombos junto a las clases que contienen las partes y el triángulo apuntando a la clase base. Una flecha continua representa una referencia guardada y una discontinua representa un uso, como Camara al recibir Prisionero. Personaje y EstadoJuego son abstractas: cada clase hija debe implementar sus operaciones.
 
-## 3 Patrones de diseño
+## 3. Patrones de diseño
 
 **Richard Aaron Soriano Cordova, aproximadamente 1 minuto y medio.**
 
-“State separa Jugando, Pausa, Derrota y Victoria. Juego delega la entrada y la actualización en el estado activo. Por eso, en pausa no se actualizan posiciones ni temporizadores.”
+“State separa Jugando, Pausa, Derrota, Victoria y NivelCompletado. Juego delega la entrada y la actualización en su estado activo. Por eso la pausa congela movimiento, vigilancia, disparos y temporizadores. NivelCompletado espera Enter antes de cargar el siguiente mapa.”
 
-Pausar con P y reanudar con Escape. Mostrar `estados.py`.
+Pausar con P y continuar con Escape. Mostrar `estados.py` y la delegación de `juego.py`.
 
-“Observer comunica los cambios del puntaje. Puntaje notifica a PanelPuntaje cuando sumamos puntos o reiniciamos. La clase Puntaje no conoce el dibujo de la pantalla. El panel se suscribe una sola vez.”
+“Observer comunica los cambios del puntaje. Puntaje notifica a PanelPuntaje, que hereda de ObservadorPuntaje. El panel recibe los puntos y Vista los muestra. Puntaje no necesita conocer el dibujo de la pantalla.”
 
-Mostrar `puntuacion.py` y la suscripción en `juego.py`. Los dos patrones implementados son State y Observer.
+Mostrar la suscripción en `juego.py` y los métodos de `puntuacion.py`.
 
-## 4 Demostración y pruebas
+## 4. Demostración y comprobaciones
 
 **Piero Cemei Romero Meza, aproximadamente 2 minutos.**
 
-1. Mover al personaje contra un muro para mostrar la colisión.
-2. Pulsar Shift y observar la carrera y su recarga.
-3. Entrar en el campo visual del guardia; mostrar derrota y reiniciar con R.
-4. Recoger la llave y señalar los 100 puntos.
-5. Llegar a la salida y señalar los 600 puntos finales.
+1. Mover contra un muro y activar la carrera con Shift.
+2. Acercarse al costado de un guardia para mostrar la alerta cercana. Reintentar con R.
+3. Recoger la llave: da 100 puntos. Escapar: suma 500 puntos.
+4. Mostrar NivelCompletado y continuar con Enter. El puntaje se conserva.
+5. Explicar la arena con sus capturas: Espacio apunta al jefe; IJKL fija la dirección del disparo. El Alcaide avisa sus ataques y cambia de fase al bajar a la mitad de vida.
 
-Ruta de ensayo para ganar: subir por el lado izquierdo y entrar al cuarto de la llave. Regresar por la misma entrada, bajar hasta el muro que separa al guardia y esperar cubierto a que cambie de dirección. Cruzar por el pasillo inferior de la zona central, rodear los obstáculos de la derecha y subir a la salida. La línea superior está bloqueada y no permite el atajo anterior.
+La campaña completa da 3400 puntos: cuatro llaves, cuatro salidas y 1000 puntos por el jefe. Al perder, R repite el nivel y conserva solo los puntos de niveles anteriores; N empieza desde cero.
 
-“Ejecutamos veintidós pruebas automáticas. Revisan los muros, la visión del guardia y la cámara, el puntaje, la pausa y una ruta completa. La ruta llegó a la salida con 600 puntos. También falta hacer la prueba manual con teclado antes de exponer.”
+“Las 40 pruebas automáticas revisan movimiento, colisiones, vigilancia cercana y frontal, cobertura de los muros, puntaje, estados, transición de niveles y combate. La verificación completó los cuatro niveles con movimiento y disparos, sin desactivar enemigos, y generó diez capturas.”
 
-Mostrar los resultados de las pruebas y una captura. Las capturas automáticas no sustituyen el ensayo con teclado.
+Para ensayar el primer nivel: recoger la llave por la izquierda, volver hasta la cobertura, observar la patrulla y cruzar por la parte inferior del pasillo central manteniendo distancia del círculo rojo. Rodear las coberturas de la derecha y subir a la salida. Ensayar con teclado en el equipo de exposición.
 
 ## Preguntas que deben poder responder
 
-- **¿Por qué no basta un solo archivo con todo?** Separar reglas, estados, puntaje y dibujo permite modificar y probar cada responsabilidad con menos dependencias.
-- **¿Qué protege el puntaje?** Los métodos validan que un incremento sea un entero positivo. El prefijo `_` expresa uso interno en Python; no es una protección absoluta del lenguaje.
-- **¿Por qué el guardia y la cámara no heredan de la misma clase?** La cámara se modeló como dispositivo de vigilancia. La jerarquía Personaje representa a los actores que se actualizan polimórficamente.
-- **¿Qué pasa si se alcanza la salida al ser detectado?** Se procesa primero la detección y se pierde, sin conceder el premio de salida.
-- **¿Cuántos niveles hay?** Uno implementado en el parcial. La ampliación multinivel está pendiente para el final.
-- **¿Por qué no aparecen todas las clases en el UML?** El código tiene dieciocho clases y el diagrama muestra nueve clases clave para que las relaciones se lean con claridad. Las otras son los estados, la habilidad de correr, el observador del puntaje y la vista. La rúbrica pide ocho o más clases principales, no un inventario de todas.
+- **¿Cuántas clases y niveles hay?** 22 clases en `src` y cuatro niveles. Las clases de `tests` sirven para comprobar el juego y no son sus personajes o componentes.
+- **¿Por qué hay un círculo y un cono?** El cono representa visión a distancia; el círculo impide permanecer pegado al guardia por detrás o por un costado. Ambos respetan los muros.
+- **¿Qué pasa si la detección coincide con la salida?** La derrota tiene prioridad y no se concede el premio de salida.
+- **¿Por qué Nivel recibe Puntaje?** Para conservar el mismo objeto al cambiar de nivel; eso permite mostrar la agregación.
+- **¿Qué contiene Combate?** Un Alcaide y una lista de Proyectil creados por él; el UML muestra esos tipos y sus composiciones.
+- **¿La ejecución automática equivale al ensayo con teclado?** Comprueba las reglas y genera las capturas, pero el equipo debe ensayar la demostración presencial.
 
 ## Antes de entregar
 
-- Ensayar en el equipo donde se presentará; comprobar teclado, legibilidad y ventana de 1000 por 760 píxeles.
-- Registrar los aportes reales de cada integrante. Los ocho commits revisados muestran dos nombres de autor configurados; por sí solos no identifican el trabajo de los cuatro integrantes.
-- Si cambia el juego o el UML, actualizar también las capturas y el informe antes de subir la entrega.
+- Comprobar el juego y la legibilidad del UML en el equipo de exposición.
+- Cada integrante debe poder explicar sus aportes reales y los conceptos POO del código.
+- Subir los cambios revisados y mantener sincronizados código, Mermaid, imagen, explicación e informe.

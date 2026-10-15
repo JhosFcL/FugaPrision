@@ -82,7 +82,8 @@ def ejecutar():
     captura("03_victoria.png")
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_r)])
     assert isinstance(juego.estado, Jugando) and juego.panel.valor == 0 and juego.indice_nivel == 0
-    ubicar(juego.nivel.prisionero, juego.nivel.guardia.get_posicion())
+    gx, gy = juego.nivel.guardias[0].get_posicion()
+    ubicar(juego.nivel.prisionero, (gx, gy + 35))
     juego.actualizar(0, set())
     assert isinstance(juego.estado, Derrota)
     captura("04_derrota.png")

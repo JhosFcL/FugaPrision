@@ -28,15 +28,15 @@ def centro(columna, fila):
 
 
 class Camara:
-    def __init__(self, posicion):
+    def __init__(self, posicion, angulo=math.pi / 2):
         self.posicion = posicion
-        self.angulo = math.pi / 2
+        self.angulo = angulo
         self.alcance = 95
         self.apertura = math.radians(60)
 
     def detectar(self, prisionero, muros):
         return dentro_de_vision(self.posicion, prisionero.get_posicion(),
-                               self.angulo, self.alcance, self.apertura, muros)
+                               self.angulo, self.alcance, self.apertura, muros, prisionero.radio)
 
 
 class Llave:
@@ -84,14 +84,9 @@ class Nivel:
         self.prisionero = Prisionero(self, *centro(*self.configuracion["inicio"]))
         self.guardias = [Guardia(self, [centro(*p) for p in ruta])
                          for ruta in self.configuracion["rutas"]]
-        # Alias conservado para las herramientas del prototipo.
-        self.guardia = self.guardias[0] if self.guardias else None
         self.personajes = [self.prisionero, *self.guardias]
-        self.camaras = []
-        for posicion, angulo in self.configuracion["camaras"]:
-            camara = Camara(centro(*posicion))
-            camara.angulo = angulo
-            self.camaras.append(camara)
+        self.camaras = [Camara(centro(*posicion), angulo)
+                        for posicion, angulo in self.configuracion["camaras"]]
         self.llave = Llave(centro(*self.configuracion["llave"]))
         self.salida = PuertaSalida(centro(*self.configuracion["salida"]))
         self.combate = Combate(self) if self.es_final else None

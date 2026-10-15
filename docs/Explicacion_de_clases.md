@@ -1,25 +1,32 @@
 # Qué hace cada clase de Fuga de la Prisión
 
-Esta guía explica las 18 clases del código actual. En cada apartado aparece primero la explicación y después el bloque completo de la clase, copiado de su archivo original.
+El juego tiene 22 clases en src y todas aparecen en el UML. Cada apartado explica una clase y muestra su código actual completo. main.py y geometria.py contienen funciones; las clases de tests sirven para comprobar el juego.
 
-main.py abre la ventana, lee el teclado y ejecuta el ciclo del juego. geometria.py aporta funciones de distancia, colisiones y visión. Ninguno declara una clase, por eso no forma parte de las 18.
+## Cómo leer el UML
 
-Los bloques de abajo muestran clases aisladas para estudiar. Para ejecutar el juego se usan los archivos originales, que también incluyen importaciones, constantes y funciones auxiliares.
+Cada caja tiene tres partes: nombre, atributos y métodos. Los atributos que guardan otros objetos indican su clase: por ejemplo, carrera: HabilidadCarrera o jefe: Alcaide. Los atributos heredados se muestran en la clase base; las propiedades de consulta aparecen como atributos. Se omiten los constructores en el UML, pero se incluyen en el código completo de abajo. Si una clase no tiene atributos propios, ese compartimento queda vacío.
+
+- Rombo negro (*--): composición. La clase junto al rombo crea sus partes.
+- Rombo blanco (o--): agregación. Utiliza objetos creados fuera de ella.
+- Triángulo vacío (<|--): herencia. Apunta a la clase base.
+- Flecha continua (-->): asociación. Guarda una referencia al otro objeto.
+- Flecha discontinua (..>): dependencia. Recibe o utiliza la otra clase.
+- 1, 0..1 y 0..*: uno, ninguno o uno, y ninguno o varios, respectivamente.
+- + indica acceso público; # marca datos o métodos internos por convención de Python. Optional indica que el valor también puede ser None. Las clases abstractas no se instancian directamente.
+
+La rúbrica pide asociación, agregación, composición, encapsulamiento, herencia y polimorfismo. Las notas siguientes señalan dónde se aplican. State y Observer son patrones de diseño y se nombran aparte.
+
+El [modelo Mermaid](diagramas/modelo_parcial.mmd) es la fuente del [diagrama como imagen](diagramas/modelo_parcial.png). Los bloques de código son para estudiar; para ejecutar se usan los archivos originales con sus importaciones y funciones auxiliares.
 
 ## 1. Juego
 
-**Archivo original:** [src/juego.py](../src/juego.py#L7-L29)
+**Archivo original:** [src/juego.py](../src/juego.py#L7)
 
-**Qué hace.** Coordina una partida. Conserva el puntaje, el panel que muestra los puntos, el nivel actual y el estado actual. No dibuja la pantalla ni calcula por sí mismo la ruta del guardia.
+**Qué hace.** Coordina la campaña, los niveles, los puntos y el estado de la partida.
 
-**Cómo funciona:**
+**Cómo funciona.** iniciar_partida empieza desde cero; siguiente_nivel conserva los puntos y avanza. reintentar_nivel restaura los puntos que había al entrar al nivel. actualizar valida el tiempo y delega en el estado activo.
 
-- __init__ crea el puntaje y el panel, conecta ambos mediante suscribir y comienza una partida.
-- iniciar_partida pone el puntaje en cero, crea un nivel nuevo y deja el estado en Jugando. Se usa al iniciar y al reiniciar.
-- cambiar_estado reemplaza el estado actual; manejar_entrada entrega la orden del teclado a ese estado.
-- actualizar rechaza tiempos inválidos, limita una demora grande a 0,05 segundos y deja que el estado actual actualice la partida.
-
-**POO que demuestra:** Composición: crea Puntaje, PanelPuntaje y Nivel. Polimorfismo: llama manejar_entrada y actualizar del estado actual, cualquiera que sea su clase concreta. Patrón State: cambia el objeto que representa ese estado.
+**POO que demuestra.** Composición: crea Nivel, Puntaje, PanelPuntaje y los estados de la partida. Polimorfismo: usa manejar_entrada y actualizar del EstadoJuego activo. Aquí se coordina el patrón State.
 
 **Clase completa en el código:**
 
@@ -33,8 +40,23 @@ class Juego:
 
     def iniciar_partida(self):
         self.puntaje.reiniciar()
-        self.nivel = Nivel(self.puntaje)
+        self.indice_nivel = 0
+        self.puntos_inicio_nivel = 0
+        self._cargar_nivel()
+
+    def _cargar_nivel(self):
+        self.nivel = Nivel(self.puntaje, self.indice_nivel)
         self.estado = Jugando(self)
+
+    def siguiente_nivel(self):
+        if self.nivel.terminado and self.indice_nivel < self.nivel.total_niveles - 1:
+            self.indice_nivel += 1
+            self.puntos_inicio_nivel = self.puntaje.get_valor()
+            self._cargar_nivel()
+
+    def reintentar_nivel(self):
+        self.puntaje.set_valor(self.puntos_inicio_nivel)
+        self._cargar_nivel()
 
     def cambiar_estado(self, estado):
         self.estado = estado
@@ -51,17 +73,13 @@ class Juego:
 
 ## 2. EstadoJuego
 
-**Archivo original:** [src/estados.py](../src/estados.py#L4-L16)
+**Archivo original:** [src/estados.py](../src/estados.py#L4)
 
-**Qué hace.** Es la base común de los estados del juego. Guarda una referencia a Juego y define las dos acciones que cada estado debe resolver. Al ser abstracta, no representa una partida concreta por sí sola.
+**Qué hace.** Define las operaciones comunes de los estados de la partida.
 
-**Cómo funciona:**
+**Cómo funciona.** Guarda el Juego que recibe. Sus métodos abstractos obligan a las clases hijas a definir la entrada y la actualización.
 
-- nombre es la etiqueta que después se muestra en pantalla.
-- __init__ guarda el juego para que el estado pueda cambiarlo o consultar su nivel.
-- manejar_entrada y actualizar son métodos abstractos: Jugando, Pausa, Derrota y Victoria deben definirlos.
-
-**POO que demuestra:** Abstracción: define las operaciones comunes que deben implementar los estados. Asociación: guarda una referencia al Juego recibido; no lo crea.
+**POO que demuestra.** Abstracción y herencia: es la base de los cinco estados concretos. Asociación: guarda Juego sin crearlo. Forma parte de State.
 
 **Clase completa en el código:**
 
@@ -83,16 +101,13 @@ class EstadoJuego(ABC):
 
 ## 3. Jugando
 
-**Archivo original:** [src/estados.py](../src/estados.py#L19-L33)
+**Archivo original:** [src/estados.py](../src/estados.py#L19)
 
-**Qué hace.** Representa la partida activa. Es el estado en el que el nivel avanza, los personajes se mueven y se comprueba si el jugador gana o pierde.
+**Qué hace.** Mantiene activa la simulación del nivel.
 
-**Cómo funciona:**
+**Cómo funciona.** Permite pausar o activar la carrera. Actualiza el nivel y cambia a Derrota, Victoria o NivelCompletado según su resultado.
 
-- manejar_entrada cambia a Pausa cuando llega la orden pausa; con carrera intenta activar la habilidad del prisionero.
-- actualizar llama al nivel. Si el nivel devuelve derrota o victoria, cambia al estado correspondiente.
-
-**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: implementa manejar_entrada y actualizar con el comportamiento propio de la partida activa.
+**POO que demuestra.** Herencia de EstadoJuego y polimorfismo: implementa sus dos operaciones con el comportamiento de una partida activa.
 
 **Clase completa en el código:**
 
@@ -112,20 +127,19 @@ class Jugando(EstadoJuego):
             self.juego.cambiar_estado(Derrota(self.juego))
         elif resultado == "victoria":
             self.juego.cambiar_estado(Victoria(self.juego))
+        elif resultado == "nivel_completado":
+            self.juego.cambiar_estado(NivelCompletado(self.juego))
 ```
 
 ## 4. Pausa
 
-**Archivo original:** [src/estados.py](../src/estados.py#L36-L44)
+**Archivo original:** [src/estados.py](../src/estados.py#L38)
 
-**Qué hace.** Representa la partida detenida temporalmente. Permite volver a jugar sin crear otro nivel.
+**Qué hace.** Detiene la simulación hasta que el jugador continúa.
 
-**Cómo funciona:**
+**Cómo funciona.** La entrada de pausa vuelve a Jugando. actualizar no mueve personajes ni modifica temporizadores, disparos o vida.
 
-- manejar_entrada regresa a Jugando cuando recibe la orden pausa.
-- actualizar contiene pass a propósito: no mueve personajes ni aumenta el tiempo mientras está en pausa.
-
-**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: responde a los mismos métodos que Jugando, pero detiene la actualización del nivel.
+**POO que demuestra.** Herencia de EstadoJuego y polimorfismo: recibe las mismas llamadas que Jugando, pero no actualiza el nivel.
 
 **Clase completa en el código:**
 
@@ -143,16 +157,13 @@ class Pausa(EstadoJuego):
 
 ## 5. Derrota
 
-**Archivo original:** [src/estados.py](../src/estados.py#L47-L55)
+**Archivo original:** [src/estados.py](../src/estados.py#L49)
 
-**Qué hace.** Representa una partida terminada porque el guardia o la cámara detectó al prisionero.
+**Qué hace.** Espera la decisión del jugador después de perder.
 
-**Cómo funciona:**
+**Cómo funciona.** R repite el nivel actual; N comienza una campaña nueva. Mientras se muestra este estado, el nivel permanece detenido.
 
-- manejar_entrada crea una partida nueva cuando recibe reiniciar.
-- actualizar no hace nada: el nivel queda detenido hasta que el usuario reinicie.
-
-**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: su manejo de entrada permite reiniciar y su actualización no mueve el nivel.
+**POO que demuestra.** Herencia de EstadoJuego y polimorfismo: redefine la entrada para reintentar o comenzar desde cero.
 
 **Clase completa en el código:**
 
@@ -162,6 +173,8 @@ class Derrota(EstadoJuego):
 
     def manejar_entrada(self, tecla):
         if tecla == "reiniciar":
+            self.juego.reintentar_nivel()
+        elif tecla == "nueva_partida":
             self.juego.iniciar_partida()
 
     def actualizar(self, dt, teclas):
@@ -170,16 +183,13 @@ class Derrota(EstadoJuego):
 
 ## 6. Victoria
 
-**Archivo original:** [src/estados.py](../src/estados.py#L58-L66)
+**Archivo original:** [src/estados.py](../src/estados.py#L62)
 
-**Qué hace.** Representa una partida terminada porque el prisionero llegó a la salida con la llave.
+**Qué hace.** Representa el final de la campaña completada.
 
-**Cómo funciona:**
+**Cómo funciona.** Mantiene detenido el nivel final y permite comenzar otra campaña con R.
 
-- manejar_entrada crea una partida nueva cuando recibe reiniciar.
-- actualizar no hace nada: la partida ganada permanece en pantalla hasta el reinicio.
-
-**POO que demuestra:** Herencia: deriva de EstadoJuego. Polimorfismo: su manejo de entrada permite reiniciar y su actualización no mueve el nivel.
+**POO que demuestra.** Herencia de EstadoJuego y polimorfismo: responde a la misma interfaz con el comportamiento de victoria.
 
 **Clase completa en el código:**
 
@@ -195,27 +205,59 @@ class Victoria(EstadoJuego):
         pass
 ```
 
-## 7. Nivel
+## 7. NivelCompletado
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L47-L117)
+**Archivo original:** [src/estados.py](../src/estados.py#L73)
 
-**Qué hace.** Contiene las reglas del pabellón. Guarda el mapa, el tiempo, las teclas, los personajes, la cámara, la llave y la salida. Recibe el mismo objeto Puntaje que creó Juego.
+**Qué hace.** Separa el final de un nivel del final de toda la campaña.
 
-**Cómo funciona:**
+**Cómo funciona.** Enter llama a siguiente_nivel; N reinicia la campaña. El siguiente nivel no empieza hasta recibir la orden.
 
-- __init__ prepara el mapa y crea los objetos del nivel: prisionero, guardia, cámara, llave y puerta de salida.
-- _crear_muros recorre las casillas y añade bordes, divisiones y obstáculos según sus coordenadas.
-- posicion_valida comprueba que un personaje no salga de los límites ni atraviese un muro.
-- actualizar guarda el tiempo y las teclas, llama a update de cada personaje y después revisa las interacciones. Si el nivel ya terminó, no continúa.
-- resolver_interacciones comprueba primero la detección: si ocurre, devuelve derrota. Si no, permite recoger la llave por 100 puntos y, al llegar con ella a la salida, suma 500 y devuelve victoria.
+**POO que demuestra.** Herencia de EstadoJuego y polimorfismo. Es el quinto estado concreto del patrón State.
 
-**POO que demuestra:** Composición: crea al Prisionero, al Guardia, la Camara, la Llave y la PuertaSalida. Agregación: recibe un Puntaje creado por Juego y lo utiliza sin crearlo. Polimorfismo: actualiza a Prisionero y Guardia mediante el mismo método update.
+**Clase completa en el código:**
+
+```python
+class NivelCompletado(EstadoJuego):
+    nombre = "NIVEL_COMPLETADO"
+
+    def manejar_entrada(self, tecla):
+        if tecla == "continuar":
+            self.juego.siguiente_nivel()
+        elif tecla == "nueva_partida":
+            self.juego.iniciar_partida()
+
+    def actualizar(self, dt, teclas):
+        pass
+```
+
+## 8. Nivel
+
+**Archivo original:** [src/nivel.py](../src/nivel.py#L63)
+
+**Qué hace.** Reúne el mapa y los objetos de uno de los cuatro niveles.
+
+**Cómo funciona.** Su configuración establece inicio, llave, salida, patrullas y cámaras. Actualiza los personajes y, en la arena, el combate. resolver_interacciones da prioridad a la derrota, concede los premios una sola vez y decide si el nivel o la campaña terminó.
+
+**POO que demuestra.** Composición: crea Prisionero, guardias, cámaras, Llave, PuertaSalida y, solo en el último nivel, Combate. Agregación: recibe un Puntaje creado por Juego. Polimorfismo: llama update a los personajes sin distinguir su clase.
 
 **Clase completa en el código:**
 
 ```python
 class Nivel:
-    def __init__(self, puntaje):
+    total_niveles = len(ETAPAS)
+
+    @property
+    def configuracion_siguiente(self):
+        return ETAPAS[min(self.indice + 1, self.total_niveles - 1)]["nombre"]
+
+    def __init__(self, puntaje, indice=0):
+        if not 0 <= indice < self.total_niveles:
+            raise ValueError("Nivel inexistente.")
+        self.indice = indice
+        self.configuracion = ETAPAS[indice]
+        self.nombre = self.configuracion["nombre"]
+        self.es_final = indice == self.total_niveles - 1
         self.puntaje = puntaje
         self.dt = 0.0
         self.tiempo = 0.0
@@ -223,13 +265,17 @@ class Nivel:
         self.terminado = False
         self.muros = []
         self._crear_muros()
-        self.prisionero = Prisionero(self, *centro(2, 11))
-        self.guardia = Guardia(self, [centro(9, 7), centro(17, 7)])
-        self.personajes = [self.prisionero, self.guardia]
-        # Montada bajo el muro horizontal: vigila el pasillo central.
-        self.camaras = [Camara(centro(15, 5))]
-        self.llave = Llave(centro(8, 2))
-        self.salida = PuertaSalida(centro(21, 2))
+        self.prisionero = Prisionero(self, *centro(*self.configuracion["inicio"]))
+        self.guardias = [Guardia(self, [centro(*p) for p in ruta])
+                         for ruta in self.configuracion["rutas"]]
+        self.personajes = [self.prisionero, *self.guardias]
+        self.camaras = [Camara(centro(*posicion), angulo)
+                        for posicion, angulo in self.configuracion["camaras"]]
+        self.llave = Llave(centro(*self.configuracion["llave"]))
+        self.salida = PuertaSalida(centro(*self.configuracion["salida"]))
+        self.combate = Combate(self) if self.es_final else None
+        if self.es_final:
+            self.llave.disponible = False
 
     def _crear_muros(self):
         for fila in range(FILAS):
@@ -247,7 +293,16 @@ class Nivel:
                               (fila == 8 and 1 <= columna <= 4 and columna != 2) or
                               (fila == 7 and 20 <= columna <= 22 and columna != 20) or
                               (fila == 4 and 20 <= columna <= 22 and columna != 22))
-                if borde or horizontal or vertical or divisiones or coberturas:
+                original = horizontal or vertical or divisiones or coberturas
+                lavanderia = ((columna in (6, 17) and fila in (2, 3, 4, 8, 9, 10)) or
+                              (fila in (4, 9) and 9 <= columna <= 14) or
+                              (columna in (3, 20) and fila in (5, 8)))
+                patio = ((columna in (5, 18) and fila in (2, 3, 7, 11)) or
+                         (fila in (3, 7, 11) and columna in (9, 10, 13, 14)) or
+                         (fila == 9 and columna in (3, 4, 20, 21)))
+                arena = columna in (5, 18) and fila in (5, 8)
+                interior = (original, lavanderia, patio, arena)[self.indice]
+                if borde or interior:
                     self.muros.append((columna * TAMANO, fila * TAMANO, TAMANO, TAMANO))
 
     def posicion_valida(self, x, y, radio):
@@ -266,41 +321,42 @@ class Nivel:
         self.tiempo += dt
         for personaje in self.personajes:
             personaje.update()
+        if self.combate:
+            self.combate.actualizar(dt, self.teclas)
         return self.resolver_interacciones()
 
     def resolver_interacciones(self):
         if self.terminado:
             return None
-        detectado = self.guardia.puede_detectar(self.prisionero)
+        detectado = any(g.puede_detectar(self.prisionero) for g in self.guardias)
         for camara in self.camaras:
             detectado = detectado or camara.detectar(self.prisionero, self.muros)
         # La captura tiene prioridad sobre la llave y la salida.
-        if detectado:
+        if detectado or (self.combate and self.combate.vida <= 0):
             self.terminado = True
             return "derrota"
+        if self.combate and self.combate.jefe.derrotado and not self.combate.premiado:
+            self.combate.premiado = True
+            self.puntaje.sumar(1000)
+            self.llave.disponible = True
         if self.llave.recoger(self.prisionero):
             self.puntaje.sumar(100)
-        if self.salida.puede_salir(self.prisionero):
+        if self.salida.puede_salir(self.prisionero) and (not self.combate or self.combate.jefe.derrotado):
             self.terminado = True
             self.puntaje.sumar(500)
-            return "victoria"
+            return "victoria" if self.es_final else "nivel_completado"
         return None
 ```
 
-## 8. Personaje
+## 9. Personaje
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L39-L63)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L39)
 
-**Qué hace.** Es la base abstracta del prisionero y el guardia. Reúne lo que ambos comparten: nivel, posición, velocidad, tamaño para colisiones y movimiento.
+**Qué hace.** Reúne la posición y el movimiento compartidos por los personajes.
 
-**Cómo funciona:**
+**Cómo funciona.** get_posicion consulta la posición; mover comprueba los muros en pasos pequeños. update es abstracto y cada clase hija debe implementarlo.
 
-- __init__ guarda esos datos; los atributos que comienzan con guion bajo se tratan como internos en Python.
-- get_posicion devuelve las coordenadas actuales.
-- mover divide el desplazamiento en pasos pequeños y pregunta al nivel si cada paso es válido. Así no cruza muros por moverse rápido.
-- update es abstracto: cada clase hija decide cómo se mueve en su propia versión.
-
-**POO que demuestra:** Abstracción: define la base común y exige implementar update. Encapsulación: guarda posición y velocidad en atributos con guion bajo y ofrece get_posicion y mover. Asociación: conserva una referencia al Nivel que recibe.
+**POO que demuestra.** Abstracción y herencia: base de Prisionero y Guardia. Encapsulamiento: _x, _y y _velocidad son datos internos por convención. Asociación: conserva el Nivel recibido.
 
 **Clase completa en el código:**
 
@@ -332,19 +388,15 @@ class Personaje(ABC):
         pass
 ```
 
-## 9. Prisionero
+## 10. Prisionero
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L66-L86)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L66)
 
-**Qué hace.** Es el personaje controlado por el jugador. Hereda el movimiento de Personaje, recuerda si recogió la llave y posee una HabilidadCarrera.
+**Qué hace.** Es el personaje controlado por el jugador.
 
-**Cómo funciona:**
+**Cómo funciona.** Lee las acciones de movimiento del nivel, normaliza la diagonal y aplica la carrera. Consulta o recoge la llave mediante métodos.
 
-- __init__ fija su velocidad normal, inicia sin llave y crea la habilidad de correr.
-- tiene_llave consulta si ya consiguió la llave; recoger_llave cambia ese dato a verdadero.
-- update lee las direcciones guardadas por Nivel, normaliza el movimiento diagonal para no ganar velocidad extra, aplica la carrera si está activa y actualiza su duración o recarga.
-
-**POO que demuestra:** Herencia: deriva de Personaje. Polimorfismo: implementa update para el movimiento del jugador. Composición: crea y conserva su HabilidadCarrera. Encapsulación: consulta y cambia _tiene_llave mediante métodos.
+**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Composición: crea HabilidadCarrera. Encapsulamiento: cambia _tiene_llave con recoger_llave y lo consulta con tiene_llave.
 
 **Clase completa en el código:**
 
@@ -372,31 +424,30 @@ class Prisionero(Personaje):
         self.carrera.actualizar(self.nivel.dt)
 ```
 
-## 10. Guardia
+## 11. Guardia
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L89-L116)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L89)
 
-**Qué hace.** Es el enemigo que patrulla. Hereda posición y movimiento de Personaje y añade una ruta y un campo de visión.
+**Qué hace.** Patrulla una ruta y detecta al prisionero.
 
-**Cómo funciona:**
+**Cómo funciona.** update lo mueve hacia el siguiente punto y orienta su visión. puede_detectar combina un cono frontal de 155 píxeles con una alerta cercana de 32 píxeles en todas direcciones. Considera el cuerpo del jugador y los muros bloquean ambos campos.
 
-- __init__ recibe la ruta, se coloca en su primer punto y define velocidad, ángulo, alcance y apertura visual.
-- update camina hacia el siguiente punto de la ruta, gira hacia donde se mueve y vuelve al inicio cuando termina el recorrido.
-- puede_detectar devuelve verdadero si toca al prisionero o si este está dentro de su campo visual sin un muro de por medio.
-
-**POO que demuestra:** Herencia: deriva de Personaje. Polimorfismo: implementa update con su propia patrulla, mientras Nivel puede tratarlo como otro Personaje.
+**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Dependencia: puede_detectar recibe al Prisionero para comprobarlo, sin guardarlo.
 
 **Clase completa en el código:**
 
 ```python
 class Guardia(Personaje):
     def __init__(self, nivel, ruta):
+        if len(ruta) < 2:
+            raise ValueError("La patrulla necesita al menos dos posiciones.")
         super().__init__(nivel, ruta[0][0], ruta[0][1], 65)
         self.ruta = ruta
         self._objetivo = 1
-        self.angulo = 0.0
+        self.angulo = math.atan2(ruta[1][1] - ruta[0][1], ruta[1][0] - ruta[0][0])
         self.alcance = 155
         self.apertura = math.radians(65)
+        self.radio_alerta = 32
 
     def update(self):
         objetivo = self.ruta[self._objetivo]
@@ -413,27 +464,25 @@ class Guardia(Personaje):
             self.mover(dx / largo * avance, dy / largo * avance)
 
     def puede_detectar(self, prisionero):
-        if distancia(self.get_posicion(), prisionero.get_posicion()) <= self.radio + prisionero.radio:
+        posicion = self.get_posicion()
+        objetivo = prisionero.get_posicion()
+        # Cerca del guardia no se puede permanecer a su lado ni a su espalda.
+        if dentro_de_vision(posicion, objetivo, self.angulo, self.radio_alerta,
+                            math.tau, self.nivel.muros, prisionero.radio):
             return True
-        return dentro_de_vision(self.get_posicion(), prisionero.get_posicion(),
-                               self.angulo, self.alcance, self.apertura, self.nivel.muros)
+        return dentro_de_vision(posicion, objetivo, self.angulo, self.alcance,
+                               self.apertura, self.nivel.muros, prisionero.radio)
 ```
 
-## 11. HabilidadCarrera
+## 12. HabilidadCarrera
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L6-L36)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L6)
 
-**Qué hace.** Controla el impulso de velocidad del prisionero. Existe como objeto propio de Prisionero para que la duración y la recarga no se mezclen con las reglas generales de movimiento.
+**Qué hace.** Controla el aumento temporal de velocidad del prisionero.
 
-**Cómo funciona:**
+**Cómo funciona.** activar permite correr durante dos segundos si la habilidad está lista. actualizar descuenta la duración y luego los cinco segundos de recarga. Los métodos de consulta devuelven el multiplicador y el texto de estado.
 
-- __init__ empieza con duración y recarga en cero.
-- activar funciona solo si la habilidad está libre; inicia dos segundos de carrera y devuelve si pudo activarse.
-- actualizar descuenta el tiempo de carrera y luego el de recarga; la recarga dura hasta cinco segundos.
-- get_multiplicador devuelve 1,5 mientras corre y 1,0 en los demás casos.
-- get_estado prepara el texto que la pantalla muestra: activa, recargando o lista.
-
-**POO que demuestra:** Encapsulación: mantiene _duracion y _recarga y ofrece métodos para activar, actualizar y consultar el efecto. Composición: Prisionero crea su instancia de esta clase.
+**POO que demuestra.** Encapsulamiento: _duracion y _recarga se gestionan mediante métodos. Composición: cada Prisionero crea su propia habilidad.
 
 **Clase completa en el código:**
 
@@ -471,46 +520,40 @@ class HabilidadCarrera:
         return "LISTA  [SHIFT]"
 ```
 
-## 12. Camara
+## 13. Camara
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L14-L23)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L30)
 
-**Qué hace.** Es un dispositivo fijo que vigila una zona. A diferencia del guardia, no patrulla ni hereda de Personaje.
+**Qué hace.** Vigila una zona fija del mapa.
 
-**Cómo funciona:**
+**Cómo funciona.** Recibe su posición y orientación. detectar comprueba el cuerpo visible del prisionero dentro de su cono de 95 píxeles; los muros lo ocultan. La lente dibujada apunta en esa misma dirección.
 
-- __init__ guarda su posición y define hacia dónde mira, hasta dónde alcanza y cuánto abre su visión.
-- detectar usa los cálculos de geometria.py para saber si ve al prisionero; los muros pueden bloquear la visión.
-
-**POO que demuestra:** Composición: Nivel crea y conserva la cámara. Dependencia: detectar recibe al Prisionero para comprobar si está en su campo de visión.
+**POO que demuestra.** Composición: Nivel crea sus cámaras. Dependencia: detectar recibe al Prisionero, sin conservarlo.
 
 **Clase completa en el código:**
 
 ```python
 class Camara:
-    def __init__(self, posicion):
+    def __init__(self, posicion, angulo=math.pi / 2):
         self.posicion = posicion
-        self.angulo = math.pi / 2
+        self.angulo = angulo
         self.alcance = 95
         self.apertura = math.radians(60)
 
     def detectar(self, prisionero, muros):
         return dentro_de_vision(self.posicion, prisionero.get_posicion(),
-                               self.angulo, self.alcance, self.apertura, muros)
+                               self.angulo, self.alcance, self.apertura, muros, prisionero.radio)
 ```
 
-## 13. Llave
+## 14. Llave
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L26-L36)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L42)
 
-**Qué hace.** Representa el objeto que el prisionero debe recoger antes de escapar.
+**Qué hace.** Es el objeto que habilita la salida.
 
-**Cómo funciona:**
+**Cómo funciona.** recoger comprueba la cercanía y que todavía esté disponible. La entrega al prisionero y devuelve True una sola vez para que Nivel conceda los puntos.
 
-- __init__ guarda su lugar en el mapa y la deja disponible.
-- recoger comprueba que todavía exista y que el prisionero esté cerca. Si la recoge, la desactiva, avisa al prisionero y devuelve verdadero. Así no puede recogerse dos veces.
-
-**POO que demuestra:** Composición: Nivel crea y conserva la llave. Dependencia: recoger recibe al Prisionero para entregarle la llave cuando se acercan.
+**POO que demuestra.** Composición: Nivel crea su Llave. Dependencia: recoger utiliza el Prisionero recibido.
 
 **Clase completa en el código:**
 
@@ -528,18 +571,15 @@ class Llave:
         return False
 ```
 
-## 14. PuertaSalida
+## 15. PuertaSalida
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L39-L44)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L55)
 
-**Qué hace.** Representa el punto de escape. Solo comprueba si el prisionero puede salir; Nivel es quien decide terminar la partida y sumar puntos.
+**Qué hace.** Representa el lugar por el que se termina un nivel.
 
-**Cómo funciona:**
+**Cómo funciona.** puede_salir devuelve si el prisionero tiene la llave y está cerca. Nivel comprueba además que el jefe esté derrotado cuando se trata de la arena.
 
-- __init__ guarda la posición de la puerta.
-- puede_salir devuelve verdadero únicamente si el prisionero tiene la llave y está cerca de la salida.
-
-**POO que demuestra:** Composición: Nivel crea y conserva la salida. Dependencia: puede_salir consulta al Prisionero recibido para decidir si tiene la llave y está cerca.
+**POO que demuestra.** Composición: Nivel crea su salida. Dependencia: consulta al Prisionero recibido.
 
 **Clase completa en el código:**
 
@@ -552,21 +592,15 @@ class PuertaSalida:
         return prisionero.tiene_llave() and distancia(self.posicion, prisionero.get_posicion()) < 22
 ```
 
-## 15. Puntaje
+## 16. Puntaje
 
-**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L18-L52)
+**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L18)
 
-**Qué hace.** Guarda los puntos de la partida y avisa a quienes muestran ese valor. Juego crea este objeto y Nivel lo usa para sumar puntos.
+**Qué hace.** Conserva los puntos y avisa cuando cambian.
 
-**Cómo funciona:**
+**Cómo funciona.** get_valor consulta el valor; set_valor valida un entero no negativo y notifica a los observadores. sumar valida el incremento. suscribir evita suscripciones repetidas y desuscribir permite retirarlas.
 
-- __init__ empieza en cero y crea la lista de observadores; get_valor permite consultar los puntos.
-- set_valor acepta solo enteros no negativos y notifica el cambio. Esto evita guardar un puntaje inválido.
-- suscribir registra un observador una sola vez y le envía el valor actual; desuscribir lo retira.
-- sumar acepta solo cantidades enteras positivas y usa set_valor para actualizar; reiniciar vuelve a cero.
-- _notificar llama a actualizar_puntaje en cada observador. Usa una copia de la lista para recorrerla de forma segura.
-
-**POO que demuestra:** Encapsulación: mantiene _valor como atributo interno y lo cambia mediante set_valor, sumar y reiniciar. Asociación: guarda observadores suscritos y les avisa al cambiar el puntaje. Patrón Observer: actúa como el objeto observado.
+**POO que demuestra.** Encapsulamiento: _valor se administra mediante métodos. Agregación: guarda observadores creados fuera de esta clase. En Observer es el objeto observado. Nivel utiliza este mismo Puntaje por agregación.
 
 **Clase completa en el código:**
 
@@ -608,17 +642,15 @@ class Puntaje:
             observador.actualizar_puntaje(self._valor)
 ```
 
-## 16. ObservadorPuntaje
+## 17. ObservadorPuntaje
 
-**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L4-L7)
+**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L4)
 
-**Qué hace.** Es la base abstracta de cualquier objeto que quiera recibir avisos cuando cambien los puntos.
+**Qué hace.** Define cómo debe recibir los cambios un observador del puntaje.
 
-**Cómo funciona:**
+**Cómo funciona.** actualizar_puntaje es abstracto. Una clase que herede de esta base debe implementar esa operación.
 
-- actualizar_puntaje es el método que una clase hija debe implementar para recibir el valor nuevo.
-
-**POO que demuestra:** Abstracción: exige implementar actualizar_puntaje. Herencia: sirve como clase base para PanelPuntaje.
+**POO que demuestra.** Abstracción y herencia: es la base de PanelPuntaje dentro del patrón Observer.
 
 **Clase completa en el código:**
 
@@ -629,18 +661,15 @@ class ObservadorPuntaje(ABC):
         pass
 ```
 
-## 17. PanelPuntaje
+## 18. PanelPuntaje
 
-**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L10-L15)
+**Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L10)
 
-**Qué hace.** Es el observador concreto del puntaje. Guarda el valor que Vista mostrará en pantalla.
+**Qué hace.** Conserva el último puntaje notificado para mostrarlo en pantalla.
 
-**Cómo funciona:**
+**Cómo funciona.** actualizar_puntaje recibe el nuevo valor. Juego lo suscribe a Puntaje y Vista lee su valor para dibujarlo.
 
-- __init__ empieza con valor cero.
-- actualizar_puntaje recibe el nuevo número desde Puntaje y lo guarda. Vista lee después juego.panel.valor para dibujarlo.
-
-**POO que demuestra:** Herencia: deriva de ObservadorPuntaje. Polimorfismo: implementa actualizar_puntaje y puede recibir el aviso que Puntaje envía a cualquier observador. Patrón Observer: actúa como observador concreto.
+**POO que demuestra.** Herencia de ObservadorPuntaje y polimorfismo en actualizar_puntaje. Es el observador concreto de Observer.
 
 **Clase completa en el código:**
 
@@ -653,22 +682,226 @@ class PanelPuntaje(ObservadorPuntaje):
         self.valor = valor
 ```
 
-## 18. Vista
+## 19. Proyectil
 
-**Archivo original:** [src/vista.py](../src/vista.py#L12-L135)
+**Archivo original:** [src/combate.py](../src/combate.py#L7)
 
-**Qué hace.** Dibuja lo que el jugador ve con Pygame. Lee datos de Juego y Nivel, pero no decide si hubo victoria, derrota o puntos ganados. Aquí se dibujan los personajes como stickmen.
+**Qué hace.** Guarda la posición, velocidad, tamaño y duración de un disparo.
 
-**Cómo funciona:**
+**Cómo funciona.** dataclass genera su constructor. La propiedad posicion devuelve sus coordenadas. avanzar mueve el disparo, descuenta su duración y devuelve el segmento recorrido para comprobar impactos, incluso si el disparo es rápido.
 
-- __init__ guarda la superficie de dibujo y prepara los tamaños de letra.
-- texto dibuja una cadena en la pantalla; punto traslada una posición del mapa a una posición visible en la ventana.
-- _dibujar_stickman forma cabeza, cuerpo, brazos y piernas con círculos y líneas.
-- _dibujar_vision dibuja el cono transparente del guardia o la cámara y lo corta donde hay muros.
-- dibujar arma la pantalla completa: título, puntos, tiempo, mapa, muros, visión, llave, salida, cámara, guardia y prisionero.
-- _dibujar_panel_estado coloca encima el mensaje de pausa, victoria o derrota con la tecla para continuar.
+**POO que demuestra.** Composición: Combate crea y conserva los proyectiles. Agrupa los datos y el movimiento de cada disparo en un objeto.
 
-**POO que demuestra:** Dependencia: dibujar recibe Juego para leer el estado de la partida y mostrarlo; Vista no crea ni guarda ese Juego.
+**Clase completa en el código:**
+
+```python
+@dataclass
+class Proyectil:
+    x: float
+    y: float
+    vx: float
+    vy: float
+    enemigo: bool = True
+    radio: float = 6
+    duracion: float = 7
+
+    @property
+    def posicion(self):
+        return self.x, self.y
+
+    def avanzar(self, dt):
+        inicio = self.posicion
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+        self.duracion -= dt
+        return inicio, self.posicion
+```
+
+## 20. Alcaide
+
+**Archivo original:** [src/combate.py](../src/combate.py#L47)
+
+**Qué hace.** Controla al jefe del último nivel.
+
+**Cómo funciona.** Alterna un aviso previo y tres ataques: corona de lágrimas, ráfaga y embestida. Al bajar a la mitad de vida cambia de fase. La embestida fija su destino y se detiene ante los muros.
+
+**POO que demuestra.** Composición: Combate crea su Alcaide. Dependencia: actualizar y _atacar reciben Combate para emitir disparos y consultar el mapa. Las propiedades posicion, fase y derrotado permiten consultar su situación.
+
+**Clase completa en el código:**
+
+```python
+class Alcaide:
+    nombre = "EL ALCAIDE"
+    vida_maxima = 72
+    radio = 28
+
+    def __init__(self):
+        self.x, self.y = 450.0, 126.0
+        self.vida = self.vida_maxima
+        self.espera = 2.0  # Tiempo para leer los controles al entrar.
+        self.aviso = 0.0
+        self.patron = 0
+        self.objetivo = (450.0, 414.0)
+        self.destino = None
+        self.golpe = 0.0
+
+    @property
+    def posicion(self):
+        return self.x, self.y
+
+    @property
+    def derrotado(self):
+        return self.vida <= 0
+
+    @property
+    def fase(self):
+        return 1 if self.vida > self.vida_maxima / 2 else 2
+
+    @property
+    def ataque(self):
+        return ("CORONA DE LÁGRIMAS", "RÁFAGA DIRIGIDA", "EMBESTIDA")[self.patron % 3]
+
+    def actualizar(self, combate, dt):
+        if self.derrotado:
+            return
+        self.golpe = max(0, self.golpe - dt)
+        if self.destino is not None:
+            largo = distancia(self.posicion, self.destino)
+            avance = min(largo, (280 if self.fase == 1 else 335) * dt)
+            if largo > 0:
+                self.x += (self.destino[0] - self.x) / largo * avance
+                self.y += (self.destino[1] - self.y) / largo * avance
+            if largo <= avance + 0.01:
+                self.destino = None
+                self.patron += 1
+                self.espera = 1.1
+            return
+        if self.aviso > 0:
+            self.aviso = max(0, self.aviso - dt)
+            if self.aviso == 0:
+                self._atacar(combate)
+            return
+        self.espera = max(0, self.espera - dt)
+        if self.espera == 0:
+            self.objetivo = combate.nivel.prisionero.get_posicion()
+            self.aviso = 0.95 if self.fase == 1 else 0.75
+
+    def _atacar(self, combate):
+        angulo = math.atan2(self.objetivo[1] - self.y, self.objetivo[0] - self.x)
+        tipo = self.patron % 3
+        if tipo == 0:
+            cantidad = 12 if self.fase == 1 else 18
+            for i in range(cantidad):
+                combate.emitir(self.posicion, angulo + i * math.tau / cantidad,
+                               115 if self.fase == 1 else 145)
+        elif tipo == 1:
+            cantidad = 5 if self.fase == 1 else 7
+            for i in range(cantidad):
+                combate.emitir(self.posicion, angulo + (i - cantidad // 2) * 0.20, 185)
+        else:
+            # La embestida fija su destino al comenzar el aviso, se puede esquivar.
+            destino = (max(80, min(784, self.objetivo[0])),
+                       max(80, min(424, self.objetivo[1])))
+            fraccion = min((fraccion_interseccion(self.posicion, destino,
+                            (x - self.radio, y - self.radio,
+                             w + 2 * self.radio, h + 2 * self.radio))
+                            for x, y, w, h in combate.nivel.muros), default=1.0)
+            fraccion = max(0, fraccion - 0.005)
+            self.destino = (self.x + (destino[0] - self.x) * fraccion,
+                            self.y + (destino[1] - self.y) * fraccion)
+            return
+        self.patron += 1
+        self.espera = 1.45 if self.fase == 1 else 0.9
+```
+
+## 21. Combate
+
+**Archivo original:** [src/combate.py](../src/combate.py#L131)
+
+**Qué hace.** Resuelve los ataques, los proyectiles y la vida en la arena.
+
+**Cómo funciona.** Crea al jefe y los disparos. Actualiza los ataques y comprueba cada segmento de proyectil contra muros y objetivos. recibir_dano respeta la inmunidad temporal. Al terminar el combate se retiran los proyectiles.
+
+**POO que demuestra.** Composición: crea Alcaide y Proyectil; a su vez, Nivel crea el Combate. Asociación: guarda el Nivel recibido. Separa estas reglas del dibujo de Vista.
+
+**Clase completa en el código:**
+
+```python
+class Combate:
+    vida_maxima = 5
+
+    def __init__(self, nivel):
+        self.nivel = nivel
+        self.jefe = Alcaide()
+        self.proyectiles = []
+        self.vida = self.vida_maxima
+        self.inmune = 0.0
+        self.recarga = 0.0
+        self.premiado = False
+
+    def emitir(self, origen, angulo, velocidad, enemigo=True):
+        self.proyectiles.append(Proyectil(*origen, math.cos(angulo) * velocidad,
+                                         math.sin(angulo) * velocidad, enemigo,
+                                         6 if enemigo else 5))
+
+    def recibir_dano(self):
+        if self.inmune > 0 or self.jefe.derrotado:
+            return
+        self.vida = max(0, self.vida - 1)
+        self.inmune = 1.1
+
+    def actualizar(self, dt, teclas):
+        self.inmune = max(0, self.inmune - dt)
+        self.recarga = max(0, self.recarga - dt)
+        if self.jefe.derrotado or self.vida <= 0:
+            self.proyectiles.clear()
+            return
+        jugador = self.nivel.prisionero
+        posicion_anterior = self.jefe.posicion
+        self.jefe.actualizar(self, dt)
+        if contacto_segmento(posicion_anterior, self.jefe.posicion, jugador.get_posicion(),
+                             jugador.radio + self.jefe.radio) is not None:
+            self.recibir_dano()
+        dx = int("tiro_derecha" in teclas) - int("tiro_izquierda" in teclas)
+        dy = int("tiro_abajo" in teclas) - int("tiro_arriba" in teclas)
+        if self.recarga == 0 and (dx or dy or "disparar" in teclas):
+            if not (dx or dy):
+                dx = self.jefe.x - jugador.get_posicion()[0]
+                dy = self.jefe.y - jugador.get_posicion()[1]
+            self.emitir(jugador.get_posicion(), math.atan2(dy, dx), 430, enemigo=False)
+            self.recarga = 0.18
+        vivos = []
+        for tiro in self.proyectiles:
+            inicio, fin = tiro.avanzar(dt)
+            # Se expande cada muro por el radio del proyectil.
+            muro = min((fraccion_interseccion(inicio, fin,
+                        (x - tiro.radio, y - tiro.radio, w + 2 * tiro.radio, h + 2 * tiro.radio))
+                        for x, y, w, h in self.nivel.muros), default=1.0)
+            objetivo = jugador.get_posicion() if tiro.enemigo else self.jefe.posicion
+            radio = jugador.radio if tiro.enemigo else self.jefe.radio
+            impacto = contacto_segmento(inicio, fin, objetivo, radio + tiro.radio)
+            if impacto is not None and impacto <= muro:
+                if tiro.enemigo:
+                    self.recibir_dano()
+                else:
+                    self.jefe.vida = max(0, self.jefe.vida - 1)
+                    self.jefe.golpe = 0.08
+                continue
+            if muro < 1.0 or tiro.duracion <= 0:
+                continue
+            vivos.append(tiro)
+        self.proyectiles = [] if self.jefe.derrotado else vivos
+```
+
+## 22. Vista
+
+**Archivo original:** [src/vista.py](../src/vista.py#L12)
+
+**Qué hace.** Dibuja el juego con Pygame.
+
+**Cómo funciona.** dibujar ordena el encabezado, mapa, objetos, personajes, combate y controles. Los métodos de apoyo dibujan cada parte. Los conos y los círculos de alerta se recortan con la misma geometría de muros usada por la detección.
+
+**POO que demuestra.** Dependencia: recibe Juego, Nivel y Camara para consultar y dibujar sus datos. No crea ni actualiza las reglas de la partida.
 
 **Clase completa en el código:**
 
@@ -709,12 +942,8 @@ class Vista:
 
     def _dibujar_vision(self, origen, angulo, alcance, apertura, muros, color):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
-        puntos = [self.punto(origen)]
-        for indice in range(61):
-            direccion = angulo - apertura / 2 + apertura * indice / 60
-            destino = (origen[0] + math.cos(direccion) * alcance,
-                       origen[1] + math.sin(direccion) * alcance)
-            puntos.append(self.punto(extremo_visible(origen, destino, muros)))
+        puntos = [self.punto(punto) for punto in
+                  poligono_vision(origen, angulo, alcance, apertura, muros)]
         pygame.draw.polygon(capa, (*color, 55), puntos)
         pygame.draw.lines(capa, (*color, 120), False, puntos[1:], 1)
         self.pantalla.blit(capa, (0, 0))
@@ -722,28 +951,57 @@ class Vista:
     def dibujar(self, juego):
         nivel = juego.nivel
         self.pantalla.fill((13, 21, 31))
+        self._dibujar_encabezado(juego)
+        self._dibujar_mapa(nivel)
+        self._dibujar_objetivos(nivel)
+        for camara in nivel.camaras:
+            self._dibujar_camara(camara)
+        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
+        for guardia in nivel.guardias:
+            self._dibujar_stickman(self.punto(guardia.get_posicion()), (242, 102, 113), paso_guardia)
+        if nivel.combate:
+            self._dibujar_combate(nivel)
+        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
+        if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
+            self._dibujar_stickman(self.punto(nivel.prisionero.get_posicion()),
+                                  (101, 234, 204), paso_prisionero)
+        self._dibujar_controles(nivel)
+        if juego.estado.nombre != "JUGANDO":
+            self._dibujar_panel_estado(juego)
+
+    def _dibujar_encabezado(self, juego):
+        nivel = juego.nivel
         self.texto("FUGA DE LA PRISIÓN", 68, 24, fuente=self.titulo)
-        self.texto("PROTOTIPO PARCIAL  /  PABELLÓN 01", 70, 66, (139, 159, 178), self.pequena)
+        self.texto(f"NIVEL {nivel.indice + 1} / {nivel.total_niveles}  ·  {nivel.nombre.upper()}",
+                   70, 66, (139, 159, 178), self.pequena)
         self.texto(f"PUNTOS  {juego.panel.valor:04d}", 738, 28, (111, 226, 188), self.mediana)
         self.texto(f"TIEMPO  {nivel.tiempo:05.1f} s", 740, 62, (139, 159, 178), self.pequena)
         llave = "LLAVE OBTENIDA · BUSCA LA SALIDA" if nivel.prisionero.tiene_llave() else "OBJETIVO · CONSIGUE LA LLAVE Y ESCAPA"
+        if nivel.combate and not nivel.combate.jefe.derrotado:
+            llave = "DERROTA AL ALCAIDE · ESPACIO o IJKL para disparar"
         self.texto(llave, 70, 110, (236, 205, 117), self.pequena)
         self.texto("CARRERA  " + nivel.prisionero.carrera.get_estado(), 651, 110, (164, 201, 232), self.pequena)
+
+    def _dibujar_mapa(self, nivel):
         area = pygame.Rect(*ORIGEN, COLUMNAS * TAMANO, FILAS * TAMANO)
-        pygame.draw.rect(self.pantalla, (28, 42, 53), area)
+        pygame.draw.rect(self.pantalla, (45, 31, 43) if nivel.es_final else (28, 42, 53), area)
         for fila in range(FILAS):
             for columna in range(COLUMNAS):
                 rect = pygame.Rect(ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO, TAMANO, TAMANO)
                 pygame.draw.rect(self.pantalla, (33, 48, 60), rect, 1)
         for camara in nivel.camaras:
             self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.muros, (241, 184, 79))
-        guardia = nivel.guardia
-        self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
+        for guardia in nivel.guardias:
+            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.radio_alerta,
+                                 math.tau, nivel.muros, (242, 102, 113))
+            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
         for muro in nivel.muros:
             rect = pygame.Rect(muro[0] + ORIGEN[0], muro[1] + ORIGEN[1], muro[2], muro[3])
             pygame.draw.rect(self.pantalla, (62, 78, 90), rect)
             pygame.draw.rect(self.pantalla, (77, 94, 107), rect, 1)
             pygame.draw.line(self.pantalla, (90, 104, 116), rect.topleft, rect.topright)
+
+    def _dibujar_objetivos(self, nivel):
         salida = self.punto(nivel.salida.posicion)
         color_salida = (103, 222, 176) if nivel.prisionero.tiene_llave() else (93, 126, 117)
         pygame.draw.rect(self.pantalla, color_salida, (salida[0] - 14, salida[1] - 15, 28, 30), 3, border_radius=3)
@@ -754,29 +1012,73 @@ class Vista:
             pygame.draw.line(self.pantalla, (246, 210, 102), (x, y), (x + 13, y), 4)
             pygame.draw.line(self.pantalla, (246, 210, 102), (x + 10, y), (x + 10, y + 6), 3)
             self.texto("LLAVE", x - 22, y + 18, (246, 210, 102), self.pequena)
-        for camara in nivel.camaras:
-            x, y = self.punto(camara.posicion)
-            pygame.draw.line(self.pantalla, (152, 169, 179), (x, y - 18), (x, y - 7), 3)
-            pygame.draw.rect(self.pantalla, (244, 190, 93), (x - 10, y - 8, 20, 12), border_radius=3)
-            pygame.draw.circle(self.pantalla, (37, 43, 48), (x, y + 2), 5)
-            pygame.draw.circle(self.pantalla, (101, 159, 180), (x, y + 2), 2)
-            self.texto("CÁMARA", x - 30, y - 42, (244, 190, 93), self.pequena)
-        gx, gy = self.punto(guardia.get_posicion())
-        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
-        self._dibujar_stickman((gx, gy), (242, 102, 113), paso_guardia)
-        px, py = self.punto(nivel.prisionero.get_posicion())
-        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
-        self._dibujar_stickman((px, py), (101, 234, 204), paso_prisionero)
-        self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa", 69, 680, fuente=self.pequena)
-        self.texto("Evita las zonas de visión. Los muros te ocultan. Contactar al guardia también te captura.", 69, 709, (139, 159, 178), self.pequena)
-        if juego.estado.nombre != "JUGANDO":
-            self._dibujar_panel_estado(juego)
+
+    def _dibujar_camara(self, camara):
+        x, y = self.punto(camara.posicion)
+        dx, dy = math.cos(camara.angulo), math.sin(camara.angulo)
+        lente = (round(x + dx * 9), round(y + dy * 9))
+        pygame.draw.circle(self.pantalla, (244, 190, 93), (x, y), 10)
+        pygame.draw.line(self.pantalla, (37, 43, 48), (x, y), lente, 9)
+        pygame.draw.circle(self.pantalla, (101, 159, 180), lente, 3)
+        self.texto("CÁMARA", x - 30, y - 34, (244, 190, 93), self.pequena)
+
+    def _dibujar_controles(self, nivel):
+        self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa" +
+                   ("     ESPACIO / IJKL  Disparar" if nivel.es_final else ""), 69, 680, fuente=self.pequena)
+        consejo = "Cono: visión frontal. Círculo: alerta cercana en todas direcciones. Los muros te ocultan."
+        if nivel.es_final:
+            consejo = "Espacio apunta al jefe; IJKL fija la dirección. Esquiva los avisos rojos. Tras vencerlo, recoge la llave."
+        self.texto(consejo, 69, 709, (139, 159, 178), self.pequena)
+
+    def _dibujar_combate(self, nivel):
+        combate = nivel.combate
+        jefe = combate.jefe
+        self.texto(f"VIDA  {combate.vida} / {combate.vida_maxima}", 70, 86, (255, 147, 161), self.pequena)
+        self.texto("ALCAIDE" if not jefe.derrotado else "DERROTADO", 360, 86, (216, 167, 198), self.pequena)
+        pygame.draw.rect(self.pantalla, (65, 42, 60), (452, 91, 480, 10), border_radius=5)
+        ancho = round(480 * jefe.vida / jefe.vida_maxima)
+        if ancho:
+            pygame.draw.rect(self.pantalla, (240, 100, 133), (452, 91, ancho, 10), border_radius=5)
+        if not jefe.derrotado:
+            x, y = self.punto(jefe.posicion)
+            if jefe.aviso > 0:
+                color = (255, 178, 104)
+                pygame.draw.circle(self.pantalla, color, (x, y), jefe.radio + 12, 2)
+                if jefe.patron % 3 == 2:
+                    destino = self.punto(jefe.objetivo)
+                    pygame.draw.line(self.pantalla, (243, 96, 122), (x, y), destino, 3)
+                    pygame.draw.circle(self.pantalla, color, destino, 23, 2)
+                self.texto(jefe.ataque, 360, 661, color, self.pequena)
+            else:
+                self.texto(f"FASE {jefe.fase} / 2  ·  " + ("¡EMBESTIDA!" if jefe.destino else "EL ALCAIDE"),
+                           360, 661, (216, 167, 198), self.pequena)
+            # Un alcaide monstruoso original: gorra, lágrimas y uniforme de rayas.
+            pygame.draw.ellipse(self.pantalla, (20, 17, 27), (x - 36, y + 20, 72, 16))
+            piel = (255, 230, 232) if jefe.golpe > 0 else ((190, 111, 147) if jefe.fase == 1 else (227, 105, 128))
+            pygame.draw.ellipse(self.pantalla, (28, 22, 38), (x - 29, y - 12, 58, 49))
+            pygame.draw.ellipse(self.pantalla, piel, (x - 27, y - 33, 54, 54))
+            for lado in (-1, 1):
+                pygame.draw.circle(self.pantalla, (23, 22, 38), (x + lado * 11, y - 10), 7)
+                pygame.draw.line(self.pantalla, (106, 194, 226), (x + lado * 11, y - 4), (x + lado * 14, y + 12), 4)
+                pygame.draw.circle(self.pantalla, (239, 218, 227), (x + lado * 12, y - 12), 2)
+                pygame.draw.circle(self.pantalla, piel, (x + lado * 30, y + 12), 9)
+            pygame.draw.ellipse(self.pantalla, (49, 22, 39), (x - 7, y + 4, 14, 10))
+            pygame.draw.rect(self.pantalla, (39, 49, 71), (x - 27, y - 38, 54, 13), border_radius=4)
+            pygame.draw.rect(self.pantalla, (226, 190, 102), (x - 5, y - 36, 10, 8), border_radius=2)
+            for fila in range(3):
+                pygame.draw.line(self.pantalla, (141, 146, 171), (x - 18, y + 20 + fila * 6), (x + 18, y + 20 + fila * 6), 3)
+        for tiro in combate.proyectiles:
+            x, y = self.punto(tiro.posicion)
+            color = (255, 112, 145) if tiro.enemigo else (109, 234, 244)
+            pygame.draw.circle(self.pantalla, (22, 17, 33), (x, y), round(tiro.radio + 2))
+            pygame.draw.circle(self.pantalla, color, (x, y), round(tiro.radio))
+            pygame.draw.circle(self.pantalla, (255, 235, 240), (x - 2, y - 2), 2)
 
     def _dibujar_panel_estado(self, juego):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         capa.fill((5, 10, 18, 195))
         self.pantalla.blit(capa, (0, 0))
-        pygame.draw.rect(self.pantalla, (26, 40, 53), (245, 250, 510, 235), border_radius=16)
+        pygame.draw.rect(self.pantalla, (26, 40, 53), (220, 250, 560, 250), border_radius=16)
         nombre = juego.estado.nombre
         if nombre == "PAUSA":
             titulo = "PARTIDA EN PAUSA"
@@ -784,17 +1086,22 @@ class Vista:
             accion = "P o ESC para continuar"
             color = (182, 212, 242)
         elif nombre == "VICTORIA":
-            titulo = "¡ESCAPASTE DEL PABELLÓN!"
-            detalle = f"Nivel completado · {juego.panel.valor} puntos"
+            titulo = "¡ERES LIBRE!"
+            detalle = f"4 niveles y el Alcaide vencidos · {juego.panel.valor} puntos"
             accion = "R para volver a jugar"
             color = (111, 226, 188)
+        elif nombre == "NIVEL_COMPLETADO":
+            titulo = f"¡NIVEL {juego.indice_nivel + 1} COMPLETADO!"
+            detalle = f"Siguiente: {juego.nivel.configuracion_siguiente}"
+            accion = "ENTER para continuar · N para empezar de cero"
+            color = (111, 226, 188)
         else:
-            titulo = "TE HAN DETECTADO"
-            detalle = "Busca otra ruta y observa la vigilancia."
-            accion = "R para intentarlo de nuevo"
+            titulo = "EL ALCAIDE TE DERROTÓ" if juego.nivel.es_final else "TE HAN DETECTADO"
+            detalle = "Esquiva los avisos y usa la carrera." if juego.nivel.es_final else "Busca otra ruta y observa la vigilancia."
+            accion = "R: reintentar este nivel · N: empezar de cero"
             color = (250, 142, 147)
-        self.texto(titulo, 275, 286, color, self.mediana)
-        self.texto(detalle, 275, 343)
-        self.texto(accion, 275, 398, (236, 205, 117))
-        self.texto("Cierra la ventana para salir", 275, 438, (139, 159, 178), self.pequena)
+        self.texto(titulo, 247, 286, color, self.mediana)
+        self.texto(detalle, 247, 343)
+        self.texto(accion, 247, 398, (236, 205, 117), self.pequena)
+        self.texto("Cierra la ventana para salir", 247, 448, (139, 159, 178), self.pequena)
 ```
