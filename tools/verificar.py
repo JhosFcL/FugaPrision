@@ -14,8 +14,9 @@ import pygame
 from src.juego import Juego
 from src.estados import Pausa, Jugando, Victoria, Derrota, NivelCompletado
 from src.vista import Vista, ANCHO, ALTO
-from tests.test_juego import recorrer_ruta, ubicar
-from tests.test_campana import caminar, vencer_alcaide, escapar_arena
+from tests.test_juego import ubicar
+from tests.test_campana import vencer_alcaide, escapar_arena
+from tests.recorridos import recorrer, acercarse_haciendo_ruido
 from main import procesar_eventos
 
 
@@ -48,17 +49,27 @@ def ejecutar():
     procesar_eventos(juego, [pygame.event.Event(pygame.WINDOWFOCUSLOST)])
     assert isinstance(juego.estado, Pausa)
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_p)])
-    fotogramas = recorrer_ruta(juego)
+    estados_sigilo = set()
+
+    def observar_sigilo(partida):
+        if any(g.modo == "INVESTIGA" for g in partida.nivel.guardias) and "ruido" not in estados_sigilo:
+            captura("11_investigacion_ruido.png")
+            estados_sigilo.add("ruido")
+        if any(g.modo == "PERSIGUE" for g in partida.nivel.guardias) and "persecucion" not in estados_sigilo:
+            captura("12_persecucion.png")
+            estados_sigilo.add("persecucion")
+
+    fotogramas = recorrer(juego, observar_sigilo)
     assert isinstance(juego.estado, NivelCompletado)
     captura("09_nivel_completado.png")
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
     assert juego.indice_nivel == 1 and juego.panel.valor == 600
     captura("05_lavanderia.png")
-    caminar(juego, [(2, 1), (22, 1), (22, 11), (21, 11), (22, 11), (22, 2), (21, 2)])
+    recorrer(juego, observar_sigilo)
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
     assert juego.indice_nivel == 2 and juego.panel.valor == 1200
     captura("06_patio.png")
-    caminar(juego, [(2, 2), (3, 2), (2, 2), (2, 1), (22, 1), (22, 11), (21, 11)])
+    recorrer(juego, observar_sigilo)
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
     assert juego.indice_nivel == 3 and juego.panel.valor == 1800
     captura("07_jefe.png")
@@ -83,15 +94,20 @@ def ejecutar():
     procesar_eventos(juego, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_r)])
     assert isinstance(juego.estado, Jugando) and juego.panel.valor == 0 and juego.indice_nivel == 0
     gx, gy = juego.nivel.guardias[0].get_posicion()
-    ubicar(juego.nivel.prisionero, (gx, gy + 35))
+    ubicar(juego.nivel.prisionero, (gx, gy))
     juego.actualizar(0, set())
     assert isinstance(juego.estado, Derrota)
     captura("04_derrota.png")
+    juego.manejar_entrada("reiniciar")
+    acercarse_haciendo_ruido(juego)
+    captura("11_investigacion_ruido.png")
+    estados_sigilo.add("ruido")
     assert not procesar_eventos(juego, [pygame.event.Event(pygame.QUIT)])
     pygame.quit()
     assert capturadas == {"aviso", "fase2"}
+    assert estados_sigilo == {"ruido", "persecucion"}, estados_sigilo
     print(f"{resultado.testsRun} pruebas sin fallos; campaña completa de 4 niveles, "
-          f"ruta inicial de {fotogramas} fotogramas y jefe vencido en {combate_frames / 60:.2f} s; 10 capturas generadas.")
+          f"ruta inicial de {fotogramas} fotogramas y jefe vencido en {combate_frames / 60:.2f} s; 12 capturas generadas.")
 
 
 if __name__ == "__main__":

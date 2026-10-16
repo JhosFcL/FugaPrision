@@ -1,20 +1,16 @@
 ---
 config:
   theme: neutral
-  layout: dagre
-  htmlLabels: false
   themeVariables:
     fontFamily: Arial
     fontSize: 16px
   class:
     hideEmptyMembersBox: false
-    htmlLabels: false
     useMaxWidth: false
 ---
 classDiagram
 direction TB
 
-%% juego.py
 class Juego {
   +puntaje: Puntaje
   +panel: PanelPuntaje
@@ -31,7 +27,6 @@ class Juego {
   +actualizar(dt, teclas) None
 }
 
-%% estados.py
 class EstadoJuego {
   <<abstract>>
   +nombre: str
@@ -39,49 +34,37 @@ class EstadoJuego {
   +manejar_entrada(tecla) None*
   +actualizar(dt, teclas) None*
 }
+
 class Jugando {
   +nombre: str
   +manejar_entrada(tecla) None
   +actualizar(dt, teclas) None
 }
+
 class Pausa {
   +nombre: str
   +manejar_entrada(tecla) None
   +actualizar(dt, teclas) None
 }
+
 class Derrota {
   +nombre: str
   +manejar_entrada(tecla) None
   +actualizar(dt, teclas) None
 }
+
 class Victoria {
   +nombre: str
   +manejar_entrada(tecla) None
   +actualizar(dt, teclas) None
 }
+
 class NivelCompletado {
   +nombre: str
   +manejar_entrada(tecla) None
   +actualizar(dt, teclas) None
 }
 
-%% nivel.py
-class Camara {
-  +posicion: tuple
-  +angulo: float
-  +alcance: float
-  +apertura: float
-  +detectar(prisionero, muros) bool
-}
-class Llave {
-  +posicion: tuple
-  +disponible: bool
-  +recoger(prisionero) bool
-}
-class PuertaSalida {
-  +posicion: tuple
-  +puede_salir(prisionero) bool
-}
 class Nivel {
   +total_niveles: int
   +configuracion_siguiente: str
@@ -94,7 +77,8 @@ class Nivel {
   +tiempo: float
   +teclas: set
   +terminado: bool
-  +muros: list~tuple~
+  +mapa: Mapa
+  +ruidos: SistemaRuido
   +prisionero: Prisionero
   +guardias: list~Guardia~
   +personajes: list~Personaje~
@@ -102,21 +86,21 @@ class Nivel {
   +llave: Llave
   +salida: PuertaSalida
   +combate: Optional~Combate~
-  #_crear_muros() None
   +posicion_valida(x, y, radio) bool
   +actualizar(dt, teclas) Optional~str~
   +resolver_interacciones() Optional~str~
+  #_actualizar_camaras() None
 }
 
-%% personajes.py
-class HabilidadCarrera {
-  #_duracion: float
-  #_recarga: float
-  +activar() bool
-  +actualizar(dt) None
-  +get_multiplicador() float
-  +get_estado() str
+class Mapa {
+  +plano: tuple~str~
+  +muros: list~tuple~
+  +posicion_valida(x, y, radio) bool
+  +desplazar(posicion, dx, dy, radio) tuple
+  +buscar_ruta(origen, destino, radio) list~tuple~
+  +distancia_camino(origen, destino) float
 }
+
 class Personaje {
   <<abstract>>
   +nivel: Nivel
@@ -128,33 +112,76 @@ class Personaje {
   +mover(dx, dy) None
   +update() None*
 }
+
 class Prisionero {
   #_tiene_llave: bool
   +carrera: HabilidadCarrera
+  +movimiento: str
+  +ruido: float
+  #_pasos: float
   +tiene_llave() bool
   +recoger_llave() None
   +update() None
 }
+
 class Guardia {
   +ruta: list~tuple~
   #_objetivo: int
   +angulo: float
   +alcance: float
   +apertura: float
-  +radio_alerta: float
+  +modo: str
+  +ultima_posicion: Optional~tuple~
+  #_recuerdo: float
+  #_busqueda: float
+  #_camino: list~tuple~
+  #_destino: Optional~tuple~
+  #_recalculo: float
   +update() None
+  +escuchar(posicion) None
+  +alertar(posicion) None
+  #_volver_a_patrulla() None
+  #_ir_a(objetivo, velocidad) bool
   +puede_detectar(prisionero) bool
+  +puede_capturar(prisionero) bool
 }
 
-%% puntuacion.py
-class ObservadorPuntaje {
-  <<abstract>>
-  +actualizar_puntaje(valor) None*
+class HabilidadCarrera {
+  #_duracion: float
+  #_recarga: float
+  +activar() bool
+  +actualizar(dt) None
+  +get_multiplicador() float
+  +get_estado() str
 }
-class PanelPuntaje {
-  +valor: int
-  +actualizar_puntaje(valor) None
+
+class SistemaRuido {
+  +mapa: Mapa
+  +oyentes: list~Guardia~
+  +registrar(oyente) None
+  +emitir(posicion, alcance) None
 }
+
+class Camara {
+  +posicion: tuple
+  +angulo: float
+  +alcance: float
+  +apertura: float
+  +activa: bool
+  +detectar(prisionero, muros) bool
+}
+
+class Llave {
+  +posicion: tuple
+  +disponible: bool
+  +recoger(prisionero) bool
+}
+
+class PuertaSalida {
+  +posicion: tuple
+  +puede_salir(prisionero) bool
+}
+
 class Puntaje {
   #_valor: int
   #_observadores: list~ObservadorPuntaje~
@@ -167,7 +194,16 @@ class Puntaje {
   #_notificar() None
 }
 
-%% combate.py
+class ObservadorPuntaje {
+  <<abstract>>
+  +actualizar_puntaje(valor) None*
+}
+
+class PanelPuntaje {
+  +valor: int
+  +actualizar_puntaje(valor) None
+}
+
 class Proyectil {
   <<dataclass>>
   +x: float
@@ -180,12 +216,11 @@ class Proyectil {
   +posicion: tuple
   +avanzar(dt) tuple
 }
+
 class Alcaide {
   +nombre: str
   +vida_maxima: int
   +radio: float
-  +x: float
-  +y: float
   +vida: int
   +espera: float
   +aviso: float
@@ -193,6 +228,8 @@ class Alcaide {
   +objetivo: tuple
   +destino: Optional~tuple~
   +golpe: float
+  +x: float
+  +y: float
   +posicion: tuple
   +derrotado: bool
   +fase: int
@@ -200,6 +237,7 @@ class Alcaide {
   +actualizar(combate, dt) None
   #_atacar(combate) None
 }
+
 class Combate {
   +vida_maxima: int
   +nivel: Nivel
@@ -214,7 +252,6 @@ class Combate {
   +actualizar(dt, teclas) None
 }
 
-%% vista.py
 class Vista {
   +pantalla: Surface
   +fuente: Font
@@ -230,6 +267,7 @@ class Vista {
   #_dibujar_mapa(nivel) None
   #_dibujar_objetivos(nivel) None
   #_dibujar_camara(camara) None
+  #_dibujar_guardia(guardia, paso) None
   #_dibujar_controles(nivel) None
   #_dibujar_combate(nivel) None
   #_dibujar_panel_estado(juego) None
@@ -269,3 +307,9 @@ PuertaSalida ..> Prisionero : consulta
 Vista ..> Juego : dibuja
 Vista ..> Nivel : dibuja
 Vista ..> Camara : dibuja
+Nivel "1" *-- "1" Mapa : mapa
+Nivel "1" *-- "1" SistemaRuido : ruidos
+SistemaRuido "1" --> "1" Mapa : mapa
+SistemaRuido "1" o-- "0..*" Guardia : oyentes
+Vista ..> Guardia : dibuja
+Prisionero ..> SistemaRuido : emite

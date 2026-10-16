@@ -31,15 +31,22 @@ test_salida_exige_llave_y_no_duplica_premio (tests.test_juego.PruebasJuego.test_
 test_setter_puntaje_valida_y_notifica (tests.test_juego.PruebasJuego.test_setter_puntaje_valida_y_notifica) ... ok
 test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invalido_y_demoras) ... ok
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
-test_alerta_cercana_detecta_a_los_lados_y_por_detras (tests.test_vigilancia.PruebasVigilancia.test_alerta_cercana_detecta_a_los_lados_y_por_detras) ... ok
-test_alerta_y_vision_frontal_respetan_muros (tests.test_vigilancia.PruebasVigilancia.test_alerta_y_vision_frontal_respetan_muros) ... ok
-test_camara_detecta_cuerpo_parcialmente_dentro_del_cono (tests.test_vigilancia.PruebasVigilancia.test_camara_detecta_cuerpo_parcialmente_dentro_del_cono) ... ok
-test_cuerpo_que_toca_alerta_tambien_se_detecta (tests.test_vigilancia.PruebasVigilancia.test_cuerpo_que_toca_alerta_tambien_se_detecta) ... ok
-test_espalda_fuera_de_alerta_sigue_permitiendo_sigilo (tests.test_vigilancia.PruebasVigilancia.test_espalda_fuera_de_alerta_sigue_permitiendo_sigilo) ... ok
-test_patrulla_comienza_mirando_hacia_su_ruta (tests.test_vigilancia.PruebasVigilancia.test_patrulla_comienza_mirando_hacia_su_ruta) ... ok
-test_poligono_de_alerta_no_atraviesa_muros (tests.test_vigilancia.PruebasVigilancia.test_poligono_de_alerta_no_atraviesa_muros) ... ok
+test_divisiones_obligan_a_usar_puertas_y_caminos_transitables (tests.test_mapa.PruebasMapa.test_divisiones_obligan_a_usar_puertas_y_caminos_transitables) ... ok
+test_movimiento_grande_y_diagonal_no_atraviesa_paredes (tests.test_mapa.PruebasMapa.test_movimiento_grande_y_diagonal_no_atraviesa_paredes) ... ok
+test_plano_abierto_o_con_tamano_incorrecto_se_rechaza (tests.test_mapa.PruebasMapa.test_plano_abierto_o_con_tamano_incorrecto_se_rechaza) ... ok
+test_todo_el_suelo_es_accesible_y_no_hay_huecos_de_una_celda (tests.test_mapa.PruebasMapa.test_todo_el_suelo_es_accesible_y_no_hay_huecos_de_una_celda) ... ok
+test_camara_considera_el_cuerpo_y_la_cobertura (tests.test_vigilancia.PruebasVigilancia.test_camara_considera_el_cuerpo_y_la_cobertura) ... ok
+test_carrera_por_pasillo_real_hace_investigar_sin_teletransportes (tests.test_vigilancia.PruebasVigilancia.test_carrera_por_pasillo_real_hace_investigar_sin_teletransportes) ... ok
+test_investiga_y_regresa_a_patrulla_si_no_encuentra_jugador (tests.test_vigilancia.PruebasVigilancia.test_investiga_y_regresa_a_patrulla_si_no_encuentra_jugador) ... ok
+test_pared_oculta_y_guardia_no_conoce_posicion_nueva (tests.test_vigilancia.PruebasVigilancia.test_pared_oculta_y_guardia_no_conoce_posicion_nueva) ... ok
+test_persecucion_encuentra_puerta_y_no_cruza_pared (tests.test_vigilancia.PruebasVigilancia.test_persecucion_encuentra_puerta_y_no_cruza_pared) ... ok
+test_quieto_o_empujando_pared_no_emite_pasos (tests.test_vigilancia.PruebasVigilancia.test_quieto_o_empujando_pared_no_emite_pasos) ... ok
+test_ruido_investiga_sin_captura_instantanea (tests.test_vigilancia.PruebasVigilancia.test_ruido_investiga_sin_captura_instantanea) ... ok
+test_sigilo_caminar_y_carrera_emiten_distinto_ruido (tests.test_vigilancia.PruebasVigilancia.test_sigilo_caminar_y_carrera_emiten_distinto_ruido) ... ok
+test_sonido_rodea_paredes_sin_atravesarlas (tests.test_vigilancia.PruebasVigilancia.test_sonido_rodea_paredes_sin_atravesarlas) ... ok
+test_ver_inicia_persecucion_y_solo_contacto_captura (tests.test_vigilancia.PruebasVigilancia.test_ver_inicia_persecucion_y_solo_contacto_captura) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 2.297s
+Ran 47 tests in 4.567s
 
 OK

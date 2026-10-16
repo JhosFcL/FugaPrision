@@ -1,6 +1,6 @@
 # Historial Git observado
 
-Revisión del 15 de octubre de 2026. Hasta el commit `fc416a6`, el repositorio tenía once commits:
+Revisión del 15 de octubre de 2026. Hasta el commit `5dd0d9d`, el repositorio tenía doce commits:
 
 | Commit | Fecha | Autor configurado | Mensaje |
 | --- | --- | --- | --- |
@@ -15,7 +15,8 @@ Revisión del 15 de octubre de 2026. Hasta el commit `fc416a6`, el repositorio t
 | `f54e787` | 2026-10-15 | JhosFcL | Cambios |
 | `b6a293e` | 2026-10-15 | JhosFcL | cambios |
 | `fc416a6` | 2026-10-15 | shzjeud | mi parte XD |
+| `5dd0d9d` | 2026-10-15 | JhosFcL | cambios |
 
-Nueve commits muestran el autor configurado `JhosFcL`, uno muestra `Simei` y otro muestra `shzjeud`. Estos nombres no permiten identificar por sí solos los aportes de los cuatro integrantes. La rúbrica valora el uso correcto de Git en equipo; el historial se registra sin atribuir identidades que no constan en los commits.
+Diez commits muestran el autor configurado `JhosFcL`, uno muestra `Simei` y otro muestra `shzjeud`. Estos nombres no permiten identificar por sí solos los aportes de los cuatro integrantes. La rúbrica valora el uso correcto de Git en equipo; el historial se registra sin atribuir identidades que no constan en los commits.
 
-Esta revisión del UML, la vigilancia y la documentación se entrega como cambios locales pendientes de que el equipo los revise y los suba.
+La revisión de ruido, persecución, mapas y documentación se entrega como cambios locales pendientes de que el equipo los revise y los suba.

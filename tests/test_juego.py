@@ -6,7 +6,7 @@ from src.estados import Jugando, Pausa, Derrota, Victoria, NivelCompletado
 from src.personajes import Personaje, HabilidadCarrera
 from src.puntuacion import Puntaje, ObservadorPuntaje
 from src.geometria import dentro_de_vision
-from src.nivel import centro, TAMANO
+from src.mapa import centro, TAMANO
 
 
 def ubicar(personaje, posicion):
@@ -16,39 +16,8 @@ def ubicar(personaje, posicion):
 
 
 def recorrer_ruta(juego):
-    casillas = [(2, 7), (3, 7), (3, 4), (4, 4), (4, 3), (8, 3), (8, 2),
-                (8, 3), (4, 3), (4, 4), (3, 4), (3, 6), (4, 6),
-                (4, 7), (7, 7), (7, 8.2), (20, 8.2), (20, 6),
-                (22, 6), (22, 3), (21, 3), (21, 2)]
-    fotogramas = 0
-    for casilla in casillas:
-        objetivo = centro(*casilla)
-        for _ in range(3000):
-            x, y = juego.nivel.prisionero.get_posicion()
-            dx = objetivo[0] - x
-            dy = objetivo[1] - y
-            if math.hypot(dx, dy) < 2 or isinstance(juego.estado, (Victoria, NivelCompletado)):
-                break
-            teclas = set()
-            if abs(dx) > 1.3:
-                teclas.add("derecha" if dx > 0 else "izquierda")
-            if abs(dy) > 1.3:
-                teclas.add("abajo" if dy > 0 else "arriba")
-            juego.actualizar(1 / 120, teclas)
-            fotogramas += 1
-            if isinstance(juego.estado, Derrota):
-                raise AssertionError(f"Captura hacia {casilla}: jugador {juego.nivel.prisionero.get_posicion()}, "
-                                     f"guardia {juego.nivel.guardias[0].get_posicion()}, tiempo {juego.nivel.tiempo:.2f}.")
-        else:
-            raise AssertionError("La ruta no alcanzó su siguiente punto.")
-        if casilla == (7, 7):
-            # El muro protege al jugador mientras el guardia cambia de dirección.
-            for _ in range(420):
-                juego.actualizar(1 / 120, set())
-                fotogramas += 1
-                if isinstance(juego.estado, Derrota):
-                    raise AssertionError("El escondite no protegió al jugador.")
-    return fotogramas
+    from tests.recorridos import recorrer
+    return recorrer(juego)
 
 
 class RegistroPuntaje(ObservadorPuntaje):
@@ -80,9 +49,8 @@ class PruebasJuego(unittest.TestCase):
 
     def test_colision_muro_interior_sin_atravesarlo(self):
         jugador = self.juego.nivel.prisionero
-        ubicar(jugador, centro(8, 3))
-        jugador.mover(0, 300)
-        self.assertLessEqual(jugador.get_posicion()[1], 134)
+        jugador.mover(1000, 0)
+        self.assertEqual(jugador.get_posicion()[0], 6 * TAMANO - jugador.radio)
 
     def test_velocidad_diagonal_normalizada(self):
         distancias = []
@@ -103,29 +71,34 @@ class PruebasJuego(unittest.TestCase):
 
     def test_camara_detecta(self):
         nivel = self.juego.nivel
-        ubicar(nivel.prisionero, centro(15, 6))
+        camara = nivel.camaras[0]
+        x, y = camara.posicion
+        ubicar(nivel.prisionero, (x, y + 40))
         self.juego.actualizar(0, set())
-        self.assertIsInstance(self.juego.estado, Derrota)
-
-        otro_juego = Juego()
-        ubicar(otro_juego.nivel.prisionero, centro(15, 3))
-        otro_juego.actualizar(0, set())
-        self.assertIsInstance(otro_juego.estado, Jugando)
+        self.assertTrue(camara.activa)
+        self.assertTrue(all(g.modo == "PERSIGUE" for g in nivel.guardias))
+        self.assertIsInstance(self.juego.estado, Jugando)
+        ubicar(nivel.prisionero, (x, y - 40))
+        self.juego.actualizar(0, set())
+        self.assertFalse(camara.activa)
 
     def test_atajo_superior_bloqueado(self):
         prisionero = self.juego.nivel.prisionero
-        ubicar(prisionero, centro(8, 2))
+        ubicar(prisionero, centro(8, 1))
         prisionero.mover(400, 0)
-        self.assertLess(prisionero.get_posicion()[0], 10 * TAMANO)
+        self.assertLess(prisionero.get_posicion()[0], 12 * TAMANO)
 
     def test_guardia_detecta_y_patrulla(self):
         nivel = self.juego.nivel
         posicion = nivel.guardias[0].get_posicion()
         self.juego.actualizar(0.05, set())
         self.assertNotEqual(posicion, nivel.guardias[0].get_posicion())
-        ubicar(nivel.prisionero, centro(11, 7))
+        guardia = nivel.guardias[0]
+        ubicar(guardia, centro(2, 10))
+        guardia.angulo = math.pi / 2
         self.juego.actualizar(0, set())
-        self.assertIsInstance(self.juego.estado, Derrota)
+        self.assertEqual(guardia.modo, "PERSIGUE")
+        self.assertIsInstance(self.juego.estado, Jugando)
 
     def test_contacto_por_detras_captura(self):
         nivel = self.juego.nivel

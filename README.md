@@ -6,7 +6,7 @@ original inspirado en los patrones de proyectiles de The Binding of Isaac.
 
 ## Campaña
 
-1. **Pabellón de celdas:** el mapa original, con un guardia y una cámara.
+1. **Pabellón de celdas:** cuatro sectores comunicados por puertas, dos patrullas y una cámara.
 2. **Lavandería:** un mapa nuevo con coberturas, dos patrullas y dos cámaras.
 3. **Patio de vigilancia:** otro mapa con dos patrullas y tres cámaras.
 4. **El Alcaide:** cinco puntos de vida para enfrentarte al jefe. Lanza coronas de
@@ -34,6 +34,7 @@ python -m venv .venv
 | --- | --- |
 | Mover | WASD o flechas |
 | Correr | Shift (2 s de duración, 5 s de recarga) |
+| Caminar en sigilo | Mantener Ctrl (menos velocidad y menos ruido) |
 | Disparar hacia el jefe, en la arena | Mantener Espacio |
 | Disparar en una dirección, en la arena | I arriba, J izquierda, K abajo, L derecha |
 | Pausar / continuar | P o Escape |
@@ -45,22 +46,29 @@ python -m venv .venv
 En la arena, los muros bloquean proyectiles y dispones de un breve período de
 inmunidad tras recibir daño. La pausa y la pérdida de foco detienen toda la simulación.
 
-Los guardias tienen visión frontal y un círculo de alerta cercana de 32 píxeles:
-acercarte por un lado o por detrás también puede provocar la captura. Los muros
-bloquean ambas zonas. La detección considera el cuerpo del prisionero, por lo que
-debes mantenerlo completo fuera de las zonas de vigilancia.
+Los pasos generan ruido: Ctrl produce poco, caminar produce más y correr se oye
+desde más lejos. El sonido llega siguiendo los pasillos y las puertas. Quedarte
+quieto o empujar una pared no genera pasos. Los guardias investigan la posición
+que escuchan; si te ven o una cámara les avisa, te persiguen rodeando las paredes.
+Solo te capturan al alcanzarte. Si rompes la visión, buscan en la última posición
+conocida y después regresan a patrullar. `?` indica investigación o búsqueda y
+`!` indica persecución. La interfaz muestra el ruido y la alerta actual.
+
+Los planos tienen perímetro cerrado y divisiones con pasos definidos, sin huecos
+aislados ni una ruta libre alrededor de todo el borde. Las colisiones recortan el
+movimiento ante la primera pared, incluso en diagonal o con un desplazamiento grande.
 
 ## Material del parcial
 
 - `entrega/Informe_Parcial_Fuga_Prision.pdf`: informe para presentar.
-- `docs/diagramas/modelo_parcial.mmd` y `modelo_parcial.png`: UML de las 22 clases del juego, en Mermaid y como imagen generada desde el mismo modelo.
-- `docs/evidencias/`: diez capturas de la campaña, salida de las 40 pruebas e historial Git revisado.
+- `docs/diagramas/modelo_parcial.mmd` y `modelo_parcial.png`: UML de las 24 clases del juego, en Mermaid y como imagen generada desde el mismo modelo.
+- `docs/evidencias/`: doce capturas de la campaña, salida de las 47 pruebas e historial Git revisado.
 - `docs/03_guion_exposicion.md`: apoyo para la explicación oral.
-- `docs/Explicacion_de_clases.md`: explicación de las 22 clases, sus conceptos POO y su código completo; también explica los símbolos del UML.
+- `docs/Explicacion_de_clases.md`: explicación de las 24 clases, sus conceptos POO y su código completo; también explica los símbolos del UML.
 - `main.py` y `src/`: juego y clases.
-- `tests/` y `tools/verificar.py`: pruebas de regresión, campaña y combate, y
-  generación reproducible de diez capturas con una campaña jugada mediante
-  movimientos y disparos reales, sin teletransportes ni desactivar enemigos.
+- `tests/` y `tools/verificar.py`: pruebas de regresión, campaña y combate.
+  La verificación completa la campaña con movimientos y disparos reales, sin
+  teletransportes ni desactivar enemigos, y genera doce capturas del juego.
 
 Para comprobar el avance después de instalar las dependencias:
 
