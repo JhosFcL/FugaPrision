@@ -1,6 +1,6 @@
 # Historial Git observado
 
-Revisión del 15 de octubre de 2026. Hasta el commit `5dd0d9d`, el repositorio tenía doce commits:
+Revisión del 15 de octubre de 2026. Hasta el commit `8eed979`, el repositorio tenía trece commits:
 
 | Commit | Fecha | Autor configurado | Mensaje |
 | --- | --- | --- | --- |
@@ -16,7 +16,8 @@ Revisión del 15 de octubre de 2026. Hasta el commit `5dd0d9d`, el repositorio t
 | `b6a293e` | 2026-10-15 | JhosFcL | cambios |
 | `fc416a6` | 2026-10-15 | shzjeud | mi parte XD |
 | `5dd0d9d` | 2026-10-15 | JhosFcL | cambios |
+| `8eed979` | 2026-10-15 | JhosFcL | Cambios |
 
-Diez commits muestran el autor configurado `JhosFcL`, uno muestra `Simei` y otro muestra `shzjeud`. Estos nombres no permiten identificar por sí solos los aportes de los cuatro integrantes. La rúbrica valora el uso correcto de Git en equipo; el historial se registra sin atribuir identidades que no constan en los commits.
+Once commits muestran el autor configurado `JhosFcL`, uno muestra `Simei` y otro muestra `shzjeud`. Estos nombres no permiten identificar por sí solos los aportes de los cuatro integrantes. La rúbrica valora el uso correcto de Git en equipo; el historial se registra sin atribuir identidades que no constan en los commits.
 
-La revisión de ruido, persecución, mapas y documentación se entrega como cambios locales pendientes de que el equipo los revise y los suba.
+La revisión de ruido, persecución, mapas y documentación quedó registrada en el commit `8eed979`. Las correcciones posteriores de este resumen y del informe, la celda inicial, el Patio rediseñado, las cámaras alineadas y las tres capas del jefe se entregan como cambios locales para que el equipo los revise y los suba.

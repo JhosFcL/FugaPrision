@@ -78,6 +78,7 @@ class Nivel {
   +teclas: set
   +terminado: bool
   +mapa: Mapa
+  +celda: Optional~PuertaCelda~
   +ruidos: SistemaRuido
   +prisionero: Prisionero
   +guardias: list~Guardia~
@@ -95,10 +96,18 @@ class Nivel {
 class Mapa {
   +plano: tuple~str~
   +muros: list~tuple~
+  +abrir_puerta(posicion) None
   +posicion_valida(x, y, radio) bool
   +desplazar(posicion, dx, dy, radio) tuple
   +buscar_ruta(origen, destino, radio) list~tuple~
   +distancia_camino(origen, destino) float
+}
+
+class PuertaCelda {
+  +posicion: tuple
+  +progreso: float
+  +abierta: bool
+  +actualizar(dt, prisionero, interactuar) bool
 }
 
 class Personaje {
@@ -219,6 +228,8 @@ class Proyectil {
 
 class Alcaide {
   +nombre: str
+  +capas_totales: int
+  +vida_por_capa: int
   +vida_maxima: int
   +radio: float
   +vida: int
@@ -228,12 +239,16 @@ class Alcaide {
   +objetivo: tuple
   +destino: Optional~tuple~
   +golpe: float
+  +transicion: float
   +x: float
   +y: float
   +posicion: tuple
   +derrotado: bool
   +fase: int
+  +capas_restantes: int
+  +vida_capa: int
   +ataque: str
+  +recibir_impacto() None
   +actualizar(combate, dt) None
   #_atacar(combate) None
 }
@@ -266,6 +281,7 @@ class Vista {
   #_dibujar_encabezado(juego) None
   #_dibujar_mapa(nivel) None
   #_dibujar_objetivos(nivel) None
+  #_dibujar_celda(celda) None
   #_dibujar_camara(camara) None
   #_dibujar_guardia(guardia, paso) None
   #_dibujar_controles(nivel) None
@@ -308,6 +324,9 @@ Vista ..> Juego : dibuja
 Vista ..> Nivel : dibuja
 Vista ..> Camara : dibuja
 Nivel "1" *-- "1" Mapa : mapa
+Nivel "1" *-- "0..1" PuertaCelda : celda
+PuertaCelda ..> Prisionero : consulta
+Vista ..> PuertaCelda : dibuja
 Nivel "1" *-- "1" SistemaRuido : ruidos
 SistemaRuido "1" --> "1" Mapa : mapa
 SistemaRuido "1" o-- "0..*" Guardia : oyentes

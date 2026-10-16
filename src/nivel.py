@@ -2,23 +2,50 @@ import math
 from .geometria import distancia, dentro_de_vision
 from .personajes import Prisionero, Guardia
 from .combate import Combate
-from .mapa import Mapa, PLANOS, centro
+from .mapa import Mapa, PLANOS, TAMANO, centro
 from .ruido import SistemaRuido
 
 # Cada pabellón tiene su propia distribución y vigilancia.
 ETAPAS = (
     {"nombre": "Pabellón de celdas", "inicio": (2, 11), "llave": (8, 2),
      "salida": (21, 2), "rutas": [((9, 7), (10, 2)), ((15, 10), (16, 3))],
-     "camaras": [((16, 8), math.pi / 2)]},
+     "camaras": [((10, 1), math.pi / 2)]},
     {"nombre": "Lavandería", "inicio": (2, 11), "llave": (21, 11),
      "salida": (21, 2), "rutas": [((8, 3), (10, 10)), ((15, 10), (16, 5))],
-     "camaras": [((4, 2), math.pi / 2), ((20, 5), math.pi / 2)]},
+     "camaras": [((4, 1), math.pi / 2), ((22, 6), math.pi)]},
     {"nombre": "Patio de vigilancia", "inicio": (2, 11), "llave": (3, 2),
-     "salida": (21, 11), "rutas": [((8, 10), (10, 3)), ((15, 4), (16, 11))],
-     "camaras": [((3, 7), -math.pi / 2), ((17, 6), -math.pi / 2), ((21, 9), math.pi)]},
+     "salida": (21, 11),
+     "atajos": [(4, 4), (5, 4), (20, 9), (21, 9)],
+     "rutas": [((7, 7), (17, 7)), ((12, 2), (21, 2)), ((8, 10), (16, 10))],
+     "camaras": [((1, 2), 0), ((20, 5), math.pi / 2), ((22, 12), math.pi)]},
     {"nombre": "El Alcaide", "inicio": (12, 11), "llave": (12, 3),
      "salida": (12, 1), "rutas": [], "camaras": []},
 )
+
+
+def posicion_camara(casilla, angulo):
+    x, y = centro(*casilla)
+    separacion = TAMANO / 2 - 4
+    return x - math.cos(angulo) * separacion, y - math.sin(angulo) * separacion
+
+
+class PuertaCelda:
+    def __init__(self, posicion):
+        self.posicion = posicion
+        self.progreso = 0.0
+        self.abierta = False
+
+    def actualizar(self, dt, prisionero, interactuar):
+        if self.abierta:
+            return False
+        if not interactuar or distancia(self.posicion, prisionero.get_posicion()) > 48:
+            self.progreso = 0.0
+            return False
+        self.progreso = min(2.0, self.progreso + dt)
+        if self.progreso >= 2.0:
+            self.abierta = True
+            return True
+        return False
 
 
 class Camara:
@@ -75,6 +102,7 @@ class Nivel:
         self.teclas = set()
         self.terminado = False
         self.mapa = Mapa(PLANOS[indice])
+        self.celda = PuertaCelda(centro(4, 11)) if indice == 0 else None
         self.ruidos = SistemaRuido(self.mapa)
         self.prisionero = Prisionero(self, *centro(*self.configuracion["inicio"]))
         self.guardias = [Guardia(self, [centro(*p) for p in ruta])
@@ -82,7 +110,7 @@ class Nivel:
         self.personajes = [self.prisionero, *self.guardias]
         for guardia in self.guardias:
             self.ruidos.registrar(guardia)
-        self.camaras = [Camara(centro(*posicion), angulo)
+        self.camaras = [Camara(posicion_camara(posicion, angulo), angulo)
                         for posicion, angulo in self.configuracion["camaras"]]
         self.llave = Llave(centro(*self.configuracion["llave"]))
         self.salida = PuertaSalida(centro(*self.configuracion["salida"]))
@@ -99,6 +127,9 @@ class Nivel:
         self.dt = dt
         self.teclas = set(teclas)
         self.tiempo += dt
+        if self.celda and self.celda.actualizar(dt, self.prisionero, "interactuar" in self.teclas):
+            self.mapa.abrir_puerta(self.celda.posicion)
+            self.ruidos.emitir(self.celda.posicion, 260)
         for personaje in self.personajes:
             personaje.update()
         self._actualizar_camaras()
@@ -120,6 +151,8 @@ class Nivel:
             self.llave.disponible = True
         if self.llave.recoger(self.prisionero):
             self.puntaje.sumar(100)
+            for casilla in self.configuracion.get("atajos", []):
+                self.mapa.abrir_puerta(centro(*casilla))
         if self.salida.puede_salir(self.prisionero) and (not self.combate or self.combate.jefe.derrotado):
             self.terminado = True
             self.puntaje.sumar(500)

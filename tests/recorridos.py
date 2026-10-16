@@ -4,9 +4,25 @@ from src.mapa import centro, TAMANO
 from src.geometria import distancia, dentro_de_vision
 
 
+def abrir_celda(juego):
+    celda = juego.nivel.celda
+    if not celda or celda.abierta:
+        return
+    for _ in range(30):
+        if juego.nivel.prisionero.get_posicion()[0] >= 125:
+            break
+        juego.actualizar(.05, {"derecha"})
+    for _ in range(41):
+        juego.actualizar(.05, {"interactuar"})
+    assert celda.abierta, "La puerta no se abrió manteniendo E junto a ella."
+
+
 def acercarse_haciendo_ruido(juego):
     """Recorre la zona inicial corriendo hasta que una patrulla escucha los pasos."""
-    for punto in (centro(5, 11), centro(5, 7), centro(5, 6), centro(6, 6)):
+    for _ in range(20):
+        juego.actualizar(.05, set())
+    abrir_celda(juego)
+    for punto in (centro(5, 11), centro(5, 7), centro(5, 6), centro(6, 6), centro(8, 6)):
         for _ in range(250):
             jugador = juego.nivel.prisionero
             dx, dy = punto[0] - jugador.get_posicion()[0], punto[1] - jugador.get_posicion()[1]
@@ -50,11 +66,11 @@ def ruta_segura(nivel, destino):
                     d = distancia(guardia.get_posicion(), pos)
                     peligro += max(0, 100-d) * .4
                     if dentro_de_vision(guardia.get_posicion(),pos,guardia.angulo,
-                                        guardia.alcance,guardia.apertura,nivel.mapa.muros):
+                                        guardia.alcance,guardia.apertura,nivel.mapa.muros,nivel.prisionero.radio):
                         peligro += 35
                 for camara in nivel.camaras:
                     if dentro_de_vision(camara.posicion,pos,camara.angulo,
-                                        camara.alcance,camara.apertura,nivel.mapa.muros):
+                                        camara.alcance,camara.apertura,nivel.mapa.muros,nivel.prisionero.radio):
                         peligro += 45
                 peligros[vecina] = peligro
             nuevo = precio + 1 + peligros[vecina]
@@ -74,9 +90,9 @@ def ruta_segura(nivel, destino):
 def recorrer(juego, observar=None):
     """Valida el nivel con movimiento, sigilo, espera y carrera; los enemigos siguen activos."""
     nivel = juego.nivel
-    if nivel.indice == 2:
-        for _ in range(20):
-            juego.actualizar(.05, set())
+    abrir_celda(juego)
+    for _ in range((120, 40, 20)[nivel.indice]):
+        juego.actualizar(.05, set())
     ruta = []
     recalculo = 0
     detenido = 0.0

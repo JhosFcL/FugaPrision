@@ -46,7 +46,9 @@ def contacto_segmento(inicio, fin, centro, radio):
 
 class Alcaide:
     nombre = "EL ALCAIDE"
-    vida_maxima = 72
+    capas_totales = 3
+    vida_por_capa = 72
+    vida_maxima = capas_totales * vida_por_capa
     radio = 28
 
     def __init__(self):
@@ -58,6 +60,7 @@ class Alcaide:
         self.objetivo = (450.0, 414.0)
         self.destino = None
         self.golpe = 0.0
+        self.transicion = 0.0
 
     @property
     def posicion(self):
@@ -69,26 +72,51 @@ class Alcaide:
 
     @property
     def fase(self):
-        return 1 if self.vida > self.vida_maxima / 2 else 2
+        return min(self.capas_totales, self.capas_totales - self.capas_restantes + 1)
+
+    @property
+    def capas_restantes(self):
+        return math.ceil(max(0, self.vida) / self.vida_por_capa)
+
+    @property
+    def vida_capa(self):
+        return (self.vida - 1) % self.vida_por_capa + 1 if not self.derrotado else 0
 
     @property
     def ataque(self):
         return ("CORONA DE LÁGRIMAS", "RÁFAGA DIRIGIDA", "EMBESTIDA")[self.patron % 3]
 
+    def recibir_impacto(self):
+        if self.derrotado or self.transicion > 0:
+            return
+        fase_anterior = self.fase
+        self.vida = max(0, self.vida - 1)
+        self.golpe = 0.08
+        if self.fase != fase_anterior:
+            # Cada capa tiene su propia fase y un aviso breve antes de reanudar.
+            self.transicion = 1.1
+            self.aviso = 0.0
+            self.destino = None
+            self.espera = 0.0
+            self.patron = 0
+
     def actualizar(self, combate, dt):
         if self.derrotado:
             return
         self.golpe = max(0, self.golpe - dt)
+        if self.transicion > 0:
+            self.transicion = max(0, self.transicion - dt)
+            return
         if self.destino is not None:
             largo = distancia(self.posicion, self.destino)
-            avance = min(largo, (280 if self.fase == 1 else 335) * dt)
+            avance = min(largo, (280, 370, 460)[self.fase - 1] * dt)
             if largo > 0:
                 self.x += (self.destino[0] - self.x) / largo * avance
                 self.y += (self.destino[1] - self.y) / largo * avance
             if largo <= avance + 0.01:
                 self.destino = None
                 self.patron += 1
-                self.espera = 1.1
+                self.espera = (1.1, 0.65, 0.35)[self.fase - 1]
             return
         if self.aviso > 0:
             self.aviso = max(0, self.aviso - dt)
@@ -98,20 +126,23 @@ class Alcaide:
         self.espera = max(0, self.espera - dt)
         if self.espera == 0:
             self.objetivo = combate.nivel.prisionero.get_posicion()
-            self.aviso = 0.95 if self.fase == 1 else 0.75
+            self.aviso = (0.95, 0.72, 0.50)[self.fase - 1]
 
     def _atacar(self, combate):
         angulo = math.atan2(self.objetivo[1] - self.y, self.objetivo[0] - self.x)
         tipo = self.patron % 3
         if tipo == 0:
-            cantidad = 12 if self.fase == 1 else 18
-            for i in range(cantidad):
-                combate.emitir(self.posicion, angulo + i * math.tau / cantidad,
-                               115 if self.fase == 1 else 145)
+            cantidad = (12, 20, 28)[self.fase - 1]
+            for anillo in range(self.fase):
+                for i in range(cantidad):
+                    direccion = angulo + i * math.tau / cantidad + anillo * math.pi / cantidad
+                    velocidad = (115, 155, 205)[self.fase - 1] - anillo * 20
+                    combate.emitir(self.posicion, direccion, velocidad)
         elif tipo == 1:
-            cantidad = 5 if self.fase == 1 else 7
+            cantidad = (5, 9, 13)[self.fase - 1]
             for i in range(cantidad):
-                combate.emitir(self.posicion, angulo + (i - cantidad // 2) * 0.20, 185)
+                combate.emitir(self.posicion, angulo + (i - cantidad // 2) * 0.16,
+                               (185, 240, 300)[self.fase - 1])
         else:
             # La embestida fija su destino al comenzar el aviso, se puede esquivar.
             destino = (max(80, min(784, self.objetivo[0])),
@@ -125,7 +156,7 @@ class Alcaide:
                             self.y + (destino[1] - self.y) * fraccion)
             return
         self.patron += 1
-        self.espera = 1.45 if self.fase == 1 else 0.9
+        self.espera = (1.45, 0.85, 0.45)[self.fase - 1]
 
 
 class Combate:
@@ -172,6 +203,7 @@ class Combate:
             self.emitir(jugador.get_posicion(), math.atan2(dy, dx), 430, enemigo=False)
             self.recarga = 0.18
         vivos = []
+        fase_anterior = self.jefe.fase
         for tiro in self.proyectiles:
             inicio, fin = tiro.avanzar(dt)
             # Se expande cada muro por el radio del proyectil.
@@ -185,10 +217,9 @@ class Combate:
                 if tiro.enemigo:
                     self.recibir_dano()
                 else:
-                    self.jefe.vida = max(0, self.jefe.vida - 1)
-                    self.jefe.golpe = 0.08
+                    self.jefe.recibir_impacto()
                 continue
             if muro < 1.0 or tiro.duracion <= 0:
                 continue
             vivos.append(tiro)
-        self.proyectiles = [] if self.jefe.derrotado else vivos
+        self.proyectiles = [] if self.jefe.derrotado or self.jefe.fase != fase_anterior else vivos

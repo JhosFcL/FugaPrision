@@ -16,7 +16,7 @@ from src.estados import Pausa, Jugando, Victoria, Derrota, NivelCompletado
 from src.vista import Vista, ANCHO, ALTO
 from tests.test_juego import ubicar
 from tests.test_campana import vencer_alcaide, escapar_arena
-from tests.recorridos import recorrer, acercarse_haciendo_ruido
+from tests.recorridos import recorrer, acercarse_haciendo_ruido, abrir_celda
 from main import procesar_eventos
 
 
@@ -59,6 +59,8 @@ def ejecutar():
             captura("12_persecucion.png")
             estados_sigilo.add("persecucion")
 
+    abrir_celda(juego)
+    captura("13_celda_abierta.png")
     fotogramas = recorrer(juego, observar_sigilo)
     assert isinstance(juego.estado, NivelCompletado)
     captura("09_nivel_completado.png")
@@ -85,6 +87,9 @@ def ejecutar():
         if combate.jefe.fase == 2 and len(lagrimas) > 10 and "fase2" not in capturadas:
             captura("10_jefe_fase2.png")
             capturadas.add("fase2")
+        if combate.jefe.fase == 3 and len(lagrimas) > 20 and "fase3" not in capturadas:
+            captura("14_jefe_fase3.png")
+            capturadas.add("fase3")
 
     combate_frames = vencer_alcaide(juego, observar)
     assert juego.nivel.combate.jefe.derrotado and juego.nivel.combate.vida > 0
@@ -104,10 +109,10 @@ def ejecutar():
     estados_sigilo.add("ruido")
     assert not procesar_eventos(juego, [pygame.event.Event(pygame.QUIT)])
     pygame.quit()
-    assert capturadas == {"aviso", "fase2"}
+    assert capturadas == {"aviso", "fase2", "fase3"}
     assert estados_sigilo == {"ruido", "persecucion"}, estados_sigilo
     print(f"{resultado.testsRun} pruebas sin fallos; campaña completa de 4 niveles, "
-          f"ruta inicial de {fotogramas} fotogramas y jefe vencido en {combate_frames / 60:.2f} s; 12 capturas generadas.")
+          f"ruta inicial de {fotogramas} fotogramas y jefe vencido en {combate_frames / 60:.2f} s; 14 capturas generadas.")
 
 
 if __name__ == "__main__":

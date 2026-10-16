@@ -46,28 +46,67 @@ def caminar(juego, casillas):
 
 
 def vencer_alcaide(juego, observar=None):
-    """Combate real: moverse por la arena y disparar, sin modificar al jefe."""
+    """Combate con teclado, carrera y evasión de proyectiles; el jefe conserva sus reglas."""
+    from src.combate import contacto_segmento
     ruta = [(700, 414), (700, 90), (164, 90), (164, 414)]
     objetivo = 0
-    for fotograma in range(3600):
-        x, y = juego.nivel.prisionero.get_posicion()
+    direcciones = ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1),
+                   (1, 1), (1, -1), (-1, 1), (-1, -1))
+    for fotograma in range(10800):
+        nivel = juego.nivel
+        combate = nivel.combate
+        jefe = combate.jefe
+        jugador = nivel.prisionero
+        x, y = jugador.get_posicion()
         tx, ty = ruta[objetivo]
-        if math.hypot(tx - x, ty - y) < 6:
+        if math.hypot(tx - x, ty - y) < 25:
             objetivo = (objetivo + 1) % len(ruta)
             tx, ty = ruta[objetivo]
+        juego.manejar_entrada("carrera")
+        velocidad = 145 * jugador.carrera.get_multiplicador()
+        mejor = None
+        for dx, dy in direcciones:
+            norma = math.hypot(dx, dy) or 1
+            futuro = nivel.mapa.desplazar((x, y), dx / norma * velocidad * .6,
+                                          dy / norma * velocidad * .6, jugador.radio)
+            vx, vy = (futuro[0] - x) / .6, (futuro[1] - y) / .6
+            coste = math.hypot(tx - futuro[0], ty - futuro[1]) * .4
+            if (dx or dy) and math.dist((x, y), futuro) < 5:
+                coste += 500
+            for tiro in combate.proyectiles:
+                if not tiro.enemigo:
+                    continue
+                rx, ry = tiro.x - x, tiro.y - y
+                rvx, rvy = tiro.vx - vx, tiro.vy - vy
+                divisor = rvx * rvx + rvy * rvy
+                tiempo = max(0, min(.65, -(rx * rvx + ry * rvy) / divisor)) if divisor else 0
+                margen = math.hypot(rx + rvx * tiempo, ry + rvy * tiempo) - tiro.radio - jugador.radio
+                coste += max(0, 65 - margen) ** 2 * .06
+                if margen < 8:
+                    coste += 2000 + (8 - margen) ** 2 * 30
+            if not jefe.derrotado:
+                separacion = min(math.dist((x, y), jefe.posicion), math.dist(futuro, jefe.posicion))
+                coste += max(0, 100 - separacion) ** 2
+                if jefe.patron % 3 == 2 and (jefe.aviso > 0 or jefe.destino):
+                    destino = jefe.destino or jefe.objetivo
+                    if contacto_segmento(jefe.posicion, destino, futuro, 65) is not None:
+                        coste += 5000
+            if mejor is None or coste < mejor[0]:
+                mejor = coste, dx, dy
+        _, dx, dy = mejor
         teclas = {"disparar"}
-        if abs(tx - x) > 2:
-            teclas.add("derecha" if tx > x else "izquierda")
-        if abs(ty - y) > 2:
-            teclas.add("abajo" if ty > y else "arriba")
+        if dx:
+            teclas.add("derecha" if dx > 0 else "izquierda")
+        if dy:
+            teclas.add("abajo" if dy > 0 else "arriba")
         juego.actualizar(1 / 60, teclas)
         if observar:
             observar(juego)
         if isinstance(juego.estado, Derrota):
-            raise AssertionError("La ruta de combate terminó en derrota.")
-        if juego.nivel.combate.jefe.derrotado:
+            raise AssertionError(f"Derrota en fase {jefe.fase}, vida del jefe {jefe.vida}, t={nivel.tiempo:.1f}.")
+        if jefe.derrotado:
             return fotograma + 1
-    raise AssertionError("No se pudo vencer al Alcaide en 60 segundos.")
+    raise AssertionError("No se pudo vencer al Alcaide en 180 segundos.")
 
 
 def escapar_arena(juego):
@@ -100,6 +139,8 @@ class PruebasCampana(unittest.TestCase):
         mapas = []
         for indice in range(4):
             nivel = Nivel(Puntaje(), indice)
+            if nivel.celda:
+                nivel.mapa.abrir_puerta(nivel.celda.posicion)
             mapas.append(set(nivel.mapa.muros))
             inicio = nivel.configuracion["inicio"]
             pendientes = deque([inicio])
@@ -178,15 +219,15 @@ class PruebasCampana(unittest.TestCase):
         jefe.actualizar(combate, 1)
         self.assertEqual(len(combate.proyectiles), 12)
         combate.proyectiles.clear()
-        jefe.vida = 30
+        jefe.vida = 144
         self.assertEqual(jefe.fase, 2)
         jefe.patron = 0
         jefe._atacar(combate)
-        self.assertEqual(len(combate.proyectiles), 18)
+        self.assertEqual(len(combate.proyectiles), 40)
         combate.proyectiles.clear()
         jefe.patron = 1
         jefe._atacar(combate)
-        self.assertEqual(len(combate.proyectiles), 7)
+        self.assertEqual(len(combate.proyectiles), 9)
         jefe.patron = 2
         jefe.objetivo = (198, 414)
         jefe._atacar(combate)
@@ -209,7 +250,7 @@ class PruebasCampana(unittest.TestCase):
         self.assertEqual(juego.indice_nivel, 3)
         self.assertEqual(juego.panel.valor, 1800)
         self.assertEqual(juego.nivel.combate.vida, 5)
-        self.assertEqual(juego.nivel.combate.jefe.vida, 72)
+        self.assertEqual(juego.nivel.combate.jefe.vida, 216)
         juego.cambiar_estado(Derrota(juego))
         juego.manejar_entrada("nueva_partida")
         self.assertEqual(juego.indice_nivel, 0)
@@ -228,6 +269,50 @@ class PruebasCampana(unittest.TestCase):
         juego.actualizar(0.05, set())
         self.assertEqual(combate.vida, 4)
         self.assertEqual(combate.proyectiles, [])
+
+    def test_tres_capas_aumentan_patrones_velocidad_y_frecuencia(self):
+        combate = llegar_a_arena().nivel.combate
+        jefe = combate.jefe
+        velocidades, esperas, avisos = [], [], []
+        for vida, fase, cantidad in ((216, 1, 12), (144, 2, 40), (72, 3, 84)):
+            jefe.vida = vida
+            self.assertEqual(jefe.fase, fase)
+            self.assertEqual(jefe.capas_restantes, 4 - fase)
+            self.assertEqual(jefe.vida_capa, 72)
+            combate.proyectiles.clear()
+            jefe.patron = 0
+            jefe._atacar(combate)
+            self.assertEqual(len(combate.proyectiles), cantidad)
+            velocidades.append(max(math.hypot(p.vx, p.vy) for p in combate.proyectiles))
+            esperas.append(jefe.espera)
+            jefe.espera = 0
+            jefe.aviso = 0
+            jefe.actualizar(combate, .01)
+            avisos.append(jefe.aviso)
+        self.assertEqual(velocidades, sorted(velocidades))
+        self.assertGreater(velocidades[2], velocidades[0] * 1.7)
+        self.assertGreater(esperas[0], esperas[1])
+        self.assertGreater(esperas[1], esperas[2])
+        self.assertGreater(avisos[0], avisos[1])
+        self.assertGreater(avisos[1], avisos[2])
+
+    def test_romper_capa_no_libera_llave_y_tanda_no_salta_otras_capas(self):
+        juego = llegar_a_arena()
+        combate = juego.nivel.combate
+        jefe = combate.jefe
+        for restante in (144, 72, 0):
+            jefe.transicion = 0
+            combate.proyectiles = [Proyectil(*jefe.posicion, 0, 0, False) for _ in range(100)]
+            juego.actualizar(0, set())
+            self.assertEqual(jefe.vida, restante)
+            self.assertEqual(juego.nivel.llave.disponible, restante == 0)
+            if restante:
+                self.assertEqual(juego.panel.valor, 1800)
+                self.assertGreater(jefe.transicion, 0)
+                self.assertEqual(combate.proyectiles, [])
+        self.assertEqual(juego.panel.valor, 2800)
+        self.assertEqual(jefe.capas_restantes, 0)
+        self.assertEqual(jefe.vida_capa, 0)
 
     def test_pausa_congela_jefe_disparos_vida_y_recargas(self):
         juego = llegar_a_arena()
