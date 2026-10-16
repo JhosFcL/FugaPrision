@@ -1,6 +1,6 @@
 # Guion breve de exposición
 
-El PPT sigue los siete apartados de la estructura docente. La portada y la continuación del punto 4 llevan el total a nueve diapositivas. La plantilla original omite el apartado V.
+El PPT sigue los siete apartados de la estructura docente. La portada y la continuación del punto 4 forman las nueve diapositivas principales. A continuación se añaden 25 fichas individuales de clase, para un total de 34 diapositivas. La plantilla original omite el apartado V.
 
 | Punto | Apartado | Diapositivas |
 | --- | --- | --- |
@@ -56,3 +56,39 @@ Relacionar cada conclusión con un ejemplo presentado. Los fundamentos se observ
 ## Diapositiva 9: VIII. Anexos
 
 Material de apoyo para las preguntas. El UML íntegro reúne las 25 clases del juego y puede ampliarse desde el enlace. El setter rechaza valores inválidos, cambia _valor y notifica a los observadores. La estructura entregada omite el apartado V, por eso los siete puntos son I, II, III, IV, VI, VII y VIII.
+
+## Fichas de las 25 clases
+
+Cada ficha contiene el recorte de la caja del UML original, función, POO, código y fuente. El informe incorpora el mismo desarrollo en sus anexos.
+
+| Clase | Diapositiva | Página del informe |
+| --- | --- | --- |
+| Juego | 10 | 9 |
+| EstadoJuego | 11 | 10 |
+| Jugando | 12 | 11 |
+| Pausa | 13 | 12 |
+| Derrota | 14 | 13 |
+| Victoria | 15 | 14 |
+| NivelCompletado | 16 | 15 |
+| Nivel | 17 | 16 |
+| PuertaCelda | 18 | 17 |
+| Mapa | 19 | 18 |
+| Personaje | 20 | 19 |
+| Prisionero | 21 | 20 |
+| Guardia | 22 | 21 |
+| HabilidadCarrera | 23 | 22 |
+| SistemaRuido | 24 | 23 |
+| Camara | 25 | 24 |
+| Llave | 26 | 25 |
+| PuertaSalida | 27 | 26 |
+| Puntaje | 28 | 27 |
+| ObservadorPuntaje | 29 | 28 |
+| PanelPuntaje | 30 | 29 |
+| Proyectil | 31 | 30 |
+| Alcaide | 32 | 31 |
+| Combate | 33 | 32 |
+| Vista | 34 | 33 |
+
+## Importación en Canva
+
+Descarga el PPTX desde GitHub e impórtalo como presentación en Canva. El texto y el código son editables; las cajas del UML son recortes de la imagen original. No se ha creado ni comprobado un diseño dentro de Canva porque esta sesión no dispone de esa integración. Revisa las diapositivas después de importarlas.
