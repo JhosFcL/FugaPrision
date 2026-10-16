@@ -5,7 +5,8 @@ from collections import deque
 from src.combate import Proyectil
 from src.estados import Jugando, NivelCompletado, Derrota, Victoria
 from src.juego import Juego
-from src.nivel import Nivel, centro, COLUMNAS, FILAS
+from src.nivel import Nivel
+from src.mapa import centro, COLUMNAS, FILAS
 from src.puntuacion import Puntaje
 from tests.test_juego import ubicar
 
@@ -99,7 +100,7 @@ class PruebasCampana(unittest.TestCase):
         mapas = []
         for indice in range(4):
             nivel = Nivel(Puntaje(), indice)
-            mapas.append(set(nivel.muros))
+            mapas.append(set(nivel.mapa.muros))
             inicio = nivel.configuracion["inicio"]
             pendientes = deque([inicio])
             visitadas = {inicio}
@@ -122,15 +123,12 @@ class PruebasCampana(unittest.TestCase):
         self.assertEqual(len({frozenset(m) for m in mapas}), 4)
 
     def test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias(self):
-        rutas = {
-            1: [(2, 1), (22, 1), (22, 11), (21, 11), (22, 11), (22, 2), (21, 2)],
-            2: [(2, 2), (3, 2), (2, 2), (2, 1), (22, 1), (22, 11), (21, 11)],
-        }
-        for indice, ruta in rutas.items():
+        from tests.recorridos import recorrer
+        for indice in (1, 2):
             juego = Juego()
             juego.indice_nivel = indice
             juego._cargar_nivel()
-            caminar(juego, ruta)
+            recorrer(juego)
             self.assertIsInstance(juego.estado, NivelCompletado)
             self.assertEqual(juego.panel.valor, 600)
 

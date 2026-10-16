@@ -119,7 +119,7 @@ class Alcaide:
             fraccion = min((fraccion_interseccion(self.posicion, destino,
                             (x - self.radio, y - self.radio,
                              w + 2 * self.radio, h + 2 * self.radio))
-                            for x, y, w, h in combate.nivel.muros), default=1.0)
+                            for x, y, w, h in combate.nivel.mapa.muros), default=1.0)
             fraccion = max(0, fraccion - 0.005)
             self.destino = (self.x + (destino[0] - self.x) * fraccion,
                             self.y + (destino[1] - self.y) * fraccion)
@@ -177,7 +177,7 @@ class Combate:
             # Se expande cada muro por el radio del proyectil.
             muro = min((fraccion_interseccion(inicio, fin,
                         (x - tiro.radio, y - tiro.radio, w + 2 * tiro.radio, h + 2 * tiro.radio))
-                        for x, y, w, h in self.nivel.muros), default=1.0)
+                        for x, y, w, h in self.nivel.mapa.muros), default=1.0)
             objetivo = jugador.get_posicion() if tiro.enemigo else self.jefe.posicion
             radio = jugador.radio if tiro.enemigo else self.jefe.radio
             impacto = contacto_segmento(inicio, fin, objetivo, radio + tiro.radio)

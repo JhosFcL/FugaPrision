@@ -1,22 +1,22 @@
 # Qué hace cada clase de Fuga de la Prisión
 
-El juego tiene 22 clases en src y todas aparecen en el UML. Cada apartado explica una clase y muestra su código actual completo. main.py y geometria.py contienen funciones; las clases de tests sirven para comprobar el juego.
+El juego tiene 24 clases en src y todas aparecen en el UML. Cada apartado explica una clase y muestra su código actual completo. Las clases de tests sirven para comprobar el juego.
 
 ## Cómo leer el UML
 
-Cada caja tiene tres partes: nombre, atributos y métodos. Los atributos que guardan otros objetos indican su clase: por ejemplo, carrera: HabilidadCarrera o jefe: Alcaide. Los atributos heredados se muestran en la clase base; las propiedades de consulta aparecen como atributos. Se omiten los constructores en el UML, pero se incluyen en el código completo de abajo. Si una clase no tiene atributos propios, ese compartimento queda vacío.
+Cada caja tiene nombre, atributos propios y métodos. Los atributos que guardan otros objetos indican su clase. Los miembros heredados se leen en la base y las propiedades se muestran como atributos. Los constructores se incluyen en el código de esta guía y se omiten en el UML. Si no hay atributos propios, su compartimento queda vacío.
 
-- Rombo negro (*--): composición. La clase junto al rombo crea sus partes.
-- Rombo blanco (o--): agregación. Utiliza objetos creados fuera de ella.
+- Rombo negro (*--): composición. El rombo queda junto a la clase que crea las partes.
+- Rombo blanco (o--): agregación. Guarda objetos que se crearon fuera de ella.
 - Triángulo vacío (<|--): herencia. Apunta a la clase base.
-- Flecha continua (-->): asociación. Guarda una referencia al otro objeto.
-- Flecha discontinua (..>): dependencia. Recibe o utiliza la otra clase.
-- 1, 0..1 y 0..*: uno, ninguno o uno, y ninguno o varios, respectivamente.
-- + indica acceso público; # marca datos o métodos internos por convención de Python. Optional indica que el valor también puede ser None. Las clases abstractas no se instancian directamente.
+- Flecha continua (-->): asociación. Guarda una referencia.
+- Flecha discontinua (..>): dependencia. Recibe o utiliza otra clase.
+- 1, 0..1 y 0..*: uno, ninguno o uno, y ninguno o varios. Optional permite None.
+- + indica acceso público; # señala uso interno por convención de Python. Una clase abstracta exige implementar sus operaciones.
 
-La rúbrica pide asociación, agregación, composición, encapsulamiento, herencia y polimorfismo. Las notas siguientes señalan dónde se aplican. State y Observer son patrones de diseño y se nombran aparte.
+La rúbrica pide asociación, agregación, composición, encapsulamiento, herencia y polimorfismo. Cada explicación señala dónde se aplican. State y Observer son patrones de diseño y se nombran aparte.
 
-El [modelo Mermaid](diagramas/modelo_parcial.mmd) es la fuente del [diagrama como imagen](diagramas/modelo_parcial.png). Los bloques de código son para estudiar; para ejecutar se usan los archivos originales con sus importaciones y funciones auxiliares.
+El [modelo Mermaid](diagramas/modelo_parcial.mmd) es la fuente del [diagrama como imagen](diagramas/modelo_parcial.png). Los bloques son para estudiar: el juego se ejecuta usando los archivos originales, con sus importaciones y funciones auxiliares.
 
 ## 1. Juego
 
@@ -233,13 +233,13 @@ class NivelCompletado(EstadoJuego):
 
 ## 8. Nivel
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L63)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L58)
 
-**Qué hace.** Reúne el mapa y los objetos de uno de los cuatro niveles.
+**Qué hace.** Coordina uno de los cuatro niveles y resuelve sus interacciones.
 
-**Cómo funciona.** Su configuración establece inicio, llave, salida, patrullas y cámaras. Actualiza los personajes y, en la arena, el combate. resolver_interacciones da prioridad a la derrota, concede los premios una sola vez y decide si el nivel o la campaña terminó.
+**Cómo funciona.** Crea el mapa, el sistema de ruido, los personajes, las cámaras, la llave y la salida. Actualiza los personajes polimórficamente. Las cámaras alertan a los guardias; únicamente el contacto con ellos produce captura. En el último nivel actualiza también el combate y sus premios.
 
-**POO que demuestra.** Composición: crea Prisionero, guardias, cámaras, Llave, PuertaSalida y, solo en el último nivel, Combate. Agregación: recibe un Puntaje creado por Juego. Polimorfismo: llama update a los personajes sin distinguir su clase.
+**POO que demuestra.** Composición: crea Mapa, SistemaRuido y los objetos del nivel. Agregación: utiliza el Puntaje creado por Juego. Polimorfismo: llama update a los personajes sin distinguir su clase.
 
 **Clase completa en el código:**
 
@@ -263,12 +263,14 @@ class Nivel:
         self.tiempo = 0.0
         self.teclas = set()
         self.terminado = False
-        self.muros = []
-        self._crear_muros()
+        self.mapa = Mapa(PLANOS[indice])
+        self.ruidos = SistemaRuido(self.mapa)
         self.prisionero = Prisionero(self, *centro(*self.configuracion["inicio"]))
         self.guardias = [Guardia(self, [centro(*p) for p in ruta])
                          for ruta in self.configuracion["rutas"]]
         self.personajes = [self.prisionero, *self.guardias]
+        for guardia in self.guardias:
+            self.ruidos.registrar(guardia)
         self.camaras = [Camara(centro(*posicion), angulo)
                         for posicion, angulo in self.configuracion["camaras"]]
         self.llave = Llave(centro(*self.configuracion["llave"]))
@@ -277,41 +279,8 @@ class Nivel:
         if self.es_final:
             self.llave.disponible = False
 
-    def _crear_muros(self):
-        for fila in range(FILAS):
-            for columna in range(COLUMNAS):
-                borde = fila in (0, FILAS - 1) or columna in (0, COLUMNAS - 1)
-                horizontal = fila in (4, 9) and 5 <= columna <= 18 and columna not in (11, 12)
-                vertical = columna == 5 and fila in (5, 6, 8)
-                divisiones = ((columna == 5 and fila in (1, 2)) or
-                              (columna == 10 and 1 <= fila <= 3) or
-                              (columna == 19 and 1 <= fila <= 3) or
-                              (columna == 18 and 10 <= fila <= 12) or
-                              (columna == 8 and 5 <= fila <= 7))
-                coberturas = ((fila == 6 and 10 <= columna <= 13) or
-                              (fila == 5 and 1 <= columna <= 4 and columna != 3) or
-                              (fila == 8 and 1 <= columna <= 4 and columna != 2) or
-                              (fila == 7 and 20 <= columna <= 22 and columna != 20) or
-                              (fila == 4 and 20 <= columna <= 22 and columna != 22))
-                original = horizontal or vertical or divisiones or coberturas
-                lavanderia = ((columna in (6, 17) and fila in (2, 3, 4, 8, 9, 10)) or
-                              (fila in (4, 9) and 9 <= columna <= 14) or
-                              (columna in (3, 20) and fila in (5, 8)))
-                patio = ((columna in (5, 18) and fila in (2, 3, 7, 11)) or
-                         (fila in (3, 7, 11) and columna in (9, 10, 13, 14)) or
-                         (fila == 9 and columna in (3, 4, 20, 21)))
-                arena = columna in (5, 18) and fila in (5, 8)
-                interior = (original, lavanderia, patio, arena)[self.indice]
-                if borde or interior:
-                    self.muros.append((columna * TAMANO, fila * TAMANO, TAMANO, TAMANO))
-
     def posicion_valida(self, x, y, radio):
-        if x < radio or y < radio or x > COLUMNAS * TAMANO - radio or y > FILAS * TAMANO - radio:
-            return False
-        for muro in self.muros:
-            if circulo_toca_rectangulo(x, y, radio, muro):
-                return False
-        return True
+        return self.mapa.posicion_valida(x, y, radio)
 
     def actualizar(self, dt, teclas):
         if self.terminado:
@@ -321,6 +290,7 @@ class Nivel:
         self.tiempo += dt
         for personaje in self.personajes:
             personaje.update()
+        self._actualizar_camaras()
         if self.combate:
             self.combate.actualizar(dt, self.teclas)
         return self.resolver_interacciones()
@@ -328,11 +298,9 @@ class Nivel:
     def resolver_interacciones(self):
         if self.terminado:
             return None
-        detectado = any(g.puede_detectar(self.prisionero) for g in self.guardias)
-        for camara in self.camaras:
-            detectado = detectado or camara.detectar(self.prisionero, self.muros)
-        # La captura tiene prioridad sobre la llave y la salida.
-        if detectado or (self.combate and self.combate.vida <= 0):
+        capturado = any(g.puede_capturar(self.prisionero) for g in self.guardias)
+        # Ver u oír provoca una respuesta; solamente el contacto causa la captura.
+        if capturado or (self.combate and self.combate.vida <= 0):
             self.terminado = True
             return "derrota"
         if self.combate and self.combate.jefe.derrotado and not self.combate.premiado:
@@ -346,15 +314,117 @@ class Nivel:
             self.puntaje.sumar(500)
             return "victoria" if self.es_final else "nivel_completado"
         return None
+
+    def _actualizar_camaras(self):
+        for camara in self.camaras:
+            camara.activa = camara.detectar(self.prisionero, self.mapa.muros)
+            if camara.activa:
+                for guardia in self.guardias:
+                    guardia.alertar(self.prisionero.get_posicion())
 ```
 
-## 9. Personaje
+## 9. Mapa
+
+**Archivo original:** [src/mapa.py](../src/mapa.py#L82)
+
+**Qué hace.** Conserva el plano y reúne las reglas de paredes y caminos.
+
+**Cómo funciona.** Comprueba el tamaño y el perímetro cerrado del plano. desplazar recorta el movimiento en la primera pared de cada eje, incluso con desplazamientos grandes. buscar_ruta recorre casillas transitables para llegar por puertas y pasillos. distancia_camino sirve para calcular hasta dónde llega un ruido.
+
+**POO que demuestra.** Composición: Nivel crea su propio Mapa. La misma instancia es consultada por los personajes, el combate y SistemaRuido; así comparten las mismas paredes.
+
+**Clase completa en el código:**
+
+```python
+class Mapa:
+    def __init__(self, plano):
+        if len(plano) != FILAS or any(len(fila) != COLUMNAS for fila in plano):
+            raise ValueError("El plano debe tener 24 columnas y 14 filas.")
+        if (any(c != "#" for c in plano[0] + plano[-1]) or
+                any(fila[0] != "#" or fila[-1] != "#" for fila in plano)):
+            raise ValueError("El perímetro del mapa debe estar cerrado.")
+        self.plano = plano
+        self.muros = [(x * TAMANO, y * TAMANO, TAMANO, TAMANO)
+                      for y, fila in enumerate(plano) for x, celda in enumerate(fila) if celda == "#"]
+
+    def posicion_valida(self, x, y, radio):
+        if not all(math.isfinite(v) for v in (x, y, radio)) or radio <= 0:
+            return False
+        if not (radio <= x <= COLUMNAS * TAMANO - radio and
+                radio <= y <= FILAS * TAMANO - radio):
+            return False
+        return not any(x + radio > mx + 0.000001 and x - radio < mx + ancho - 0.000001
+                       and y + radio > my + 0.000001 and y - radio < my + alto - 0.000001
+                       for mx, my, ancho, alto in self.muros)
+
+    def desplazar(self, posicion, dx, dy, radio):
+        """Recorta cada eje en la primera pared; un salto grande tampoco la atraviesa."""
+        x, y = posicion
+        destino_x = max(radio, min(COLUMNAS * TAMANO - radio, x + dx))
+        for mx, my, ancho, alto in self.muros:
+            if y + radio <= my + 0.000001 or y - radio >= my + alto - 0.000001:
+                continue
+            if dx > 0 and x + radio <= mx + 0.000001:
+                destino_x = min(destino_x, mx - radio)
+            elif dx < 0 and x - radio >= mx + ancho - 0.000001:
+                destino_x = max(destino_x, mx + ancho + radio)
+        destino_y = max(radio, min(FILAS * TAMANO - radio, y + dy))
+        for mx, my, ancho, alto in self.muros:
+            if destino_x + radio <= mx + 0.000001 or destino_x - radio >= mx + ancho - 0.000001:
+                continue
+            if dy > 0 and y + radio <= my + 0.000001:
+                destino_y = min(destino_y, my - radio)
+            elif dy < 0 and y - radio >= my + alto - 0.000001:
+                destino_y = max(destino_y, my + alto + radio)
+        return destino_x, destino_y
+
+    def buscar_ruta(self, origen, destino, radio=12):
+        """Busca un camino por suelo transitable, sin cortar esquinas ni cruzar muros."""
+        if not self.posicion_valida(*origen, radio) or not self.posicion_valida(*destino, radio):
+            return []
+        inicio = int(origen[0] // TAMANO), int(origen[1] // TAMANO)
+        final = int(destino[0] // TAMANO), int(destino[1] // TAMANO)
+        if inicio == final:
+            return [destino]
+        pendientes = deque([inicio])
+        anteriores = {inicio: None}
+        while pendientes:
+            actual = pendientes.popleft()
+            if actual == final:
+                break
+            x, y = actual
+            for vecina in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                if vecina not in anteriores and self.posicion_valida(*centro(*vecina), radio):
+                    anteriores[vecina] = actual
+                    pendientes.append(vecina)
+        if final not in anteriores:
+            return []
+        ruta = []
+        actual = final
+        while actual is not None:
+            ruta.append(centro(*actual))
+            actual = anteriores[actual]
+        ruta.reverse()
+        if len(ruta) > 1 or distancia(origen, ruta[0]) < 1:
+            ruta.pop(0)
+        if not ruta or distancia(ruta[-1], destino) > 1:
+            ruta.append(destino)
+        return ruta
+
+    def distancia_camino(self, origen, destino):
+        ruta = self.buscar_ruta(origen, destino)
+        if not ruta:
+            return math.inf
+        return sum(distancia(a, b) for a, b in zip([origen, *ruta], ruta))
+```
+
+## 10. Personaje
 
 **Archivo original:** [src/personajes.py](../src/personajes.py#L39)
 
-**Qué hace.** Reúne la posición y el movimiento compartidos por los personajes.
+**Qué hace.** Reúne posición, tamaño y movimiento de los personajes.
 
-**Cómo funciona.** get_posicion consulta la posición; mover comprueba los muros en pasos pequeños. update es abstracto y cada clase hija debe implementarlo.
+**Cómo funciona.** get_posicion consulta las coordenadas. mover delega el desplazamiento y sus colisiones en el Mapa del nivel. update es abstracto y cada clase hija debe implementarlo. El tamaño del personaje coincide con el dibujo de su cuerpo.
 
 **POO que demuestra.** Abstracción y herencia: base de Prisionero y Guardia. Encapsulamiento: _x, _y y _velocidad son datos internos por convención. Asociación: conserva el Nivel recibido.
 
@@ -367,36 +437,28 @@ class Personaje(ABC):
         self._x = float(x)
         self._y = float(y)
         self._velocidad = velocidad
-        self.radio = 10
+        self.radio = 12
 
     def get_posicion(self):
         return self._x, self._y
 
     def mover(self, dx, dy):
-        # Pasos pequeños evitan atravesar muros a velocidades altas.
-        pasos = max(1, math.ceil(max(abs(dx), abs(dy)) / 4))
-        for _ in range(pasos):
-            nuevo_x = self._x + dx / pasos
-            if self.nivel.posicion_valida(nuevo_x, self._y, self.radio):
-                self._x = nuevo_x
-            nuevo_y = self._y + dy / pasos
-            if self.nivel.posicion_valida(self._x, nuevo_y, self.radio):
-                self._y = nuevo_y
+        self._x, self._y = self.nivel.mapa.desplazar(self.get_posicion(), dx, dy, self.radio)
 
     @abstractmethod
     def update(self):
         pass
 ```
 
-## 10. Prisionero
+## 11. Prisionero
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L66)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L58)
 
-**Qué hace.** Es el personaje controlado por el jugador.
+**Qué hace.** Es el personaje controlado por el jugador y el origen del ruido de pasos.
 
-**Cómo funciona.** Lee las acciones de movimiento del nivel, normaliza la diagonal y aplica la carrera. Consulta o recoge la llave mediante métodos.
+**Cómo funciona.** Se mueve con WASD o flechas. Ctrl reduce velocidad y ruido; Shift activa la carrera. Solo acumula pasos cuando realmente se desplaza: quedarse quieto o empujar una pared no genera pasos. Cada 22 píxeles emite un ruido de alcance 20 en sigilo, 80 al caminar o 210 al correr. La carrera mantiene su duración y recarga.
 
-**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Composición: crea HabilidadCarrera. Encapsulamiento: cambia _tiene_llave con recoger_llave y lo consulta con tiene_llave.
+**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Composición: crea HabilidadCarrera. Encapsulamiento: consulta y cambia _tiene_llave mediante métodos. Dependencia: utiliza SistemaRuido para emitir pasos.
 
 **Clase completa en el código:**
 
@@ -406,6 +468,9 @@ class Prisionero(Personaje):
         super().__init__(nivel, x, y, 145)
         self._tiene_llave = False
         self.carrera = HabilidadCarrera()
+        self.movimiento = "QUIETO"
+        self.ruido = 0.0
+        self._pasos = 0.0
 
     def tiene_llave(self):
         return self._tiene_llave
@@ -418,21 +483,34 @@ class Prisionero(Personaje):
         dx = int("derecha" in teclas) - int("izquierda" in teclas)
         dy = int("abajo" in teclas) - int("arriba" in teclas)
         norma = math.hypot(dx, dy)
+        self.movimiento = "QUIETO"
+        self.ruido = 0.0
         if norma > 0:
-            avance = self._velocidad * self.carrera.get_multiplicador() * self.nivel.dt
+            sigilo = "sigilo" in teclas
+            multiplicador = 0.55 if sigilo else self.carrera.get_multiplicador()
+            avance = self._velocidad * multiplicador * self.nivel.dt
+            anterior = self.get_posicion()
             self.mover(dx / norma * avance, dy / norma * avance)
+            recorrido = distancia(anterior, self.get_posicion())
+            if recorrido > 0.001:
+                self.movimiento = "SIGILO" if sigilo else ("CORRE" if multiplicador > 1 else "CAMINA")
+                self.ruido = 20.0 if sigilo else (210.0 if multiplicador > 1 else 80.0)
+                self._pasos += recorrido
+                if self._pasos >= 22:
+                    self._pasos %= 22
+                    self.nivel.ruidos.emitir(self.get_posicion(), self.ruido)
         self.carrera.actualizar(self.nivel.dt)
 ```
 
-## 11. Guardia
+## 12. Guardia
 
-**Archivo original:** [src/personajes.py](../src/personajes.py#L89)
+**Archivo original:** [src/personajes.py](../src/personajes.py#L97)
 
-**Qué hace.** Patrulla una ruta y detecta al prisionero.
+**Qué hace.** Patrulla, escucha ruidos, persigue al jugador y lo captura por contacto.
 
-**Cómo funciona.** update lo mueve hacia el siguiente punto y orienta su visión. puede_detectar combina un cono frontal de 155 píxeles con una alerta cercana de 32 píxeles en todas direcciones. Considera el cuerpo del jugador y los muros bloquean ambos campos.
+**Cómo funciona.** PATRULLA recorre sus puntos. escuchar cambia a INVESTIGA y conserva la posición del ruido. Ver al jugador o recibir una alerta de cámara cambia a PERSIGUE. Si pierde la visión, BUSCA en la última posición conocida, sin seguir una posición oculta que desconoce. Después de buscar durante tres segundos vuelve a su patrulla. _ir_a utiliza caminos del Mapa y las mismas colisiones del jugador para rodear las paredes.
 
-**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Dependencia: puede_detectar recibe al Prisionero para comprobarlo, sin guardarlo.
+**POO que demuestra.** Herencia de Personaje y polimorfismo en update. Actúa como oyente de SistemaRuido mediante escuchar. Dependencia: consulta al Prisionero para verlo o comprobar contacto. Su cambio de comportamiento se organiza en métodos de la propia clase.
 
 **Clase completa en el código:**
 
@@ -447,34 +525,85 @@ class Guardia(Personaje):
         self.angulo = math.atan2(ruta[1][1] - ruta[0][1], ruta[1][0] - ruta[0][0])
         self.alcance = 155
         self.apertura = math.radians(65)
-        self.radio_alerta = 32
+        self.modo = "PATRULLA"
+        self.ultima_posicion = None
+        self._recuerdo = 0.0
+        self._busqueda = 3.0
+        self._camino = []
+        self._destino = None
+        self._recalculo = 0.0
 
     def update(self):
-        objetivo = self.ruta[self._objetivo]
-        largo = distancia(self.get_posicion(), objetivo)
-        if largo < 0.01:
-            self._objetivo = (self._objetivo + 1) % len(self.ruta)
-            objetivo = self.ruta[self._objetivo]
-            largo = distancia(self.get_posicion(), objetivo)
+        dt = self.nivel.dt
+        self._recalculo = max(0.0, self._recalculo - dt)
+        self._recuerdo = max(0.0, self._recuerdo - dt)
+        if self.puede_detectar(self.nivel.prisionero):
+            self.alertar(self.nivel.prisionero.get_posicion())
+        elif self.modo == "PERSIGUE" and self._recuerdo == 0:
+            self.modo = "BUSCA"
+        if self.modo == "PATRULLA":
+            if self._ir_a(self.ruta[self._objetivo], self._velocidad):
+                self._objetivo = (self._objetivo + 1) % len(self.ruta)
+        else:
+            velocidad = 155 if self.modo == "PERSIGUE" else 95
+            if self._ir_a(self.ultima_posicion, velocidad) and self.modo != "PERSIGUE":
+                self.angulo += dt * 1.6
+                self._busqueda = max(0.0, self._busqueda - dt)
+                if self._busqueda == 0:
+                    self._volver_a_patrulla()
+
+    def escuchar(self, posicion):
+        if self.modo == "PERSIGUE":
+            return
+        self.modo = "INVESTIGA"
+        self.ultima_posicion = posicion
+        self._busqueda = 3.0
+
+    def alertar(self, posicion):
+        self.modo = "PERSIGUE"
+        self.ultima_posicion = posicion
+        self._recuerdo = 0.4
+        self._busqueda = 3.0
+
+    def _volver_a_patrulla(self):
+        self.modo = "PATRULLA"
+        self.ultima_posicion = None
+        self._objetivo = min(range(len(self.ruta)), key=lambda i:
+                             self.nivel.mapa.distancia_camino(self.get_posicion(), self.ruta[i]))
+        self._recalculo = 0.0
+        self._destino = None
+
+    def _ir_a(self, objetivo, velocidad):
+        if distancia(self.get_posicion(), objetivo) <= 2:
+            return True
+        if (self._recalculo == 0 or self._destino is None
+                or distancia(self._destino, objetivo) > 18):
+            self._camino = self.nivel.mapa.buscar_ruta(self.get_posicion(), objetivo, self.radio)
+            self._destino = objetivo
+            self._recalculo = 0.35
+        if not self._camino:
+            return False
+        dx = self._camino[0][0] - self._x
+        dy = self._camino[0][1] - self._y
+        largo = math.hypot(dx, dy)
         if largo > 0:
-            dx = objetivo[0] - self._x
-            dy = objetivo[1] - self._y
             self.angulo = math.atan2(dy, dx)
-            avance = min(largo, self._velocidad * self.nivel.dt)
+            avance = min(largo, velocidad * self.nivel.dt)
             self.mover(dx / largo * avance, dy / largo * avance)
+        if distancia(self.get_posicion(), self._camino[0]) < 0.5:
+            self._camino.pop(0)
+        return distancia(self.get_posicion(), objetivo) <= 2
 
     def puede_detectar(self, prisionero):
-        posicion = self.get_posicion()
-        objetivo = prisionero.get_posicion()
-        # Cerca del guardia no se puede permanecer a su lado ni a su espalda.
-        if dentro_de_vision(posicion, objetivo, self.angulo, self.radio_alerta,
-                            math.tau, self.nivel.muros, prisionero.radio):
-            return True
-        return dentro_de_vision(posicion, objetivo, self.angulo, self.alcance,
-                               self.apertura, self.nivel.muros, prisionero.radio)
+        return dentro_de_vision(self.get_posicion(), prisionero.get_posicion(), self.angulo,
+                               self.alcance, self.apertura, self.nivel.mapa.muros, prisionero.radio)
+
+    def puede_capturar(self, prisionero):
+        return (distancia(self.get_posicion(), prisionero.get_posicion()) <= self.radio + prisionero.radio
+                and hay_linea_de_vision(self.get_posicion(), prisionero.get_posicion(), self.nivel.mapa.muros))
 ```
 
-## 12. HabilidadCarrera
+## 13. HabilidadCarrera
 
 **Archivo original:** [src/personajes.py](../src/personajes.py#L6)
 
@@ -520,15 +649,46 @@ class HabilidadCarrera:
         return "LISTA  [SHIFT]"
 ```
 
-## 13. Camara
+## 14. SistemaRuido
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L30)
+**Archivo original:** [src/ruido.py](../src/ruido.py#L4)
 
-**Qué hace.** Vigila una zona fija del mapa.
+**Qué hace.** Emite los ruidos de pasos y avisa a los guardias que pueden escucharlos.
 
-**Cómo funciona.** Recibe su posición y orientación. detectar comprueba el cuerpo visible del prisionero dentro de su cono de 95 píxeles; los muros lo ocultan. La lente dibujada apunta en esa misma dirección.
+**Cómo funciona.** registrar conserva los oyentes sin duplicarlos. emitir mide la distancia del camino transitable hasta cada guardia; si está dentro del alcance, llama escuchar con la posición del paso. El sistema no necesita conocer cómo actúa cada guardia después del aviso.
 
-**POO que demuestra.** Composición: Nivel crea sus cámaras. Dependencia: detectar recibe al Prisionero, sin conservarlo.
+**POO que demuestra.** Composición: Nivel crea el sistema. Asociación: conserva el Mapa recibido. Agregación: registra guardias que Nivel ya creó. Aplica una notificación de tipo Observer: el emisor avisa a los oyentes registrados.
+
+**Clase completa en el código:**
+
+```python
+class SistemaRuido:
+    def __init__(self, mapa):
+        self.mapa = mapa
+        self.oyentes = []
+
+    def registrar(self, oyente):
+        if oyente not in self.oyentes:
+            self.oyentes.append(oyente)
+
+    def emitir(self, posicion, alcance):
+        if alcance <= 0:
+            return
+        for oyente in self.oyentes:
+            recorrido = self.mapa.distancia_camino(posicion, oyente.get_posicion())
+            if recorrido <= alcance:
+                oyente.escuchar(posicion)
+```
+
+## 15. Camara
+
+**Archivo original:** [src/nivel.py](../src/nivel.py#L24)
+
+**Qué hace.** Vigila una zona fija y avisa a los guardias cuando ve al jugador.
+
+**Cómo funciona.** detectar considera el cuerpo del prisionero y la cobertura de los muros. Nivel actualiza activa y alerta a sus guardias si la cámara lo ve. La cámara cambia de color al activarse; no causa una derrota instantánea.
+
+**POO que demuestra.** Composición: Nivel crea sus cámaras. Dependencia: detectar recibe al Prisionero y los muros para comprobar visibilidad.
 
 **Clase completa en el código:**
 
@@ -539,15 +699,16 @@ class Camara:
         self.angulo = angulo
         self.alcance = 95
         self.apertura = math.radians(60)
+        self.activa = False
 
     def detectar(self, prisionero, muros):
         return dentro_de_vision(self.posicion, prisionero.get_posicion(),
                                self.angulo, self.alcance, self.apertura, muros, prisionero.radio)
 ```
 
-## 14. Llave
+## 16. Llave
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L42)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L37)
 
 **Qué hace.** Es el objeto que habilita la salida.
 
@@ -571,9 +732,9 @@ class Llave:
         return False
 ```
 
-## 15. PuertaSalida
+## 17. PuertaSalida
 
-**Archivo original:** [src/nivel.py](../src/nivel.py#L55)
+**Archivo original:** [src/nivel.py](../src/nivel.py#L50)
 
 **Qué hace.** Representa el lugar por el que se termina un nivel.
 
@@ -592,7 +753,7 @@ class PuertaSalida:
         return prisionero.tiene_llave() and distancia(self.posicion, prisionero.get_posicion()) < 22
 ```
 
-## 16. Puntaje
+## 18. Puntaje
 
 **Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L18)
 
@@ -642,7 +803,7 @@ class Puntaje:
             observador.actualizar_puntaje(self._valor)
 ```
 
-## 17. ObservadorPuntaje
+## 19. ObservadorPuntaje
 
 **Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L4)
 
@@ -661,7 +822,7 @@ class ObservadorPuntaje(ABC):
         pass
 ```
 
-## 18. PanelPuntaje
+## 20. PanelPuntaje
 
 **Archivo original:** [src/puntuacion.py](../src/puntuacion.py#L10)
 
@@ -682,7 +843,7 @@ class PanelPuntaje(ObservadorPuntaje):
         self.valor = valor
 ```
 
-## 19. Proyectil
+## 21. Proyectil
 
 **Archivo original:** [src/combate.py](../src/combate.py#L7)
 
@@ -717,7 +878,7 @@ class Proyectil:
         return inicio, self.posicion
 ```
 
-## 20. Alcaide
+## 22. Alcaide
 
 **Archivo original:** [src/combate.py](../src/combate.py#L47)
 
@@ -805,7 +966,7 @@ class Alcaide:
             fraccion = min((fraccion_interseccion(self.posicion, destino,
                             (x - self.radio, y - self.radio,
                              w + 2 * self.radio, h + 2 * self.radio))
-                            for x, y, w, h in combate.nivel.muros), default=1.0)
+                            for x, y, w, h in combate.nivel.mapa.muros), default=1.0)
             fraccion = max(0, fraccion - 0.005)
             self.destino = (self.x + (destino[0] - self.x) * fraccion,
                             self.y + (destino[1] - self.y) * fraccion)
@@ -814,7 +975,7 @@ class Alcaide:
         self.espera = 1.45 if self.fase == 1 else 0.9
 ```
 
-## 21. Combate
+## 23. Combate
 
 **Archivo original:** [src/combate.py](../src/combate.py#L131)
 
@@ -876,7 +1037,7 @@ class Combate:
             # Se expande cada muro por el radio del proyectil.
             muro = min((fraccion_interseccion(inicio, fin,
                         (x - tiro.radio, y - tiro.radio, w + 2 * tiro.radio, h + 2 * tiro.radio))
-                        for x, y, w, h in self.nivel.muros), default=1.0)
+                        for x, y, w, h in self.nivel.mapa.muros), default=1.0)
             objetivo = jugador.get_posicion() if tiro.enemigo else self.jefe.posicion
             radio = jugador.radio if tiro.enemigo else self.jefe.radio
             impacto = contacto_segmento(inicio, fin, objetivo, radio + tiro.radio)
@@ -893,15 +1054,15 @@ class Combate:
         self.proyectiles = [] if self.jefe.derrotado else vivos
 ```
 
-## 22. Vista
+## 24. Vista
 
 **Archivo original:** [src/vista.py](../src/vista.py#L12)
 
-**Qué hace.** Dibuja el juego con Pygame.
+**Qué hace.** Dibuja la interfaz, los mapas y los personajes stickman con Pygame.
 
-**Cómo funciona.** dibujar ordena el encabezado, mapa, objetos, personajes, combate y controles. Los métodos de apoyo dibujan cada parte. Los conos y los círculos de alerta se recortan con la misma geometría de muros usada por la detección.
+**Cómo funciona.** dibujar ordena encabezado, mapa, objetivos, cámaras, guardias, combate y controles. El encabezado muestra ruido y alerta. Una marca ? señala investigación o búsqueda y ! señala persecución; la dirección de la mirada se indica en el guardia. Las cámaras conservan su campo visible. El dibujo del personaje se ajusta a su tamaño de colisión.
 
-**POO que demuestra.** Dependencia: recibe Juego, Nivel y Camara para consultar y dibujar sus datos. No crea ni actualiza las reglas de la partida.
+**POO que demuestra.** Dependencia: recibe Juego, Nivel, Camara y Guardia para consultar y dibujar sus datos. Las reglas de ruido, persecución y colisión se resuelven fuera de esta clase.
 
 **Clase completa en el código:**
 
@@ -923,22 +1084,22 @@ class Vista:
 
     def _dibujar_stickman(self, posicion, color, paso=0):
         x, y = posicion
-        pygame.draw.ellipse(self.pantalla, (15, 25, 33), (x - 11, y + 12, 22, 6))
+        pygame.draw.ellipse(self.pantalla, (15, 25, 33), (x - 9, y + 9, 18, 5))
 
-        cabeza = (x, y - 11)
-        torso = ((x, y - 5), (x, y + 5))
-        brazo_izquierdo = ((x, y - 2), (x - 9, y + 3))
-        brazo_derecho = ((x, y - 2), (x + 9, y + 3))
-        pierna_izquierda = ((x, y + 5), (x - 7 + paso, y + 15))
-        pierna_derecha = ((x, y + 5), (x + 7 - paso, y + 15))
+        cabeza = (x, y - 7)
+        torso = ((x, y - 2), (x, y + 4))
+        brazo_izquierdo = ((x, y), (x - 8, y + 3))
+        brazo_derecho = ((x, y), (x + 8, y + 3))
+        pierna_izquierda = ((x, y + 4), (x - 5 + paso, y + 9))
+        pierna_derecha = ((x, y + 4), (x + 5 - paso, y + 9))
 
         for inicio, fin in (torso, brazo_izquierdo, brazo_derecho,
                             pierna_izquierda, pierna_derecha):
-            pygame.draw.line(self.pantalla, (14, 27, 35), inicio, fin, 7)
-            pygame.draw.line(self.pantalla, color, inicio, fin, 4)
+            pygame.draw.line(self.pantalla, (14, 27, 35), inicio, fin, 5)
+            pygame.draw.line(self.pantalla, color, inicio, fin, 3)
 
-        pygame.draw.circle(self.pantalla, (14, 27, 35), cabeza, 7)
-        pygame.draw.circle(self.pantalla, color, cabeza, 5)
+        pygame.draw.circle(self.pantalla, (14, 27, 35), cabeza, 5)
+        pygame.draw.circle(self.pantalla, color, cabeza, 4)
 
     def _dibujar_vision(self, origen, angulo, alcance, apertura, muros, color):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
@@ -958,10 +1119,10 @@ class Vista:
             self._dibujar_camara(camara)
         paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
         for guardia in nivel.guardias:
-            self._dibujar_stickman(self.punto(guardia.get_posicion()), (242, 102, 113), paso_guardia)
+            self._dibujar_guardia(guardia, paso_guardia)
         if nivel.combate:
             self._dibujar_combate(nivel)
-        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 3) if nivel.teclas else 0
+        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 2) if nivel.prisionero.movimiento != "QUIETO" else 0
         if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
             self._dibujar_stickman(self.punto(nivel.prisionero.get_posicion()),
                                   (101, 234, 204), paso_prisionero)
@@ -976,6 +1137,14 @@ class Vista:
                    70, 66, (139, 159, 178), self.pequena)
         self.texto(f"PUNTOS  {juego.panel.valor:04d}", 738, 28, (111, 226, 188), self.mediana)
         self.texto(f"TIEMPO  {nivel.tiempo:05.1f} s", 740, 62, (139, 159, 178), self.pequena)
+        if not nivel.es_final:
+            movimiento = nivel.prisionero.movimiento
+            ruido = {"QUIETO": "NINGUNO", "SIGILO": "BAJO", "CAMINA": "MEDIO", "CORRE": "ALTO"}[movimiento]
+            perseguido = any(g.modo == "PERSIGUE" for g in nivel.guardias)
+            investigan = any(g.modo != "PATRULLA" for g in nivel.guardias)
+            estado = "¡TE PERSIGUEN!" if perseguido else ("INVESTIGAN LA ZONA" if investigan else "PATRULLA TRANQUILA")
+            self.texto("RUIDO  " + ruido, 70, 86, (164, 201, 232), self.pequena)
+            self.texto(estado, 360, 86, (250, 142, 147) if perseguido else (236, 205, 117), self.pequena)
         llave = "LLAVE OBTENIDA · BUSCA LA SALIDA" if nivel.prisionero.tiene_llave() else "OBJETIVO · CONSIGUE LA LLAVE Y ESCAPA"
         if nivel.combate and not nivel.combate.jefe.derrotado:
             llave = "DERROTA AL ALCAIDE · ESPACIO o IJKL para disparar"
@@ -990,12 +1159,8 @@ class Vista:
                 rect = pygame.Rect(ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO, TAMANO, TAMANO)
                 pygame.draw.rect(self.pantalla, (33, 48, 60), rect, 1)
         for camara in nivel.camaras:
-            self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.muros, (241, 184, 79))
-        for guardia in nivel.guardias:
-            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.radio_alerta,
-                                 math.tau, nivel.muros, (242, 102, 113))
-            self._dibujar_vision(guardia.get_posicion(), guardia.angulo, guardia.alcance, guardia.apertura, nivel.muros, (242, 102, 113))
-        for muro in nivel.muros:
+            self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.mapa.muros, (241, 184, 79))
+        for muro in nivel.mapa.muros:
             rect = pygame.Rect(muro[0] + ORIGEN[0], muro[1] + ORIGEN[1], muro[2], muro[3])
             pygame.draw.rect(self.pantalla, (62, 78, 90), rect)
             pygame.draw.rect(self.pantalla, (77, 94, 107), rect, 1)
@@ -1017,15 +1182,24 @@ class Vista:
         x, y = self.punto(camara.posicion)
         dx, dy = math.cos(camara.angulo), math.sin(camara.angulo)
         lente = (round(x + dx * 9), round(y + dy * 9))
-        pygame.draw.circle(self.pantalla, (244, 190, 93), (x, y), 10)
+        pygame.draw.circle(self.pantalla, (250, 100, 110) if camara.activa else (244, 190, 93), (x, y), 10)
         pygame.draw.line(self.pantalla, (37, 43, 48), (x, y), lente, 9)
         pygame.draw.circle(self.pantalla, (101, 159, 180), lente, 3)
         self.texto("CÁMARA", x - 30, y - 34, (244, 190, 93), self.pequena)
 
+    def _dibujar_guardia(self, guardia, paso):
+        x, y = self.punto(guardia.get_posicion())
+        self._dibujar_stickman((x, y), (242, 102, 113), paso)
+        mirada = (round(x + math.cos(guardia.angulo) * 12),
+                  round(y - 7 + math.sin(guardia.angulo) * 12))
+        pygame.draw.line(self.pantalla, (255, 205, 184), (x, y - 7), mirada, 2)
+        marca = "!" if guardia.modo == "PERSIGUE" else ("?" if guardia.modo != "PATRULLA" else "")
+        self.texto(marca, x - 5, y - 33, (255, 209, 108), self.mediana)
+
     def _dibujar_controles(self, nivel):
-        self.texto("WASD / FLECHAS  Mover     SHIFT  Correr     P / ESC  Pausa" +
+        self.texto("WASD / FLECHAS  Mover    CTRL  Sigilo    SHIFT  Correr    P / ESC  Pausa" +
                    ("     ESPACIO / IJKL  Disparar" if nivel.es_final else ""), 69, 680, fuente=self.pequena)
-        consejo = "Cono: visión frontal. Círculo: alerta cercana en todas direcciones. Los muros te ocultan."
+        consejo = "Correr hace ruido. Si te ven, huye y rompe la visión tras una pared. Solo el contacto te captura."
         if nivel.es_final:
             consejo = "Espacio apunta al jefe; IJKL fija la dirección. Esquiva los avisos rojos. Tras vencerlo, recoge la llave."
         self.texto(consejo, 69, 709, (139, 159, 178), self.pequena)
@@ -1096,8 +1270,8 @@ class Vista:
             accion = "ENTER para continuar · N para empezar de cero"
             color = (111, 226, 188)
         else:
-            titulo = "EL ALCAIDE TE DERROTÓ" if juego.nivel.es_final else "TE HAN DETECTADO"
-            detalle = "Esquiva los avisos y usa la carrera." if juego.nivel.es_final else "Busca otra ruta y observa la vigilancia."
+            titulo = "EL ALCAIDE TE DERROTÓ" if juego.nivel.es_final else "TE HAN ATRAPADO"
+            detalle = "Esquiva los avisos y usa la carrera." if juego.nivel.es_final else "Usa Ctrl para acercarte con menos ruido."
             accion = "R: reintentar este nivel · N: empezar de cero"
             color = (250, 142, 147)
         self.texto(titulo, 247, 286, color, self.mediana)

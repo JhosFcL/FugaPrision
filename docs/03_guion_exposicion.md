@@ -8,17 +8,18 @@ Duración sugerida: 6 a 8 minutos. El reparto es una propuesta para ensayar; tod
 
 “Nuestro proyecto es Fuga de la Prisión, temática 13. Es un videojuego 2D en Python y Pygame. El prisionero debe conseguir una llave y escapar evitando guardias y cámaras. La versión actual tiene tres zonas de sigilo y una arena final contra el Alcaide.”
 
-Mostrar el primer nivel y sus controles. Señalar al prisionero verde, al guardia rojo, la cámara amarilla, la llave y la salida. El cono representa visión frontal; el círculo rojo alrededor del guardia representa alerta cercana en todas direcciones. Los muros bloquean la vigilancia y la detección considera el cuerpo del prisionero, no solo su centro.
+Mostrar el primer nivel y sus controles. Señalar al prisionero verde, los guardias rojos, la cámara amarilla, la llave y la salida. Los pasos generan ruido: Ctrl reduce su alcance y correr lo aumenta. Un signo ? indica que un guardia investiga o busca y ! indica que persigue. Ver al jugador provoca persecución; la captura ocurre cuando lo alcanzan.
 
 ## 2. Clases y fundamentos POO
 
 **Mickele Carlos Torres Velazco, aproximadamente 2 minutos.**
 
-“El juego tiene 22 clases y todas aparecen en el UML. Cada caja presenta nombre, atributos y métodos. Los tipos de los atributos indican qué objetos guarda una clase: por ejemplo, Nivel guarda guardias de tipo Guardia y Combate guarda un jefe de tipo Alcaide.”
+“El juego tiene 24 clases y todas aparecen en el UML. Cada caja presenta nombre, atributos y métodos. Los tipos de los atributos indican qué objetos guarda una clase: por ejemplo, Nivel guarda guardias de tipo Guardia y Combate guarda un jefe de tipo Alcaide.”
 
 - **Asociación:** Personaje recibe y guarda su Nivel.
 - **Agregación:** Nivel utiliza el Puntaje que Juego creó. El mismo objeto se conserva cuando cambia el nivel.
 - **Composición:** Nivel crea sus personajes, cámaras, llave, salida y, en la arena, Combate. Prisionero crea HabilidadCarrera; Combate crea Alcaide y Proyectil.
+- Mapa conserva las paredes y los caminos. SistemaRuido registra a los guardias y les avisa cuando pueden escuchar un paso. Ambas clases se crean dentro de Nivel y aparecen en el UML.
 - **Herencia:** Prisionero y Guardia derivan de Personaje. Los cinco estados concretos derivan de EstadoJuego. PanelPuntaje deriva de ObservadorPuntaje.
 - **Polimorfismo:** Nivel llama `personaje.update()` sin distinguir si es Prisionero o Guardia. Juego hace lo mismo con las operaciones de su estado actual.
 - **Encapsulamiento:** Puntaje consulta y cambia `_valor` mediante métodos que validan el dato. El guion bajo indica uso interno por convención de Python.
@@ -42,21 +43,21 @@ Mostrar la suscripción en `juego.py` y los métodos de `puntuacion.py`.
 **Piero Cemei Romero Meza, aproximadamente 2 minutos.**
 
 1. Mover contra un muro y activar la carrera con Shift.
-2. Acercarse al costado de un guardia para mostrar la alerta cercana. Reintentar con R.
+2. Correr cerca de una puerta para que el guardia investigue el ruido. Entrar en su mirada y mostrar la persecución; dejarse alcanzar y reintentar con R.
 3. Recoger la llave: da 100 puntos. Escapar: suma 500 puntos.
 4. Mostrar NivelCompletado y continuar con Enter. El puntaje se conserva.
 5. Explicar la arena con sus capturas: Espacio apunta al jefe; IJKL fija la dirección del disparo. El Alcaide avisa sus ataques y cambia de fase al bajar a la mitad de vida.
 
 La campaña completa da 3400 puntos: cuatro llaves, cuatro salidas y 1000 puntos por el jefe. Al perder, R repite el nivel y conserva solo los puntos de niveles anteriores; N empieza desde cero.
 
-“Las 40 pruebas automáticas revisan movimiento, colisiones, vigilancia cercana y frontal, cobertura de los muros, puntaje, estados, transición de niveles y combate. La verificación completó los cuatro niveles con movimiento y disparos, sin desactivar enemigos, y generó diez capturas.”
+“Las 47 pruebas automáticas revisan paredes, ruido, investigación, persecución, captura, memoria de la última posición, puntaje, estados, transición de niveles y combate. La verificación completó los cuatro niveles con movimiento y disparos, sin desactivar enemigos, y generó doce capturas.”
 
-Para ensayar el primer nivel: recoger la llave por la izquierda, volver hasta la cobertura, observar la patrulla y cruzar por la parte inferior del pasillo central manteniendo distancia del círculo rojo. Rodear las coberturas de la derecha y subir a la salida. Ensayar con teclado en el equipo de exposición.
+Para ensayar: usar las puertas entre los sectores, observar hacia dónde mira la patrulla y acercarse con Ctrl. Si un guardia persigue, usar la carrera para tomar distancia y rodear una pared o una cobertura para perder su visión. Ensayar el recorrido hasta la llave y la salida con teclado.
 
 ## Preguntas que deben poder responder
 
-- **¿Cuántas clases y niveles hay?** 22 clases en `src` y cuatro niveles. Las clases de `tests` sirven para comprobar el juego y no son sus personajes o componentes.
-- **¿Por qué hay un círculo y un cono?** El cono representa visión a distancia; el círculo impide permanecer pegado al guardia por detrás o por un costado. Ambos respetan los muros.
+- **¿Cuántas clases y niveles hay?** 24 clases en `src` y cuatro niveles. Las clases de `tests` sirven para comprobar el juego y no son sus personajes o componentes.
+- **¿Cómo se entera el guardia?** Escucha pasos que llegan por el mapa, ve al jugador o recibe una alerta de cámara. Al perderlo busca en la última posición conocida; no conoce su nueva posición oculta.
 - **¿Qué pasa si la detección coincide con la salida?** La derrota tiene prioridad y no se concede el premio de salida.
 - **¿Por qué Nivel recibe Puntaje?** Para conservar el mismo objeto al cambiar de nivel; eso permite mostrar la agregación.
 - **¿Qué contiene Combate?** Un Alcaide y una lista de Proyectil creados por él; el UML muestra esos tipos y sus composiciones.

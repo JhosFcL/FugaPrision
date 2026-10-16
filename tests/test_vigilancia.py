@@ -1,63 +1,134 @@
-"""Regresiones de detección cercana, cuerpo visible y cobertura de los muros."""
+"""Ruido, persecución, memoria de la última posición y captura por contacto."""
 import math
 import unittest
+from unittest.mock import patch
 
-from src.geometria import dentro_de_vision, poligono_vision
+from src.estados import Derrota, Jugando
+from src.geometria import dentro_de_vision
 from src.juego import Juego
+from src.mapa import Mapa, centro
 from src.nivel import Camara
 from tests.test_juego import ubicar
 
 
+def mapa_prueba(muros=()):
+    filas = [["#" if x in (0, 23) or y in (0, 13) else "." for x in range(24)] for y in range(14)]
+    for x, y in muros:
+        filas[y][x] = "#"
+    return Mapa(tuple("".join(fila) for fila in filas))
+
+
 class PruebasVigilancia(unittest.TestCase):
     def setUp(self):
-        self.nivel = Juego().nivel
-        self.nivel.muros = []
+        self.juego = Juego()
+        self.nivel = self.juego.nivel
+        self.nivel.mapa = mapa_prueba()
+        self.nivel.ruidos.mapa = self.nivel.mapa
         self.guardia = self.nivel.guardias[0]
-        ubicar(self.guardia, (100, 100))
+        self.nivel.guardias = [self.guardia]
+        self.nivel.personajes = [self.nivel.prisionero, self.guardia]
+        self.nivel.ruidos.oyentes = [self.guardia]
+        self.nivel.camaras = []
+        ubicar(self.guardia, centro(7, 5))
         self.guardia.angulo = 0
+        ubicar(self.nivel.prisionero, centro(3, 11))
 
-    def test_alerta_cercana_detecta_a_los_lados_y_por_detras(self):
-        for dx, dy in ((0, 35), (0, -35), (-35, 0), (35, 0)):
-            with self.subTest(desplazamiento=(dx, dy)):
-                ubicar(self.nivel.prisionero, (100 + dx, 100 + dy))
-                self.assertTrue(self.guardia.puede_detectar(self.nivel.prisionero))
+    def test_ruido_investiga_sin_captura_instantanea(self):
+        origen = centro(7, 7)
+        self.nivel.ruidos.emitir(origen, 100)
+        self.assertEqual(self.guardia.modo, "INVESTIGA")
+        self.assertEqual(self.guardia.ultima_posicion, origen)
+        self.assertIsInstance(self.juego.estado, Jugando)
 
-    def test_cuerpo_que_toca_alerta_tambien_se_detecta(self):
-        ubicar(self.nivel.prisionero, (100, 140))
-        self.assertTrue(self.guardia.puede_detectar(self.nivel.prisionero))
-        ubicar(self.nivel.prisionero, (100, 145))
-        self.assertFalse(self.guardia.puede_detectar(self.nivel.prisionero))
+    def test_carrera_por_pasillo_real_hace_investigar_sin_teletransportes(self):
+        from tests.recorridos import acercarse_haciendo_ruido
+        juego = Juego()
+        acercarse_haciendo_ruido(juego)
+        self.assertTrue(any(g.modo == "INVESTIGA" for g in juego.nivel.guardias))
+        self.assertIsInstance(juego.estado, Jugando)
 
-    def test_espalda_fuera_de_alerta_sigue_permitiendo_sigilo(self):
-        ubicar(self.nivel.prisionero, (30, 100))
-        self.assertFalse(self.guardia.puede_detectar(self.nivel.prisionero))
+    def test_sonido_rodea_paredes_sin_atravesarlas(self):
+        self.nivel.mapa = mapa_prueba([(8, 5)])
+        self.nivel.ruidos.mapa = self.nivel.mapa
+        origen = centro(9, 5)
+        self.nivel.ruidos.emitir(origen, 80)
+        self.assertEqual(self.guardia.modo, "PATRULLA")
+        self.nivel.ruidos.emitir(origen, 210)
+        self.assertEqual(self.guardia.modo, "INVESTIGA")
 
-    def test_alerta_y_vision_frontal_respetan_muros(self):
-        self.nivel.muros = [(115, 80, 5, 40)]
-        ubicar(self.nivel.prisionero, (135, 100))
-        self.assertFalse(self.guardia.puede_detectar(self.nivel.prisionero))
-        self.nivel.muros.clear()
-        self.assertTrue(self.guardia.puede_detectar(self.nivel.prisionero))
+    def test_quieto_o_empujando_pared_no_emite_pasos(self):
+        jugador = self.nivel.prisionero
+        ubicar(jugador, (48, 90))
+        with patch.object(self.nivel.ruidos, "emitir") as emitir:
+            for teclas in (set(), {"izquierda"}):
+                for _ in range(20):
+                    self.nivel.dt = .05
+                    self.nivel.teclas = teclas
+                    jugador.update()
+            emitir.assert_not_called()
+        self.assertEqual(jugador.get_posicion(), (48, 90))
 
-    def test_camara_detecta_cuerpo_parcialmente_dentro_del_cono(self):
+    def test_sigilo_caminar_y_carrera_emiten_distinto_ruido(self):
+        for accion, esperado in (({"sigilo"}, 20), (set(), 80), ({"carrera"}, 210)):
+            with self.subTest(accion=accion):
+                juego = Juego()
+                jugador = juego.nivel.prisionero
+                if "carrera" in accion:
+                    juego.manejar_entrada("carrera")
+                with patch.object(juego.nivel.ruidos, "emitir") as emitir:
+                    for _ in range(12):
+                        juego.nivel.dt = .05
+                        juego.nivel.teclas = {"derecha"} | accion
+                        jugador.update()
+                    self.assertTrue(emitir.called)
+                    self.assertTrue(all(c.args[1] == esperado for c in emitir.call_args_list))
+
+    def test_ver_inicia_persecucion_y_solo_contacto_captura(self):
+        ubicar(self.nivel.prisionero, centro(10, 5))
+        self.juego.actualizar(.05, set())
+        self.assertEqual(self.guardia.modo, "PERSIGUE")
+        self.assertIsInstance(self.juego.estado, Jugando)
+        for _ in range(40):
+            self.juego.actualizar(.05, set())
+        self.assertIsInstance(self.juego.estado, Derrota)
+
+    def test_pared_oculta_y_guardia_no_conoce_posicion_nueva(self):
+        self.nivel.mapa = mapa_prueba([(8, y) for y in range(1, 11)])
+        self.nivel.ruidos.mapa = self.nivel.mapa
+        conocida = centro(7, 7)
+        self.guardia.alertar(conocida)
+        ubicar(self.nivel.prisionero, centro(10, 5))
+        for _ in range(10):
+            self.nivel.dt = .05
+            self.guardia.update()
+        self.assertEqual(self.guardia.modo, "BUSCA")
+        self.assertEqual(self.guardia.ultima_posicion, conocida)
+
+    def test_persecucion_encuentra_puerta_y_no_cruza_pared(self):
+        self.nivel.mapa = mapa_prueba([(8, y) for y in range(1, 11)])
+        self.nivel.ruidos.mapa = self.nivel.mapa
+        ubicar(self.nivel.prisionero, centro(9, 5))
+        self.guardia.alertar(self.nivel.prisionero.get_posicion())
+        self.assertFalse(self.guardia.puede_capturar(self.nivel.prisionero))
+        for _ in range(300):
+            self.juego.actualizar(.05, set())
+            self.assertTrue(self.nivel.posicion_valida(*self.guardia.get_posicion(), self.guardia.radio))
+            if isinstance(self.juego.estado, Derrota):
+                break
+        self.assertIsInstance(self.juego.estado, Derrota)
+
+    def test_investiga_y_regresa_a_patrulla_si_no_encuentra_jugador(self):
+        self.guardia.escuchar(centro(9, 5))
+        for _ in range(130):
+            self.nivel.dt = .05
+            self.guardia.update()
+        self.assertEqual(self.guardia.modo, "PATRULLA")
+        self.assertIsNone(self.guardia.ultima_posicion)
+
+    def test_camara_considera_el_cuerpo_y_la_cobertura(self):
         camara = Camara((0, 0), 0)
         posicion = (80 * math.cos(math.radians(33)), 80 * math.sin(math.radians(33)))
         ubicar(self.nivel.prisionero, posicion)
         self.assertFalse(dentro_de_vision((0, 0), posicion, 0, 95, math.pi / 3, []))
         self.assertTrue(camara.detectar(self.nivel.prisionero, []))
         self.assertFalse(camara.detectar(self.nivel.prisionero, [(20, -100, 10, 200)]))
-
-    def test_patrulla_comienza_mirando_hacia_su_ruta(self):
-        from src.personajes import Guardia
-        guardia = Guardia(self.nivel, [(100, 100), (50, 100)])
-        self.assertAlmostEqual(abs(guardia.angulo), math.pi)
-        with self.assertRaises(ValueError):
-            Guardia(self.nivel, [(100, 100)])
-
-    def test_poligono_de_alerta_no_atraviesa_muros(self):
-        puntos = poligono_vision((100, 100), 0, 42, math.tau, [(115, 50, 10, 100)])
-        self.assertTrue(all(x <= 115.001 for x, _ in puntos))
-
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)

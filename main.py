@@ -50,6 +50,8 @@ def ejecutar():
             teclas.add("izquierda")
         if pulsadas[pygame.K_d] or pulsadas[pygame.K_RIGHT]:
             teclas.add("derecha")
+        if pulsadas[pygame.K_LCTRL] or pulsadas[pygame.K_RCTRL]:
+            teclas.add("sigilo")
         for tecla, accion in ((pygame.K_i, "tiro_arriba"), (pygame.K_k, "tiro_abajo"),
                               (pygame.K_j, "tiro_izquierda"), (pygame.K_l, "tiro_derecha"),
                               (pygame.K_SPACE, "disparar")):
