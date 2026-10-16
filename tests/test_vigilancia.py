@@ -22,6 +22,7 @@ class PruebasVigilancia(unittest.TestCase):
     def setUp(self):
         self.juego = Juego()
         self.nivel = self.juego.nivel
+        self.nivel.celda = None
         self.nivel.mapa = mapa_prueba()
         self.nivel.ruidos.mapa = self.nivel.mapa
         self.guardia = self.nivel.guardias[0]
@@ -132,3 +133,19 @@ class PruebasVigilancia(unittest.TestCase):
         self.assertFalse(dentro_de_vision((0, 0), posicion, 0, 95, math.pi / 3, []))
         self.assertTrue(camara.detectar(self.nivel.prisionero, []))
         self.assertFalse(camara.detectar(self.nivel.prisionero, [(20, -100, 10, 200)]))
+
+    def test_alarmas_de_los_tres_mapas_alertan_a_todos_sin_derrota_instantanea(self):
+        for indice in range(3):
+            for numero in range(indice + 1):
+                juego = Juego()
+                juego.indice_nivel = indice
+                juego._cargar_nivel()
+                nivel = juego.nivel
+                camara = nivel.camaras[numero]
+                x, y = camara.posicion
+                ubicar(nivel.prisionero, (x + math.cos(camara.angulo) * 30,
+                                          y + math.sin(camara.angulo) * 30))
+                juego.actualizar(0, set())
+                self.assertTrue(camara.activa)
+                self.assertTrue(all(g.modo == "PERSIGUE" for g in nivel.guardias))
+                self.assertIsInstance(juego.estado, Jugando)

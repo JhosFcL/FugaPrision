@@ -50,7 +50,7 @@ class PruebasJuego(unittest.TestCase):
     def test_colision_muro_interior_sin_atravesarlo(self):
         jugador = self.juego.nivel.prisionero
         jugador.mover(1000, 0)
-        self.assertEqual(jugador.get_posicion()[0], 6 * TAMANO - jugador.radio)
+        self.assertEqual(jugador.get_posicion()[0], 4 * TAMANO - jugador.radio)
 
     def test_velocidad_diagonal_normalizada(self):
         distancias = []

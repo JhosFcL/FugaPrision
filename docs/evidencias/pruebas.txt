@@ -4,9 +4,11 @@ test_mapas_conectados_y_entidades_en_suelo (tests.test_campana.PruebasCampana.te
 test_patrones_fase_dos_y_aviso_antes_de_atacar (tests.test_campana.PruebasCampana.test_patrones_fase_dos_y_aviso_antes_de_atacar) ... ok
 test_pausa_congela_jefe_disparos_vida_y_recargas (tests.test_campana.PruebasCampana.test_pausa_congela_jefe_disparos_vida_y_recargas) ... ok
 test_proyectiles_rapidos_no_atraviesan_jugador_ni_muros (tests.test_campana.PruebasCampana.test_proyectiles_rapidos_no_atraviesan_jugador_ni_muros) ... ok
+test_romper_capa_no_libera_llave_y_tanda_no_salta_otras_capas (tests.test_campana.PruebasCampana.test_romper_capa_no_libera_llave_y_tanda_no_salta_otras_capas) ... ok
 test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias (tests.test_campana.PruebasCampana.test_rutas_nuevas_sin_teletransporte_ni_desactivar_guardias) ... ok
 test_salida_bloqueada_hasta_matar_jefe (tests.test_campana.PruebasCampana.test_salida_bloqueada_hasta_matar_jefe) ... ok
 test_transicion_conserva_puntos_y_no_avanza_dos_veces (tests.test_campana.PruebasCampana.test_transicion_conserva_puntos_y_no_avanza_dos_veces) ... ok
+test_tres_capas_aumentan_patrones_velocidad_y_frecuencia (tests.test_campana.PruebasCampana.test_tres_capas_aumentan_patrones_velocidad_y_frecuencia) ... ok
 test_guia_contiene_el_codigo_actual_completo_de_cada_clase (tests.test_documentacion.PruebasDocumentacion.test_guia_contiene_el_codigo_actual_completo_de_cada_clase) ... ok
 test_uml_incluye_clases_atributos_metodos_y_relaciones_reales (tests.test_documentacion.PruebasDocumentacion.test_uml_incluye_clases_atributos_metodos_y_relaciones_reales) ... ok
 test_actualizacion_polimorfica (tests.test_juego.PruebasJuego.test_actualizacion_polimorfica) ... ok
@@ -31,10 +33,15 @@ test_salida_exige_llave_y_no_duplica_premio (tests.test_juego.PruebasJuego.test_
 test_setter_puntaje_valida_y_notifica (tests.test_juego.PruebasJuego.test_setter_puntaje_valida_y_notifica) ... ok
 test_tiempo_invalido_y_demoras (tests.test_juego.PruebasJuego.test_tiempo_invalido_y_demoras) ... ok
 test_velocidad_diagonal_normalizada (tests.test_juego.PruebasJuego.test_velocidad_diagonal_normalizada) ... ok
+test_camaras_estan_fijadas_a_pared_y_apuntan_al_suelo (tests.test_mapa.PruebasMapa.test_camaras_estan_fijadas_a_pared_y_apuntan_al_suelo) ... ok
+test_celda_bloquea_paso_y_exige_interaccion_cercana_continua (tests.test_mapa.PruebasMapa.test_celda_bloquea_paso_y_exige_interaccion_cercana_continua) ... ok
 test_divisiones_obligan_a_usar_puertas_y_caminos_transitables (tests.test_mapa.PruebasMapa.test_divisiones_obligan_a_usar_puertas_y_caminos_transitables) ... ok
+test_llave_del_patio_abre_atajos_y_no_antes (tests.test_mapa.PruebasMapa.test_llave_del_patio_abre_atajos_y_no_antes) ... ok
 test_movimiento_grande_y_diagonal_no_atraviesa_paredes (tests.test_mapa.PruebasMapa.test_movimiento_grande_y_diagonal_no_atraviesa_paredes) ... ok
+test_patio_tiene_galerias_horizontales_y_recorrido_de_ida_y_vuelta (tests.test_mapa.PruebasMapa.test_patio_tiene_galerias_horizontales_y_recorrido_de_ida_y_vuelta) ... ok
 test_plano_abierto_o_con_tamano_incorrecto_se_rechaza (tests.test_mapa.PruebasMapa.test_plano_abierto_o_con_tamano_incorrecto_se_rechaza) ... ok
 test_todo_el_suelo_es_accesible_y_no_hay_huecos_de_una_celda (tests.test_mapa.PruebasMapa.test_todo_el_suelo_es_accesible_y_no_hay_huecos_de_una_celda) ... ok
+test_alarmas_de_los_tres_mapas_alertan_a_todos_sin_derrota_instantanea (tests.test_vigilancia.PruebasVigilancia.test_alarmas_de_los_tres_mapas_alertan_a_todos_sin_derrota_instantanea) ... ok
 test_camara_considera_el_cuerpo_y_la_cobertura (tests.test_vigilancia.PruebasVigilancia.test_camara_considera_el_cuerpo_y_la_cobertura) ... ok
 test_carrera_por_pasillo_real_hace_investigar_sin_teletransportes (tests.test_vigilancia.PruebasVigilancia.test_carrera_por_pasillo_real_hace_investigar_sin_teletransportes) ... ok
 test_investiga_y_regresa_a_patrulla_si_no_encuentra_jugador (tests.test_vigilancia.PruebasVigilancia.test_investiga_y_regresa_a_patrulla_si_no_encuentra_jugador) ... ok
@@ -47,6 +54,6 @@ test_sonido_rodea_paredes_sin_atravesarlas (tests.test_vigilancia.PruebasVigilan
 test_ver_inicia_persecucion_y_solo_contacto_captura (tests.test_vigilancia.PruebasVigilancia.test_ver_inicia_persecucion_y_solo_contacto_captura) ... ok
 
 ----------------------------------------------------------------------
-Ran 47 tests in 4.567s
+Ran 54 tests in 13.286s
 
 OK
