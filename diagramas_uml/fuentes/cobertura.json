@@ -1,0 +1,79 @@
+{
+  "Juego": [
+    1,
+    4
+  ],
+  "Nivel": [
+    1,
+    2,
+    3
+  ],
+  "Mapa": [
+    1
+  ],
+  "SistemaColisiones": [
+    1
+  ],
+  "Vista": [
+    1
+  ],
+  "Puntaje": [
+    1
+  ],
+  "Personaje": [
+    2
+  ],
+  "Prisionero": [
+    2
+  ],
+  "Guardia": [
+    2,
+    3
+  ],
+  "GuardiaPatrulla": [
+    2,
+    3
+  ],
+  "GuardiaCentinela": [
+    2,
+    3
+  ],
+  "Camara": [
+    2
+  ],
+  "Llave": [
+    2
+  ],
+  "Puerta": [
+    2
+  ],
+  "PanelSeguridad": [
+    2
+  ],
+  "CreadorGuardia": [
+    1,
+    3
+  ],
+  "CreadorPatrulla": [
+    3
+  ],
+  "CreadorCentinela": [
+    3
+  ],
+  "EstadoJuego": [
+    1,
+    4
+  ],
+  "Jugando": [
+    4
+  ],
+  "Pausa": [
+    4
+  ],
+  "Derrota": [
+    4
+  ],
+  "Victoria": [
+    4
+  ]
+}

@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="lamina-3" name="03. Factory Method">
+    <mxGraphModel dx="1191" dy="842" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1191" pageHeight="842" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="conexion-0" value="" edge="1" parent="1" source="CreadorPatrulla" target="CreadorGuardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="55" y="469.5" />
+            <mxPoint as="targetPoint" x="55" y="170.5" />
+            <Array as="points">
+              <mxPoint x="30" y="469.5" />
+              <mxPoint x="30" y="170.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-1" value="" edge="1" parent="1" source="CreadorCentinela" target="CreadorGuardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="55" y="674.5" />
+            <mxPoint as="targetPoint" x="55" y="170.5" />
+            <Array as="points">
+              <mxPoint x="27" y="674.5" />
+              <mxPoint x="27" y="170.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-2" value="" edge="1" parent="1" source="GuardiaPatrulla" target="Guardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.50000000;exitY=0.00000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.50000000;entryY=1.00000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="982.5" y="445" />
+            <mxPoint as="targetPoint" x="955" y="264" />
+            <Array as="points">
+              <mxPoint x="982.5" y="354.5" />
+              <mxPoint x="955" y="354.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-3" value="" edge="1" parent="1" source="GuardiaCentinela" target="Guardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=1.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="1145" y="686" />
+            <mxPoint as="targetPoint" x="1145" y="199.5" />
+            <Array as="points">
+              <mxPoint x="1164" y="686" />
+              <mxPoint x="1164" y="199.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-4" value="" edge="1" parent="1" source="CreadorGuardia" target="Guardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;exitX=1.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="530" y="170.5" />
+            <mxPoint as="targetPoint" x="765" y="199.5" />
+            <Array as="points">
+              <mxPoint x="647.5" y="170.5" />
+              <mxPoint x="647.5" y="199.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-5" value="" edge="1" parent="1" source="CreadorGuardia" target="Nivel" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;exitX=0.50000000;exitY=1.00000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="292.5" y="206" />
+            <mxPoint as="targetPoint" x="455" y="374.5" />
+            <Array as="points">
+              <mxPoint x="292.5" y="300" />
+              <mxPoint x="420" y="300" />
+              <mxPoint x="420" y="374.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-6" value="" edge="1" parent="1" source="CreadorPatrulla" target="GuardiaPatrulla" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;exitX=1.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="380" y="469.5" />
+            <mxPoint as="targetPoint" x="820" y="486.5" />
+            <Array as="points">
+              <mxPoint x="600" y="469.5" />
+              <mxPoint x="600" y="486.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conexion-7" value="" edge="1" parent="1" source="CreadorCentinela" target="GuardiaCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;exitX=1.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="380" y="674.5" />
+            <mxPoint as="targetPoint" x="820" y="686" />
+            <Array as="points">
+              <mxPoint x="600" y="674.5" />
+              <mxPoint x="600" y="686" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="titulo" value="03. Factory Method" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=19;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="32" y="12" width="1120" height="27" />
+        </mxCell>
+        <mxCell id="subtitulo" value="incorporar() reutiliza el procedimiento común; crear() es el método fábrica que cada creador concreto redefine." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=10.2;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="32" y="39" width="1120" height="21" />
+        </mxCell>
+        <mxCell id="separador-cabecera" edge="1" parent="1" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="32" y="66" />
+            <mxPoint as="targetPoint" x="1158.55" y="66" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CreadorGuardia" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="55" y="135" width="475" height="71" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="475" height="71" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="475" height="37" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-abstracta" value="«abstract»" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="3" width="475" height="13" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-nombre" value="CreadorGuardia" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="16" width="475" height="20" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-metodo-0" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="43" width="457" height="12" />
+        </mxCell>
+        <mxCell id="CreadorGuardia-metodo-1" value="+ incorporar(nivel: Nivel, datos: dict): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorGuardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="55" width="457" height="12" />
+        </mxCell>
+        <mxCell id="Guardia" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="765" y="135" width="380" height="129" />
+        </mxCell>
+        <mxCell id="Guardia-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="380" height="129" />
+        </mxCell>
+        <mxCell id="Guardia-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="380" height="37" />
+        </mxCell>
+        <mxCell id="Guardia-abstracta" value="«abstract»" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="3" width="380" height="13" />
+        </mxCell>
+        <mxCell id="Guardia-nombre" value="Guardia" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="0" y="16" width="380" height="20" />
+        </mxCell>
+        <mxCell id="Guardia-separador" edge="1" parent="Guardia" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="0" y="71" />
+            <mxPoint as="targetPoint" x="380" y="71" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Guardia-atributo-0" value="- alerta: bool" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="43" width="362" height="12" />
+        </mxCell>
+        <mxCell id="Guardia-atributo-1" value="- objetivo: tuple" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="55" width="362" height="12" />
+        </mxCell>
+        <mxCell id="Guardia-metodo-0" value="+ alertar(posicion: tuple): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="77" width="362" height="12" />
+        </mxCell>
+        <mxCell id="Guardia-metodo-1" value="+ dejar_alerta(): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="89" width="362" height="12" />
+        </mxCell>
+        <mxCell id="Guardia-metodo-2" value="# perseguir(dt: float): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="101" width="362" height="12" />
+        </mxCell>
+        <mxCell id="Guardia-metodo-3" value="+ update(dt: float): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Guardia" connectable="0">
+          <mxGeometry as="geometry" x="9" y="113" width="362" height="12" />
+        </mxCell>
+        <mxCell id="CreadorPatrulla" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="55" y="445" width="325" height="49" />
+        </mxCell>
+        <mxCell id="CreadorPatrulla-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="49" />
+        </mxCell>
+        <mxCell id="CreadorPatrulla-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="26" />
+        </mxCell>
+        <mxCell id="CreadorPatrulla-nombre" value="CreadorPatrulla" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="2" width="325" height="23" />
+        </mxCell>
+        <mxCell id="CreadorPatrulla-metodo-0" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="9" y="32" width="307" height="12" />
+        </mxCell>
+        <mxCell id="CreadorCentinela" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="55" y="650" width="325" height="49" />
+        </mxCell>
+        <mxCell id="CreadorCentinela-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="49" />
+        </mxCell>
+        <mxCell id="CreadorCentinela-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="CreadorCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="26" />
+        </mxCell>
+        <mxCell id="CreadorCentinela-nombre" value="CreadorCentinela" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="2" width="325" height="23" />
+        </mxCell>
+        <mxCell id="CreadorCentinela-metodo-0" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="CreadorCentinela" connectable="0">
+          <mxGeometry as="geometry" x="9" y="32" width="307" height="12" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="820" y="445" width="325" height="83" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="83" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="26" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-nombre" value="GuardiaPatrulla" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="0" y="2" width="325" height="23" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-separador" edge="1" parent="GuardiaPatrulla" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="0" y="60" />
+            <mxPoint as="targetPoint" x="325" y="60" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-atributo-0" value="- ruta: list&lt;tuple&gt;" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="9" y="32" width="307" height="12" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-atributo-1" value="- indice: int" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="9" y="44" width="307" height="12" />
+        </mxCell>
+        <mxCell id="GuardiaPatrulla-metodo-0" value="+ update(dt: float): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaPatrulla" connectable="0">
+          <mxGeometry as="geometry" x="9" y="66" width="307" height="12" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="820" y="650" width="325" height="72" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="GuardiaCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="72" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="GuardiaCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="325" height="26" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela-nombre" value="GuardiaCentinela" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaCentinela" connectable="0">
+          <mxGeometry as="geometry" x="0" y="2" width="325" height="23" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela-separador" edge="1" parent="GuardiaCentinela" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="0" y="49" />
+            <mxPoint as="targetPoint" x="325" y="49" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GuardiaCentinela-atributo-0" value="- origen: tuple" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaCentinela" connectable="0">
+          <mxGeometry as="geometry" x="9" y="32" width="307" height="12" />
+        </mxCell>
+        <mxCell id="GuardiaCentinela-metodo-0" value="+ update(dt: float): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="GuardiaCentinela" connectable="0">
+          <mxGeometry as="geometry" x="9" y="55" width="307" height="12" />
+        </mxCell>
+        <mxCell id="Nivel" value="" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="455" y="350" width="300" height="49" />
+        </mxCell>
+        <mxCell id="Nivel-caja" value="" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="Nivel" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="300" height="49" />
+        </mxCell>
+        <mxCell id="Nivel-cabecera" value="" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" vertex="1" parent="Nivel" connectable="0">
+          <mxGeometry as="geometry" x="0" y="0" width="300" height="26" />
+        </mxCell>
+        <mxCell id="Nivel-nombre" value="Nivel" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Nivel" connectable="0">
+          <mxGeometry as="geometry" x="0" y="2" width="300" height="23" />
+        </mxCell>
+        <mxCell id="Nivel-metodo-0" value="+ agregar_guardia(guardia: Guardia): None" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="Nivel" connectable="0">
+          <mxGeometry as="geometry" x="9" y="32" width="282" height="12" />
+        </mxCell>
+        <mxCell id="Nivel-nota" value="Nivel resumido; definición completa en 01." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.3;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="455" y="331" width="400" height="16" />
+        </mxCell>
+        <mxCell id="nota-0" value="Procedimiento común de incorporar():" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=10.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="455" y="552.5" width="710.551" height="18.5" />
+        </mxCell>
+        <mxCell id="nota-1" value="1. guardia = self.crear(datos, colisiones)" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.7;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="455" y="576.3" width="710.551" height="17.7" />
+        </mxCell>
+        <mxCell id="nota-2" value="2. nivel.agregar_guardia(guardia)" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.7;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="455" y="598.3" width="710.551" height="17.7" />
+        </mxCell>
+        <mxCell id="nota-3" value="El creador concreto decide la clase del guardia." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.1;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="455" y="624.9" width="710.551" height="17.1" />
+        </mxCell>
+        <mxCell id="etiqueta-4" value="crear() devuelve" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="568" y="149" width="85.6" height="15" />
+        </mxCell>
+        <mxCell id="etiqueta-5" value="incorpora al nivel" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="438" y="304" width="95.8" height="15" />
+        </mxCell>
+        <mxCell id="etiqueta-6" value="crea" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="573" y="444" width="54" height="15" />
+        </mxCell>
+        <mxCell id="etiqueta-7" value="crea" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="573" y="649" width="54" height="15" />
+        </mxCell>
+        <mxCell id="separador-pie" edge="1" parent="1" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="32" y="797.89" />
+            <mxPoint as="targetPoint" x="1158.55" y="797.89" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pie" value="Propuesta v1 | - privado; # protegido; + público | Ver explicación en LEEME.md" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.5;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="32" y="801.89" width="1120" height="15" />
+        </mxCell>
+        <mxCell id="estado-del-modelo" value="Diseño propuesto para implementar - 19/11/2026" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.2;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" vertex="1" parent="1" connectable="0">
+          <mxGeometry as="geometry" x="32" y="817.89" width="1120" height="15" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

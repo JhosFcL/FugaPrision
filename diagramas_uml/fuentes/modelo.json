@@ -1,0 +1,272 @@
+{
+  "Juego": {
+    "atributos": [
+      "- nivel_actual: Nivel",
+      "- estado_actual: EstadoJuego",
+      "- puntaje: Puntaje",
+      "- puntos_inicio_nivel: int",
+      "- vista: Vista"
+    ],
+    "metodos": [
+      "+ iniciar(): None",
+      "+ cargar_nivel(numero: int): None",
+      "+ cambiar_estado(estado: EstadoJuego): None",
+      "+ procesar_evento(evento: Event): None",
+      "+ update(dt: float): None",
+      "+ actualizar_nivel(dt: float): None",
+      "+ dibujar(): None",
+      "+ siguiente_nivel(): None",
+      "+ reiniciar_nivel(): None",
+      "+ reiniciar_partida(): None",
+      "+ get_nivel(): Nivel",
+      "+ get_puntaje(): Puntaje",
+      "+ get_estado(): EstadoJuego"
+    ],
+    "abstracta": false
+  },
+  "Nivel": {
+    "atributos": [
+      "- numero: int",
+      "- mapa: Mapa",
+      "- colisiones: SistemaColisiones",
+      "- personajes: list<Personaje>",
+      "- camaras: list<Camara>",
+      "- llave: Llave",
+      "- puerta: Puerta",
+      "- panel: PanelSeguridad [0..1]"
+    ],
+    "metodos": [
+      "+ agregar_guardia(guardia: Guardia): None",
+      "+ get_numero(): int",
+      "+ get_mapa(): Mapa",
+      "+ get_colisiones(): SistemaColisiones",
+      "+ get_personajes(): list<Personaje>",
+      "+ get_prisionero(): Prisionero",
+      "+ get_guardias(): list<Guardia>",
+      "+ get_camaras(): list<Camara>",
+      "+ get_llave(): Llave",
+      "+ get_puerta(): Puerta",
+      "+ get_panel(): PanelSeguridad | None"
+    ],
+    "abstracta": false
+  },
+  "Mapa": {
+    "atributos": [
+      "- plano: list<str>",
+      "- muros: list<Rect>"
+    ],
+    "metodos": [
+      "+ get_muros(): list<Rect>",
+      "+ get_dimensiones(): tuple"
+    ],
+    "abstracta": false
+  },
+  "SistemaColisiones": {
+    "atributos": [
+      "- mapa: Mapa"
+    ],
+    "metodos": [
+      "+ puede_mover(rect: Rect, dx: float, dy: float): bool",
+      "+ mover(rect: Rect, dx: float, dy: float): Rect",
+      "+ toca(a: Rect, b: Rect): bool"
+    ],
+    "abstracta": false
+  },
+  "Vista": {
+    "atributos": [
+      "- pantalla: Surface"
+    ],
+    "metodos": [
+      "+ dibujar(juego: Juego): None",
+      "+ dibujar_pausa(): None",
+      "+ dibujar_resultado(victoria: bool): None"
+    ],
+    "abstracta": false
+  },
+  "Puntaje": {
+    "atributos": [
+      "- valor: int"
+    ],
+    "metodos": [
+      "+ get_valor(): int",
+      "+ sumar(cantidad: int): None",
+      "+ restaurar(valor: int): None",
+      "+ reiniciar(): None"
+    ],
+    "abstracta": false
+  },
+  "Personaje": {
+    "atributos": [
+      "- rect: Rect",
+      "- velocidad: float",
+      "- colisiones: SistemaColisiones"
+    ],
+    "metodos": [
+      "+ get_rect(): Rect",
+      "+ mover(dx: float, dy: float, dt: float): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": true
+  },
+  "Prisionero": {
+    "atributos": [
+      "- llave_obtenida: bool",
+      "- direccion: tuple"
+    ],
+    "metodos": [
+      "+ set_direccion(dx: int, dy: int): None",
+      "+ recoger_llave(): None",
+      "+ tiene_llave(): bool",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "Guardia": {
+    "atributos": [
+      "- alerta: bool",
+      "- objetivo: tuple"
+    ],
+    "metodos": [
+      "+ alertar(posicion: tuple): None",
+      "+ dejar_alerta(): None",
+      "# perseguir(dt: float): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": true
+  },
+  "GuardiaPatrulla": {
+    "atributos": [
+      "- ruta: list<tuple>",
+      "- indice: int"
+    ],
+    "metodos": [
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "GuardiaCentinela": {
+    "atributos": [
+      "- origen: tuple"
+    ],
+    "metodos": [
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "Camara": {
+    "atributos": [
+      "- zona: Rect",
+      "- activa: bool"
+    ],
+    "metodos": [
+      "+ detectar(rect: Rect): bool",
+      "+ activar(): None",
+      "+ desactivar(): None",
+      "+ get_zona(): Rect"
+    ],
+    "abstracta": false
+  },
+  "Llave": {
+    "atributos": [
+      "- rect: Rect",
+      "- recogida: bool"
+    ],
+    "metodos": [
+      "+ get_rect(): Rect",
+      "+ recoger(): bool",
+      "+ esta_recogida(): bool"
+    ],
+    "abstracta": false
+  },
+  "Puerta": {
+    "atributos": [
+      "- rect: Rect",
+      "- abierta: bool"
+    ],
+    "metodos": [
+      "+ get_rect(): Rect",
+      "+ abrir(): None",
+      "+ esta_abierta(): bool"
+    ],
+    "abstracta": false
+  },
+  "PanelSeguridad": {
+    "atributos": [
+      "- rect: Rect",
+      "- utilizado: bool",
+      "- tiempo_restante: float",
+      "- camaras: list<Camara>"
+    ],
+    "metodos": [
+      "+ get_rect(): Rect",
+      "+ activar(): bool",
+      "+ update(dt: float): None",
+      "+ esta_activo(): bool"
+    ],
+    "abstracta": false
+  },
+  "CreadorGuardia": {
+    "atributos": [],
+    "metodos": [
+      "+ crear(datos: dict, colisiones: SistemaColisiones): Guardia",
+      "+ incorporar(nivel: Nivel, datos: dict): None"
+    ],
+    "abstracta": true
+  },
+  "CreadorPatrulla": {
+    "atributos": [],
+    "metodos": [
+      "+ crear(datos: dict, colisiones: SistemaColisiones): Guardia"
+    ],
+    "abstracta": false
+  },
+  "CreadorCentinela": {
+    "atributos": [],
+    "metodos": [
+      "+ crear(datos: dict, colisiones: SistemaColisiones): Guardia"
+    ],
+    "abstracta": false
+  },
+  "EstadoJuego": {
+    "atributos": [
+      "# juego: Juego"
+    ],
+    "metodos": [
+      "+ manejar_evento(evento: Event): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": true
+  },
+  "Jugando": {
+    "atributos": [],
+    "metodos": [
+      "+ manejar_evento(evento: Event): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "Pausa": {
+    "atributos": [],
+    "metodos": [
+      "+ manejar_evento(evento: Event): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "Derrota": {
+    "atributos": [],
+    "metodos": [
+      "+ manejar_evento(evento: Event): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  },
+  "Victoria": {
+    "atributos": [],
+    "metodos": [
+      "+ manejar_evento(evento: Event): None",
+      "+ update(dt: float): None"
+    ],
+    "abstracta": false
+  }
+}

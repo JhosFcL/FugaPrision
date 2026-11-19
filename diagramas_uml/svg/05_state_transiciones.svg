@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1190.5511811023623pt" height="841.8897637795277pt" viewBox="0 0 1190.5511811023623 841.8897637795277"><rect x="0" y="0" width="1190.5511811023623" height="841.8897637795277" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="32" y="32" font-family="DejaVu Sans, sans-serif" font-size="19" fill="#222222" font-weight="bold">05. State: transiciones de la partida</text>
+<text x="32" y="53" font-family="DejaVu Sans, sans-serif" font-size="10.2" fill="#222222">Cuatro estados concretos. El avance entre niveles se realiza durante Jugando, sin añadir otra clase de estado.</text>
+<polyline points="32.00,66.00 1158.55,66.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<rect x="420" y="185" width="350" height="145" rx="12" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<text x="595.0" y="214" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="bold">Jugando</text>
+<polyline points="420.00,227.00 770.00,227.00" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="434" y="249" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Actualiza personajes, cámaras y panel.</text>
+<text x="434" y="266" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Resuelve contactos y suma puntos.</text>
+<rect x="50" y="440" width="290" height="115" rx="12" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<text x="195.0" y="469" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="bold">Pausa</text>
+<polyline points="50.00,482.00 340.00,482.00" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="64" y="504" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Conserva la partida detenida.</text>
+<rect x="450" y="570" width="290" height="115" rx="12" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<text x="595.0" y="599" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="bold">Derrota</text>
+<polyline points="450.00,612.00 740.00,612.00" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="464" y="634" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Espera el reinicio del nivel.</text>
+<rect x="850" y="440" width="290" height="115" rx="12" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<text x="995.0" y="469" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="bold">Victoria</text>
+<polyline points="850.00,482.00 1140.00,482.00" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="864" y="504" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">La última salida fue alcanzada.</text>
+<circle cx="576" cy="108" r="6" fill="#333333"/>
+<polyline points="576.00,114.00 576.00,185.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="571.00,174.00 576.00,185.00 581.00,174.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="587" y="142.2" width="67.02851562500001" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="590" y="153" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">iniciar partida</text>
+<polyline points="420.00,255.00 195.00,255.00 195.00,440.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="190.00,429.00 195.00,440.00 200.00,429.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="232" y="234.2" width="34.849218750000006" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="235" y="245" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">P / Esc</text>
+<polyline points="340.00,480.00 385.00,480.00 385.00,300.00 420.00,300.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="409.00,305.00 420.00,300.00 409.00,295.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="302" y="356.2" width="34.849218750000006" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="305" y="367" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">P / Esc</text>
+<polyline points="595.00,330.00 595.00,570.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="590.00,559.00 595.00,570.00 600.00,559.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="607" y="464.2" width="113.25859375" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="610" y="475" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">contacto con un guardia</text>
+<polyline points="450.00,625.00 380.00,625.00 380.00,360.00 455.00,360.00 455.00,330.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="460.00,341.00 455.00,330.00 450.00,341.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="222" y="589.2" width="80.353125" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="225" y="600" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">R / reiniciar nivel</text>
+<polyline points="770.00,255.00 995.00,255.00 995.00,440.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="990.00,429.00 995.00,440.00 1000.00,429.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="817" y="234.2" width="93.26953125" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="820" y="245" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">salida [último nivel]</text>
+<polyline points="1140.00,490.00 1164.00,490.00 1164.00,125.00 695.00,125.00 695.00,185.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="690.00,174.00 695.00,185.00 700.00,174.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="897" y="104.2" width="82.11054687500001" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="900" y="115" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">R / nueva partida</text>
+<polyline points="770.00,300.00 805.00,300.00 805.00,365.00 735.00,365.00 735.00,330.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="740.00,341.00 735.00,330.00 730.00,341.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="792" y="381.2" width="181.46718750000002" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="795" y="392" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">salida [quedan niveles] / siguiente nivel</text>
+<text x="50" y="735" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Cerrar la ventana finaliza la aplicación desde cualquier estado.</text>
+<polyline points="32.00,797.89 1158.55,797.89" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="32" y="813.8897637795277" font-family="DejaVu Sans, sans-serif" font-size="8.5" fill="#222222">Las etiquetas expresan evento [condición] / acción. P y Esc cambian entre Jugando y Pausa.</text>
+<text x="32" y="828.8897637795277" font-family="DejaVu Sans, sans-serif" font-size="8.2" fill="#222222">Propuesta v1 - 19/11/2026 | Diagrama de comportamiento; no constituye código implementado.</text></svg>

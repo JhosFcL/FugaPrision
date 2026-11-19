@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1190.5511811023623pt" height="841.8897637795277pt" viewBox="0 0 1190.5511811023623 841.8897637795277"><rect x="0" y="0" width="1190.5511811023623" height="841.8897637795277" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="32" y="32" font-family="DejaVu Sans, sans-serif" font-size="19" fill="#222222" font-weight="bold">04. State: diagrama de clases</text>
+<text x="32" y="53" font-family="DejaVu Sans, sans-serif" font-size="10.2" fill="#222222">Juego conserva un EstadoJuego y delega en él el manejo de eventos y la actualización.</text>
+<polyline points="32.00,66.00 1158.55,66.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="35" y="575" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#222222">Jugando.update(dt) llama a Juego.actualizar_nivel(dt). Pausa.update(dt) mantiene detenido el nivel.</text>
+<polyline points="595.00,249.00 595.00,420.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polygon points="595.0,249 591.0,257.0 595.0,265.0 599.0,257.0" fill="#333333" stroke="#333333" stroke-width=".9"/>
+<rect x="602" y="374.2" width="65.705078125" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="605" y="385" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">estado actual</text>
+<rect x="602" y="349.5" width="11.407958984375" height="13.5" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="605" y="360" font-family="DejaVu Sans, sans-serif" font-size="8.5" fill="#222222">1</text>
+<rect x="602" y="400.5" width="11.407958984375" height="13.5" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="605" y="411" font-family="DejaVu Sans, sans-serif" font-size="8.5" fill="#222222">1</text>
+<polyline points="755.00,467.00 805.00,467.00 805.00,172.00 755.00,172.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polyline points="766.00,167.00 755.00,172.00 766.00,177.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<rect x="817" y="344.2" width="82.81953125000001" height="13.8" rx="0" fill="#ffffff" stroke="none" stroke-width=".8"/>
+<text x="820" y="355" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222">contexto recibido</text>
+<polyline points="152.50,650.00 152.50,605.00 595.00,605.00 595.00,514.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polygon points="600.0,525.0 595.0,514 590.0,525.0" fill="#ffffff" stroke="#333333" stroke-width=".9"/>
+<polyline points="447.50,650.00 447.50,605.00 595.00,605.00 595.00,514.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polygon points="600.0,525.0 595.0,514 590.0,525.0" fill="#ffffff" stroke="#333333" stroke-width=".9"/>
+<polyline points="742.50,650.00 742.50,605.00 595.00,605.00 595.00,514.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polygon points="600.0,525.0 595.0,514 590.0,525.0" fill="#ffffff" stroke="#333333" stroke-width=".9"/>
+<polyline points="1037.50,650.00 1037.50,605.00 595.00,605.00 595.00,514.00" fill="none" stroke="#333333" stroke-width="0.9"/>
+<polygon points="600.0,525.0 595.0,514 590.0,525.0" fill="#ffffff" stroke="#333333" stroke-width=".9"/>
+<rect x="435" y="95" width="320" height="154" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="435" y="95" width="320" height="26" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="595.0" y="113" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">Juego</text>
+<polyline points="435.00,155.00 755.00,155.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="444" y="137" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">- nivel_actual: Nivel</text>
+<text x="444" y="149" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">- estado_actual: EstadoJuego</text>
+<text x="444" y="171" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ cambiar_estado(estado: EstadoJuego): None</text>
+<text x="444" y="183" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ procesar_evento(evento: Event): None</text>
+<text x="444" y="195" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ update(dt: float): None</text>
+<text x="444" y="207" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ actualizar_nivel(dt: float): None</text>
+<text x="444" y="219" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ siguiente_nivel(): None</text>
+<text x="444" y="231" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ reiniciar_nivel(): None</text>
+<text x="444" y="243" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ reiniciar_partida(): None</text>
+<text x="435" y="89" font-family="DejaVu Sans, sans-serif" font-size="8.3" fill="#222222">Juego resumido; definición completa en 01.</text>
+<rect x="435" y="420" width="320" height="94" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="435" y="420" width="320" height="37" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="595.0" y="433" font-family="DejaVu Sans, sans-serif" font-size="8.8" fill="#222222" text-anchor="middle">«abstract»</text>
+<text x="595.0" y="449" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">EstadoJuego</text>
+<polyline points="435.00,480.00 755.00,480.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="444" y="473" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222"># juego: Juego</text>
+<text x="444" y="496" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222" font-style="italic">+ manejar_evento(evento: Event): None</text>
+<text x="444" y="508" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222" font-style="italic">+ update(dt: float): None</text>
+<rect x="35" y="650" width="235" height="60" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="35" y="650" width="235" height="26" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="152.5" y="668" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">Jugando</text>
+<polyline points="35.00,676.00 270.00,676.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="44" y="692" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ manejar_evento(evento: Event): None</text>
+<text x="44" y="704" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ update(dt: float): None</text>
+<rect x="330" y="650" width="235" height="60" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="330" y="650" width="235" height="26" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="447.5" y="668" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">Pausa</text>
+<polyline points="330.00,676.00 565.00,676.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="339" y="692" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ manejar_evento(evento: Event): None</text>
+<text x="339" y="704" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ update(dt: float): None</text>
+<rect x="625" y="650" width="235" height="60" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="625" y="650" width="235" height="26" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="742.5" y="668" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">Derrota</text>
+<polyline points="625.00,676.00 860.00,676.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="634" y="692" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ manejar_evento(evento: Event): None</text>
+<text x="634" y="704" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ update(dt: float): None</text>
+<rect x="920" y="650" width="235" height="60" rx="0" fill="#ffffff" stroke="#333333" stroke-width=".8"/>
+<rect x="920" y="650" width="235" height="26" rx="0" fill="#f1f1f1" stroke="#333333" stroke-width=".8"/>
+<text x="1037.5" y="668" font-family="DejaVu Sans, sans-serif" font-size="11.5" fill="#222222" text-anchor="middle" font-weight="bold">Victoria</text>
+<polyline points="920.00,676.00 1155.00,676.00" fill="none" stroke="#333333" stroke-width="0.7"/>
+<text x="929" y="692" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ manejar_evento(evento: Event): None</text>
+<text x="929" y="704" font-family="DejaVu Sans, sans-serif" font-size="9.4" fill="#222222">+ update(dt: float): None</text>
+<polyline points="32.00,797.89 1158.55,797.89" fill="none" stroke="#333333" stroke-width="0.6"/>
+<text x="32" y="813.8897637795277" font-family="DejaVu Sans, sans-serif" font-size="8.5" fill="#222222"># juego es protegido para que los estados concretos consulten el contexto. Los atributos de dominio siguen siendo privados.</text>
+<text x="32" y="828.8897637795277" font-family="DejaVu Sans, sans-serif" font-size="8.2" fill="#222222">Propuesta v1 - 19/11/2026 | Diseño objetivo; no representa todavía una refactorización del código.</text></svg>
