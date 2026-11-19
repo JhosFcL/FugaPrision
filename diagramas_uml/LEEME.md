@@ -4,11 +4,13 @@ Fecha de la propuesta: 19 de noviembre de 2026.
 
 Este modelo describe el diseño que proponemos implementar. El juego descargado sigue usando sus clases anteriores; estos diagramas no certifican que esa refactorización ya exista.
 
-## Archivos y orden de lectura
+## Archivos
 
-- `drawio/`: **un archivo editable independiente por cada lámina del PDF**, en el mismo orden:
+- [UML_Fuga_Prision_v1.pdf](UML_Fuga_Prision_v1.pdf): las cinco láminas para consultar o imprimir.
+- `drawio/`: un archivo editable por cada lámina del PDF.
+- `LEEME.md`: este documento, con la explicación del diseño.
 
-| Página del PDF | Archivo para diagrams.net |
+| Página del PDF | Archivo editable |
 |---|---|
 | 1. Estructura principal | [01_estructura_principal.drawio](drawio/01_estructura_principal.drawio) |
 | 2. Personajes y seguridad | [02_personajes_y_seguridad.drawio](drawio/02_personajes_y_seguridad.drawio) |
@@ -16,28 +18,12 @@ Este modelo describe el diseño que proponemos implementar. El juego descargado 
 | 4. State: clases | [04_state_clases.drawio](drawio/04_state_clases.drawio) |
 | 5. State: transiciones | [05_state_transiciones.drawio](drawio/05_state_transiciones.drawio) |
 
-- `UML_drawio_por_lamina.zip`: los cinco archivos anteriores, listos para descargar y descomprimir.
-- `UML_Fuga_Prision_v1.pdf`: cinco láminas A3 horizontales, con texto y trazos vectoriales.
-- `imagenes/01_estructura_principal.png`: coordinación, mapa, colisiones, dibujo y puntuación.
-- `imagenes/02_personajes_y_seguridad.png`: herencia, entidades y pertenencia al nivel.
-- `imagenes/03_factory_method.png`: creadores y productos concretos.
-- `imagenes/04_state_clases.png`: clases de State.
-- `imagenes/05_state_transiciones.png`: eventos y cambios de estado.
-- `UML_Fuga_Prision_v1.drawio`: alternativa con las cinco páginas en un solo archivo, también corregida.
-- `svg/`: cada lámina en formato vectorial independiente.
-- `fuentes/modelo.json`: catálogo único de atributos y operaciones.
-- `fuentes/generar_uml.py`: generador de las láminas, no es código del videojuego.
-- `fuentes/exportar_drawio.py`: exportador de cuadros, textos y conexiones editables.
-- `verificacion/`: capturas de las cinco láminas comprobadas en diagrams.net.
+### Abrir y editar
 
-### Abrir y editar en diagrams.net
-
-1. Descarga el `.drawio` desde GitHub con **Download raw file**, o descarga y descomprime `UML_drawio_por_lamina.zip`.
+1. Descarga el `.drawio` desde GitHub con **Download raw file**.
 2. En [app.diagrams.net](https://app.diagrams.net/), elige **Archivo → Abrir desde → Dispositivo** y selecciona el archivo.
-3. Ajusta el zoom para ver la lámina completa. La distribución ya está preparada; ejecutar **Organizar → Diseño** la redistribuiría.
-4. Para mover una clase completa, selecciona su grupo; para cambiar un atributo o método, entra en el grupo y edita su texto. Las multiplicidades y etiquetas de relación son textos independientes.
-
-Los archivos usan formas y textos nativos, con tamaños definidos, puntos de conexión fijos y rutas de flechas explícitas. Así se conserva la distribución del PDF sin depender de tablas HTML. No son imágenes insertadas: sus elementos se pueden editar.
+3. Ajusta el zoom. La distribución ya está preparada.
+4. Para mover una clase completa, selecciona su grupo. Para cambiar un atributo o método, entra en el grupo y edita su texto. Las multiplicidades y etiquetas de relación son textos independientes.
 
 El modelo tiene **23 clases distintas**. Las láminas presentan vistas complementarias del mismo diseño. `Juego` y `Nivel` se repiten resumidos donde solo se necesita mostrar el patrón; su definición completa está en la lámina 01. La distribución por láminas permite consultar todas las clases sin convertir el UML en una imagen gigante.
 
@@ -167,7 +153,7 @@ La captura se produce por contacto con un guardia. Una cámara activa alerta; no
 
 ## Comprobaciones del modelo
 
-- Las 23 clases aparecen en al menos una lámina; la cobertura está en `fuentes/cobertura.json`.
+- Las 23 clases aparecen en al menos una lámina.
 - Las clases repetidas reutilizan el mismo catálogo de atributos y métodos.
 - Los atributos de dominio son privados. La referencia al contexto de State es protegida y está justificada.
 - Los productos concretos heredan de Guardia y los creadores concretos heredan de CreadorGuardia.
