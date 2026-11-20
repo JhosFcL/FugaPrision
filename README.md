@@ -1,5 +1,31 @@
 # Fuga de la Prisión — La última fuga
 
+## Avance de la versión sencilla
+
+El diseño está en [diagramas_uml/LEEME.md](diagramas_uml/LEEME.md). La primera clase implementada es [mapa.py](mapa.py): convierte cada `#` del plano en una pared de 40 × 40 píxeles. Sus atributos son privados y sus dos métodos públicos coinciden con el UML.
+
+Ejemplo para ejecutar en la consola de Python desde esta carpeta, con Pygame instalado:
+
+```python
+from mapa import Mapa
+
+plano = [
+    "########",
+    "#......#",
+    "#..##..#",
+    "#......#",
+    "########",
+]
+
+mapa = Mapa(plano)
+print(mapa.get_dimensiones())  # (320, 200)
+print(len(mapa.get_muros()))   # 24 paredes
+```
+
+Esta clase describe el escenario. El dibujo y las colisiones se incorporarán en los siguientes pasos. `main.py` todavía ejecuta el juego anterior, cuyo código está en `src/`.
+
+## Juego anterior
+
 Juego 2D en Python y Pygame con una campaña de cuatro niveles. Los tres primeros
 combinan sigilo, llaves, patrullas y cámaras; el último es una arena contra un jefe
 original inspirado en los patrones de proyectiles de The Binding of Isaac.
