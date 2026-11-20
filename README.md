@@ -22,7 +22,37 @@ print(mapa.get_dimensiones())  # (320, 200)
 print(len(mapa.get_muros()))   # 24 paredes
 ```
 
-Esta clase describe el escenario. El dibujo y las colisiones se incorporarán en los siguientes pasos. `main.py` todavía ejecuta el juego anterior, cuyo código está en `src/`.
+La segunda clase es [sistema_colisiones.py](sistema_colisiones.py). Recibe un `Mapa` y conserva esa referencia en el atributo privado `__mapa`.
+
+| Método | Trabajo |
+|---|---|
+| `puede_mover(rect, dx, dy)` | Indica si se puede completar el desplazamiento solicitado. |
+| `mover(rect, dx, dy)` | Devuelve un nuevo rectángulo con el desplazamiento permitido, deteniéndose en la primera pared y respetando los límites del mapa. |
+| `toca(a, b)` | Indica si los dos rectángulos se superponen. |
+
+Con el mismo mapa del ejemplo:
+
+```python
+from pygame import Rect
+from sistema_colisiones import SistemaColisiones
+
+colisiones = SistemaColisiones(mapa)
+personaje = Rect(50, 90, 20, 20)
+print(colisiones.puede_mover(personaje, 200, 0))  # False
+print(colisiones.mover(personaje, 200, 0))      # <rect(100, 90, 20, 20)>
+```
+
+La pared interior comienza en `x = 120`. Como el personaje mide 20 píxeles de ancho, se detiene en `x = 100`. Primero se resuelve el movimiento horizontal y luego el vertical; así puede deslizarse junto a una pared. El rectángulo original se conserva y se devuelve una copia con la posición resultante. El rectángulo inicial debe estar dentro del mapa, en un espacio libre y tener dimensiones positivas.
+
+Los desplazamientos se aplican en píxeles enteros. Dos bordes apoyados entre sí no cuentan como superposición, según el comportamiento de [pygame.Rect](https://www.pygame.org/docs/ref/rect.html).
+
+Para comprobar las colisiones en Linux:
+
+```bash
+PYGAME_HIDE_SUPPORT_PROMPT=1 .venv/bin/python -m unittest tests.test_sistema_colisiones -v
+```
+
+El dibujo y el personaje se incorporarán en los siguientes pasos. `main.py` todavía ejecuta el juego anterior, cuyo código está en `src/`.
 
 ## Juego anterior
 
