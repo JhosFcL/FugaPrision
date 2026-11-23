@@ -1,0 +1,36 @@
+"""Patrón Factory Method para crear e incorporar guardias en un nivel."""
+from abc import ABC, abstractmethod
+
+from pygame import Rect
+
+from personajes import GuardiaCentinela, GuardiaPatrulla
+
+
+TAMANO_GUARDIA = (28, 28)
+
+
+class CreadorGuardia(ABC):
+    @abstractmethod
+    def crear(self, datos, colisiones):
+        ...
+
+    def incorporar(self, nivel, datos):
+        guardia = self.crear(datos, nivel.get_colisiones())
+        nivel.agregar_guardia(guardia)
+
+
+class CreadorPatrulla(CreadorGuardia):
+    def crear(self, datos, colisiones):
+        x, y = datos["posicion"]
+        ancho, alto = datos.get("tamano", TAMANO_GUARDIA)
+        velocidad = datos.get("velocidad", 115.0)
+        return GuardiaPatrulla(Rect(x, y, ancho, alto), colisiones, datos["ruta"], velocidad)
+
+
+class CreadorCentinela(CreadorGuardia):
+    def crear(self, datos, colisiones):
+        x, y = datos["posicion"]
+        ancho, alto = datos.get("tamano", TAMANO_GUARDIA)
+        velocidad = datos.get("velocidad", 125.0)
+        origen = datos.get("origen")
+        return GuardiaCentinela(Rect(x, y, ancho, alto), colisiones, origen, velocidad)
