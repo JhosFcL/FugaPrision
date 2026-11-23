@@ -273,17 +273,24 @@ class Vista {
   +pequena: Font
   +titulo: Font
   +mediana: Font
+  +recursos: dict
+  #_direccion_preso: str
+  #_posicion_preso: Optional~tuple~
+  #_nivel_actual: Optional~Nivel~
   +texto(texto, x, y, color, fuente) None
   +punto(posicion) tuple
-  #_dibujar_stickman(posicion, color, paso) None
+  #_dibujar_sprite(sprite, posicion) None
+  #_actualizar_direccion_preso(nivel) None
   #_dibujar_vision(origen, angulo, alcance, apertura, muros, color) None
   +dibujar(juego) None
+  #_dibujar_ambiente(nivel) None
+  #_dibujar_prisionero(nivel) None
   #_dibujar_encabezado(juego) None
   #_dibujar_mapa(nivel) None
   #_dibujar_objetivos(nivel) None
   #_dibujar_celda(celda) None
-  #_dibujar_camara(camara) None
-  #_dibujar_guardia(guardia, paso) None
+  #_dibujar_camara(camara, indice) None
+  #_dibujar_guardia(guardia, tiempo) None
   #_dibujar_controles(nivel) None
   #_dibujar_combate(nivel) None
   #_dibujar_panel_estado(juego) None

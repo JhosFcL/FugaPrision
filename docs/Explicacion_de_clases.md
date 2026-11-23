@@ -1135,9 +1135,9 @@ class Combate:
 
 **Archivo original:** [src/vista.py](../src/vista.py#L12)
 
-**Qué hace.** Dibuja la interfaz, los mapas y los personajes stickman con Pygame.
+**Qué hace.** Dibuja la interfaz, los mapas con tiles y los personajes con sprites animados en Pygame.
 
-**Cómo funciona.** dibujar ordena encabezado, mapa, objetivos, cámaras, guardias, combate y controles. El encabezado muestra ruido, alarma y alerta. Dibuja los barrotes de la celda con el progreso de E y tres barras de vida para el jefe, además de la fase activa y su transición. Una marca ? señala investigación o búsqueda y ! señala persecución; la dirección de la mirada se indica en el guardia. Las cámaras conservan su campo visible. El dibujo del personaje se ajusta a su tamaño de colisión.
+**Cómo funciona.** Carga los tiles de cada mapa y los sprites direccionales de 12 fotogramas desde `img/`. `dibujar` ordena encabezado, mapa, celda, objetivos, cámaras, guardias, combate, prisionero y controles. Al moverse, cada personaje cambia de fotograma y dirección según su desplazamiento o mirada. Las cámaras conservan su campo visible y las reglas de colisión y juego permanecen intactas fuera de esta clase.
 
 **POO que demuestra.** Dependencia: recibe Juego, Nivel, Camara y Guardia para consultar y dibujar sus datos. Las reglas de ruido, persecución y colisión se resuelven fuera de esta clase.
 
@@ -1151,6 +1151,10 @@ class Vista:
         self.pequena = pygame.font.SysFont("segoeui", 15)
         self.titulo = pygame.font.SysFont("segoeui", 32, bold=True)
         self.mediana = pygame.font.SysFont("segoeui", 23, bold=True)
+        self.recursos = _cargar_recursos()
+        self._direccion_preso = "abajo"
+        self._posicion_preso = None
+        self._nivel_actual = None
 
     def texto(self, texto, x, y, color=(225, 234, 242), fuente=None):
         imagen = (fuente or self.fuente).render(texto, True, color)
@@ -1159,24 +1163,27 @@ class Vista:
     def punto(self, posicion):
         return round(posicion[0] + ORIGEN[0]), round(posicion[1] + ORIGEN[1])
 
-    def _dibujar_stickman(self, posicion, color, paso=0):
-        x, y = posicion
-        pygame.draw.ellipse(self.pantalla, (15, 25, 33), (x - 9, y + 9, 18, 5))
+    def _dibujar_sprite(self, sprite, posicion):
+        rect = sprite.get_rect(center=posicion)
+        self.pantalla.blit(sprite, rect)
 
-        cabeza = (x, y - 7)
-        torso = ((x, y - 2), (x, y + 4))
-        brazo_izquierdo = ((x, y), (x - 8, y + 3))
-        brazo_derecho = ((x, y), (x + 8, y + 3))
-        pierna_izquierda = ((x, y + 4), (x - 5 + paso, y + 9))
-        pierna_derecha = ((x, y + 4), (x + 5 - paso, y + 9))
-
-        for inicio, fin in (torso, brazo_izquierdo, brazo_derecho,
-                            pierna_izquierda, pierna_derecha):
-            pygame.draw.line(self.pantalla, (14, 27, 35), inicio, fin, 5)
-            pygame.draw.line(self.pantalla, color, inicio, fin, 3)
-
-        pygame.draw.circle(self.pantalla, (14, 27, 35), cabeza, 5)
-        pygame.draw.circle(self.pantalla, color, cabeza, 4)
+    def _actualizar_direccion_preso(self, nivel):
+        posicion = nivel.prisionero.get_posicion()
+        if nivel is not self._nivel_actual:
+            self._nivel_actual = nivel
+            self._direccion_preso = "abajo"
+            self._posicion_preso = posicion
+        dx = int("derecha" in nivel.teclas) - int("izquierda" in nivel.teclas)
+        dy = int("abajo" in nivel.teclas) - int("arriba" in nivel.teclas)
+        if dx != 0 or dy != 0:
+            self._direccion_preso = _direccion_desde_vector(dx, dy, self._direccion_preso)
+        elif self._posicion_preso is not None and distancia(self._posicion_preso, posicion) > 0.1:
+            self._direccion_preso = _direccion_desde_vector(
+                posicion[0] - self._posicion_preso[0],
+                posicion[1] - self._posicion_preso[1],
+                self._direccion_preso,
+            )
+        self._posicion_preso = posicion
 
     def _dibujar_vision(self, origen, angulo, alcance, apertura, muros, color):
         capa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
@@ -1188,6 +1195,7 @@ class Vista:
 
     def dibujar(self, juego):
         nivel = juego.nivel
+        self._actualizar_direccion_preso(nivel)
         self.pantalla.fill((13, 21, 31))
         self._dibujar_encabezado(juego)
         self._dibujar_mapa(nivel)
@@ -1195,19 +1203,55 @@ class Vista:
             self._dibujar_celda(nivel.celda)
         self._dibujar_objetivos(nivel)
         for camara in nivel.camaras:
-            self._dibujar_camara(camara)
-        paso_guardia = round(math.sin(nivel.tiempo * 11) * 3)
+            self._dibujar_camara(camara, nivel.indice)
+        self._dibujar_ambiente(nivel)
         for guardia in nivel.guardias:
-            self._dibujar_guardia(guardia, paso_guardia)
+            self._dibujar_guardia(guardia, nivel.tiempo)
         if nivel.combate:
             self._dibujar_combate(nivel)
-        paso_prisionero = round(math.sin(nivel.tiempo * 14) * 2) if nivel.prisionero.movimiento != "QUIETO" else 0
-        if not nivel.combate or nivel.combate.inmune <= 0 or int(nivel.tiempo * 12) % 2 == 0:
-            self._dibujar_stickman(self.punto(nivel.prisionero.get_posicion()),
-                                  (101, 234, 204), paso_prisionero)
+        self._dibujar_prisionero(nivel)
         self._dibujar_controles(nivel)
         if juego.estado.nombre != "JUGANDO":
             self._dibujar_panel_estado(juego)
+
+    def _dibujar_ambiente(self, nivel):
+        area = pygame.Rect(*ORIGEN, COLUMNAS * TAMANO, FILAS * TAMANO)
+        self.pantalla.blit(self.recursos["luces"][nivel.indice], ORIGEN, special_flags=pygame.BLEND_RGB_MULT)
+        self.pantalla.set_clip(area)
+        halo_lampara = self.recursos["halo_lampara"]
+        for columna, fila in LAMPARAS_MURO[nivel.indice]:
+            x = round(ORIGEN[0] + (columna + 0.5) * TAMANO)
+            y = round(ORIGEN[1] + (fila + 0.5) * TAMANO)
+            if fila == 0:
+                y += 12
+            elif fila == FILAS - 1:
+                y -= 12
+            elif columna == 0:
+                x += 12
+            elif columna == COLUMNAS - 1:
+                x -= 12
+            self.pantalla.blit(halo_lampara, halo_lampara.get_rect(center=(x, y)), special_flags=pygame.BLEND_RGB_ADD)
+        halo_salida = self.recursos["halo_salida"] if nivel.prisionero.tiene_llave() else self.recursos["halo_salida_tenue"]
+        salida = self.punto(nivel.salida.posicion)
+        self.pantalla.blit(halo_salida, halo_salida.get_rect(center=salida), special_flags=pygame.BLEND_RGB_ADD)
+        if nivel.llave.disponible:
+            llave = self.punto(nivel.llave.posicion)
+            halo_llave = self.recursos["halo_llave"]
+            self.pantalla.blit(halo_llave, halo_llave.get_rect(center=llave), special_flags=pygame.BLEND_RGB_ADD)
+        if nivel.celda and not nivel.celda.abierta:
+            celda = self.punto(nivel.celda.posicion)
+            halo_llave = self.recursos["halo_llave"]
+            self.pantalla.blit(halo_llave, halo_llave.get_rect(center=celda), special_flags=pygame.BLEND_RGB_ADD)
+        self.pantalla.set_clip(None)
+
+    def _dibujar_prisionero(self, nivel):
+        if nivel.combate and nivel.combate.inmune > 0 and int(nivel.tiempo * 12) % 2 != 0:
+            return
+        movimiento = nivel.prisionero.movimiento
+        ritmo = {"QUIETO": 0.0, "SIGILO": 5.5, "CAMINA": 9.5, "CORRE": 14.0}[movimiento]
+        frame = _indice_frame(nivel.tiempo, ritmo, movimiento != "QUIETO")
+        sprite = self.recursos["preso"][self._direccion_preso][frame]
+        self._dibujar_sprite(sprite, self.punto(nivel.prisionero.get_posicion()))
 
     def _dibujar_encabezado(self, juego):
         nivel = juego.nivel
@@ -1238,70 +1282,113 @@ class Vista:
         self.texto("CARRERA  " + nivel.prisionero.carrera.get_estado(), 651, 110, (164, 201, 232), self.pequena)
 
     def _dibujar_mapa(self, nivel):
-        area = pygame.Rect(*ORIGEN, COLUMNAS * TAMANO, FILAS * TAMANO)
-        pygame.draw.rect(self.pantalla, (45, 31, 43) if nivel.es_final else (28, 42, 53), area)
+        indice = nivel.indice
+        tiles = self.recursos["mapas"][indice]
+        atajos = set(nivel.configuracion.get("atajos", []))
+        lamparas = LAMPARAS_MURO[indice]
+        ventanas = VENTANAS_MURO[indice]
         for fila in range(FILAS):
             for columna in range(COLUMNAS):
-                rect = pygame.Rect(ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO, TAMANO, TAMANO)
-                pygame.draw.rect(self.pantalla, (33, 48, 60), rect, 1)
+                destino = (ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO)
+                celda = nivel.mapa.plano[fila][columna]
+                if (columna, fila) in atajos and celda == ".":
+                    self.pantalla.blit(tiles["puerta_abierta"], destino)
+                elif (columna * 7 + fila * 13) % 11 == 0:
+                    self.pantalla.blit(tiles["suelo_grieta"], destino)
+                elif (columna * 5 + fila * 3) % 7 == 0:
+                    self.pantalla.blit(tiles["suelo_alt"], destino)
+                else:
+                    self.pantalla.blit(tiles["suelo"], destino)
+        for columna, fila, clave in DECORACIONES[indice]:
+            destino = (ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO)
+            self.pantalla.blit(tiles[clave], destino)
+        sombra_abajo = self.recursos["sombra_abajo"]
+        sombra_lado = self.recursos["sombra_lado"]
+        for fila in range(FILAS):
+            for columna in range(COLUMNAS):
+                if nivel.mapa.plano[fila][columna] in "#P":
+                    continue
+                destino = (ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO)
+                if fila > 0 and nivel.mapa.plano[fila - 1][columna] in "#P":
+                    self.pantalla.blit(sombra_abajo, destino)
+                if columna > 0 and nivel.mapa.plano[fila][columna - 1] in "#P":
+                    self.pantalla.blit(sombra_lado, destino)
         for camara in nivel.camaras:
             self._dibujar_vision(camara.posicion, camara.angulo, camara.alcance, camara.apertura, nivel.mapa.muros, (241, 184, 79))
-        for muro in nivel.mapa.muros:
-            rect = pygame.Rect(muro[0] + ORIGEN[0], muro[1] + ORIGEN[1], muro[2], muro[3])
-            pygame.draw.rect(self.pantalla, (62, 78, 90), rect)
-            pygame.draw.rect(self.pantalla, (77, 94, 107), rect, 1)
-            pygame.draw.line(self.pantalla, (90, 104, 116), rect.topleft, rect.topright)
-            if nivel.mapa.plano[int(muro[1] // TAMANO)][int(muro[0] // TAMANO)] == "P":
-                pygame.draw.rect(self.pantalla, (100, 151, 181), rect, 3)
-                for separacion in (8, 18, 28):
-                    pygame.draw.line(self.pantalla, (143, 183, 204),
-                                     (rect.x + separacion, rect.y + 3), (rect.x + separacion, rect.bottom - 3), 2)
+        for fila in range(FILAS):
+            for columna in range(COLUMNAS):
+                celda = nivel.mapa.plano[fila][columna]
+                if celda not in "#P":
+                    continue
+                destino = (ORIGEN[0] + columna * TAMANO, ORIGEN[1] + fila * TAMANO)
+                if celda == "P":
+                    self.pantalla.blit(tiles["barrotes"], destino)
+                elif _es_objeto_interior(indice, columna, fila):
+                    objeto = tiles.get("objeto_alt", tiles["objeto"]) if (columna + fila) % 2 else tiles["objeto"]
+                    self.pantalla.blit(objeto, destino)
+                elif indice == 0 and (columna, fila) in FRANJAS_PELIGRO:
+                    self.pantalla.blit(tiles["muro_peligro"], destino)
+                elif (columna, fila) in ventanas:
+                    self.pantalla.blit(tiles["muro"], destino)
+                    self.pantalla.blit(tiles["ventana"], destino)
+                else:
+                    muro = tiles["muro_alt"] if (fila > 0 and nivel.mapa.plano[fila - 1][columna] == "#") else tiles["muro"]
+                    self.pantalla.blit(muro, destino)
+                    if "tubo_muro" in tiles and fila in (0, FILAS - 1) and columna in (4, 5, 10, 11, 18, 19) and (columna, fila) not in lamparas:
+                        self.pantalla.blit(tiles["tubo_muro"], destino)
+                    if "alambre" in tiles and fila == 0:
+                        self.pantalla.blit(tiles["alambre"], (destino[0], destino[1] - 10))
+                if (columna, fila) in lamparas:
+                    self.pantalla.blit(tiles["lampara"], destino)
 
     def _dibujar_objetivos(self, nivel):
+        tiles = self.recursos["mapas"][nivel.indice]
         salida = self.punto(nivel.salida.posicion)
-        color_salida = (103, 222, 176) if nivel.prisionero.tiene_llave() else (93, 126, 117)
-        pygame.draw.rect(self.pantalla, color_salida, (salida[0] - 14, salida[1] - 15, 28, 30), 3, border_radius=3)
-        self.texto("SALIDA", salida[0] - 27, salida[1] + 20, color_salida, self.pequena)
+        desbloqueada = nivel.prisionero.tiene_llave()
+        self._dibujar_sprite(tiles["salida"] if desbloqueada else tiles["salida_bloqueada"], salida)
+        self._dibujar_sprite(tiles["etq_salida"], (salida[0], salida[1] + 24))
         if nivel.llave.disponible:
             x, y = self.punto(nivel.llave.posicion)
-            pygame.draw.circle(self.pantalla, (246, 210, 102), (x - 5, y), 6, 3)
-            pygame.draw.line(self.pantalla, (246, 210, 102), (x, y), (x + 13, y), 4)
-            pygame.draw.line(self.pantalla, (246, 210, 102), (x + 10, y), (x + 10, y + 6), 3)
-            self.texto("LLAVE", x - 22, y + 18, (246, 210, 102), self.pequena)
+            flote = round(math.sin(nivel.tiempo * 4.5) * 2)
+            self._dibujar_sprite(tiles["llave"], (x, y + flote))
+            self._dibujar_sprite(tiles["etq_llave"], (x, y + 24))
 
     def _dibujar_celda(self, celda):
+        tiles = self.recursos["mapas"][0]
         x, y = self.punto(celda.posicion)
         if celda.abierta:
-            pygame.draw.rect(self.pantalla, (103, 222, 176), (x - 17, y - 17, 34, 34), 2)
+            self._dibujar_sprite(tiles["puerta_abierta"], (x, y))
             return
-        pygame.draw.rect(self.pantalla, (25, 33, 42), (x - 17, y - 17, 34, 34))
-        for separacion in (-12, -4, 4, 12):
-            pygame.draw.line(self.pantalla, (173, 188, 204),
-                             (x + separacion, y - 17), (x + separacion, y + 17), 3)
-        pygame.draw.rect(self.pantalla, (246, 210, 102), (x - 4, y - 5, 8, 10))
+        self._dibujar_sprite(tiles["barrotes"], (x, y))
+        pygame.draw.rect(self.pantalla, (246, 210, 102), (x - 4, y - 5, 8, 10), border_radius=2)
         self.texto(f"E · {celda.progreso / 2:.0%}", x - 28, y + 20, (246, 210, 102), self.pequena)
 
-    def _dibujar_camara(self, camara):
+    def _dibujar_camara(self, camara, indice):
+        tiles = self.recursos["mapas"][indice]
         x, y = self.punto(camara.posicion)
-        dx, dy = math.cos(camara.angulo), math.sin(camara.angulo)
-        lente = (round(x + dx * 9), round(y + dy * 9))
-        soporte = (round(x - dx * 10), round(y - dy * 10))
-        pygame.draw.line(self.pantalla, (188, 201, 208), soporte, (x, y), 5)
-        cuerpo = [(round(x + dx * largo - dy * ancho), round(y + dy * largo + dx * ancho))
-                  for largo, ancho in ((-7, -6), (7, -6), (7, 6), (-7, 6))]
-        pygame.draw.polygon(self.pantalla, (250, 100, 110) if camara.activa else (244, 190, 93), cuerpo)
-        pygame.draw.line(self.pantalla, (37, 43, 48), (x, y), lente, 9)
-        pygame.draw.circle(self.pantalla, (101, 159, 180), lente, 3)
-        self.texto("CÁMARA", x - 30, y - 34, (244, 190, 93), self.pequena)
+        base = tiles["camara_activa"] if camara.activa else tiles["camara"]
+        rotada = pygame.transform.rotate(base, 90 - math.degrees(camara.angulo))
+        self._dibujar_sprite(rotada, (x, y))
+        self._dibujar_sprite(tiles["etq_camara"], (x, y - 24))
 
-    def _dibujar_guardia(self, guardia, paso):
+    def _dibujar_guardia(self, guardia, tiempo):
         x, y = self.punto(guardia.get_posicion())
-        self._dibujar_stickman((x, y), (242, 102, 113), paso)
-        mirada = (round(x + math.cos(guardia.angulo) * 12),
-                  round(y - 7 + math.sin(guardia.angulo) * 12))
-        pygame.draw.line(self.pantalla, (255, 205, 184), (x, y - 7), mirada, 2)
+        direccion = _direccion_desde_vector(math.cos(guardia.angulo), math.sin(guardia.angulo))
+        if guardia.modo == "PERSIGUE":
+            en_movimiento, ritmo = True, 13.0
+        elif guardia.modo == "PATRULLA":
+            en_movimiento, ritmo = True, 7.0
+        else:
+            en_movimiento = (guardia.ultima_posicion is not None
+                             and distancia(guardia.get_posicion(), guardia.ultima_posicion) > 2.5)
+            ritmo = 9.5
+        frame = _indice_frame(tiempo, ritmo, en_movimiento)
+        sprite = self.recursos["guardia"][direccion][frame]
+        self._dibujar_sprite(sprite, (x, y))
         marca = "!" if guardia.modo == "PERSIGUE" else ("?" if guardia.modo != "PATRULLA" else "")
-        self.texto(marca, x - 5, y - 33, (255, 209, 108), self.mediana)
+        if marca:
+            color = (255, 118, 126) if guardia.modo == "PERSIGUE" else (255, 209, 108)
+            self.texto(marca, x - 5, y - 38, color, self.mediana)
 
     def _dibujar_controles(self, nivel):
         self.texto("WASD / FLECHAS  Mover    CTRL  Sigilo    SHIFT  Correr    P / ESC  Pausa" +
@@ -1345,22 +1432,18 @@ class Vista:
             else:
                 self.texto(f"FASE {jefe.fase} / 3  ·  " + ("¡EMBESTIDA!" if jefe.destino else "EL ALCAIDE"),
                            360, 661, (216, 167, 198), self.pequena)
-            # Un alcaide monstruoso original: gorra, lágrimas y uniforme de rayas.
-            pygame.draw.ellipse(self.pantalla, (20, 17, 27), (x - 36, y + 20, 72, 16))
-            piel = (255, 230, 232) if jefe.golpe > 0 else (
-                (190, 111, 147), (227, 105, 128), (255, 78, 90))[jefe.fase - 1]
-            pygame.draw.ellipse(self.pantalla, (28, 22, 38), (x - 29, y - 12, 58, 49))
-            pygame.draw.ellipse(self.pantalla, piel, (x - 27, y - 33, 54, 54))
-            for lado in (-1, 1):
-                pygame.draw.circle(self.pantalla, (23, 22, 38), (x + lado * 11, y - 10), 7)
-                pygame.draw.line(self.pantalla, (106, 194, 226), (x + lado * 11, y - 4), (x + lado * 14, y + 12), 4)
-                pygame.draw.circle(self.pantalla, (239, 218, 227), (x + lado * 12, y - 12), 2)
-                pygame.draw.circle(self.pantalla, piel, (x + lado * 30, y + 12), 9)
-            pygame.draw.ellipse(self.pantalla, (49, 22, 39), (x - 7, y + 4, 14, 10))
-            pygame.draw.rect(self.pantalla, (39, 49, 71), (x - 27, y - 38, 54, 13), border_radius=4)
-            pygame.draw.rect(self.pantalla, (226, 190, 102), (x - 5, y - 36, 10, 8), border_radius=2)
-            for fila in range(3):
-                pygame.draw.line(self.pantalla, (141, 146, 171), (x - 18, y + 20 + fila * 6), (x + 18, y + 20 + fila * 6), 3)
+            if jefe.fase > 1:
+                aura = (255, 154, 82) if jefe.fase == 2 else (255, 78, 90)
+                pygame.draw.ellipse(self.pantalla, aura, (x - 32, y + 18, 64, 18), 2)
+            blanco = jefe.destino or nivel.prisionero.get_posicion()
+            direccion = _direccion_desde_vector(blanco[0] - jefe.x, blanco[1] - jefe.y)
+            ritmo = 14.0 if jefe.destino else (10.0 if jefe.aviso > 0 else 4.0)
+            frame = _indice_frame(nivel.tiempo, ritmo, True)
+            sprite = self.recursos["alcaide"][direccion][frame]
+            if jefe.golpe > 0:
+                sprite = sprite.copy()
+                sprite.fill((95, 95, 95, 0), special_flags=pygame.BLEND_RGB_ADD)
+            self._dibujar_sprite(sprite, (x, y))
         for tiro in combate.proyectiles:
             x, y = self.punto(tiro.posicion)
             color = (255, 112, 145) if tiro.enemigo else (109, 234, 244)
