@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" compressed="false">
   <diagram id="lamina-4" name="04. State: diagrama de clases">
     <mxGraphModel dx="1472" dy="858" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1191" pageHeight="842" math="0" shadow="0">
@@ -224,7 +225,7 @@
           <mxGeometry height="12" width="217" x="9" y="44" as="geometry" />
         </mxCell>
         <mxCell id="nota-0" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=10;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="Jugando.update(dt) llama a Juego.actualizar_nivel(dt). Pausa.update(dt) mantiene detenido el nivel." vertex="1">
-          <mxGeometry height="18" width="1130.55" x="35" y="563" as="geometry" />
+          <mxGeometry height="18" width="1130.55" x="35" y="742" as="geometry" />
         </mxCell>
         <mxCell id="etiqueta-0" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" value="estado actual" vertex="1">
           <mxGeometry height="15" width="70.3" x="603" y="332" as="geometry" />

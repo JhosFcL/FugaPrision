@@ -1,64 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" compressed="false">
   <diagram id="lamina-3" name="03. Factory Method">
-    <mxGraphModel dx="2604" dy="824" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1191" pageHeight="842" math="0" shadow="0">
+    <mxGraphModel dx="1191" dy="842" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1191" pageHeight="842" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="conexion-0" edge="1" parent="1" source="CreadorPatrulla" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;" target="CreadorGuardia" value="">
-          <mxGeometry relative="1" x="-0.1705" as="geometry">
+        <mxCell id="conexion-0" edge="1" parent="1" source="CreadorPatrulla" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=block;endFill=0;endSize=10;jettySize=0;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="CreadorGuardia" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="sourcePoint" x="110" y="469.5" />
+            <mxPoint as="targetPoint" x="75" y="170.5" />
             <Array as="points">
-              <mxPoint x="-72.33" y="469.5" />
-              <mxPoint x="-72.33" y="315.5" />
-              <mxPoint x="-72.33" y="170.5" />
+              <mxPoint x="42" y="469.5" />
+              <mxPoint x="42" y="170.5" />
             </Array>
-            <mxPoint x="55" y="469.5" as="sourcePoint" />
-            <mxPoint x="55" y="170.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="conexion-1" edge="1" parent="1" source="CreadorCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.00000000;exitY=0.50000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;" target="CreadorGuardia" value="">
-          <mxGeometry relative="1" x="-0.1007" as="geometry">
+        <mxCell id="conexion-1" edge="1" parent="1" source="CreadorCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=block;endFill=0;endSize=10;jettySize=0;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="CreadorGuardia" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="sourcePoint" x="110" y="674.5" />
+            <mxPoint as="targetPoint" x="75" y="170.5" />
             <Array as="points">
-              <mxPoint x="-72.17" y="674.5" />
-              <mxPoint x="-72.17" y="396.33" />
-              <mxPoint x="-72.17" y="170.5" />
+              <mxPoint x="42" y="674.5" />
+              <mxPoint x="42" y="170.5" />
             </Array>
-            <mxPoint x="55" y="674.5" as="sourcePoint" />
-            <mxPoint x="55" y="170.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="conexion-2" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;exitX=0.50000000;exitY=0.00000000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.58;entryY=1.031;entryDx=0;entryDy=0;entryPerimeter=0;" target="Guardia" value="">
-          <mxGeometry relative="1" x="0.0568" as="geometry">
-            <Array as="points">
-              <mxPoint x="985.5" y="353.5" />
-              <mxPoint x="985.5" y="315.5" />
-            </Array>
-            <mxPoint x="985.5" y="444" as="sourcePoint" />
-            <mxPoint x="958" y="263.0000000000001" as="targetPoint" />
+        <mxCell id="conexion-2" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=block;endFill=0;endSize=10;jettySize=0;orthogonalLoop=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.572;entryY=1;entryDx=0;entryDy=0;" target="Guardia" value="" source="GuardiaPatrulla">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="sourcePoint" x="962.5" y="449" />
+            <mxPoint as="targetPoint" x="962.5" y="264" />
+            <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="conexion-3" edge="1" parent="1" source="GuardiaCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=block;endFill=0;endSize=10;entryX=1.00000000;entryY=0.50000000;entryDx=0;entryDy=0;entryPerimeter=0;" target="Guardia" value="">
-          <mxGeometry relative="1" x="0.0054" as="geometry">
+        <mxCell id="conexion-3" edge="1" parent="1" source="GuardiaCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=block;endFill=0;endSize=10;jettySize=0;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Guardia" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="sourcePoint" x="1125" y="688" />
+            <mxPoint as="targetPoint" x="1125" y="199.5" />
             <Array as="points">
-              <mxPoint x="1164" y="690" />
-              <mxPoint x="1199" y="690" />
-              <mxPoint x="1234.33" y="690" />
-              <mxPoint x="1234.33" y="591.33" />
-              <mxPoint x="1234.33" y="443.83" />
-              <mxPoint x="1234.33" y="315.5" />
-              <mxPoint x="1234.33" y="199.5" />
-              <mxPoint x="1164" y="199.5" />
+              <mxPoint x="1155" y="688" />
+              <mxPoint x="1155" y="199.5" />
             </Array>
-            <mxPoint x="1145" y="686" as="sourcePoint" />
-            <mxPoint x="1145" y="199.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="conexion-5" edge="1" parent="1" source="CreadorGuardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=none;jettySize=0;orthogonalLoop=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;exitX=0.50000000;exitY=1.00000000;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
-          <mxGeometry relative="1" x="-0.0055" as="geometry">
-            <Array as="points">
-              <mxPoint x="292.5" y="318.04" />
-            </Array>
-            <mxPoint x="292.5" y="206" as="sourcePoint" />
-            <mxPoint x="292.5" y="334.71" as="targetPoint" />
+        <mxCell id="conexion-5" edge="1" parent="1" source="CreadorGuardia" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;jettySize=0;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="" target="Nivel">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="sourcePoint" x="312.5" y="206" />
+            <mxPoint as="targetPoint" x="312" y="342" />
+            <Array as="points" />
           </mxGeometry>
         </mxCell>
         <mxCell id="titulo" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=19;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="03. Factory Method" vertex="1">
@@ -74,7 +62,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="CreadorGuardia" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="71" width="475" x="55" y="135" as="geometry" />
+          <mxGeometry height="71" width="475" x="75" y="135" as="geometry" />
         </mxCell>
         <mxCell id="CreadorGuardia-caja" connectable="0" parent="CreadorGuardia" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
           <mxGeometry height="71" width="475" as="geometry" />
@@ -89,13 +77,13 @@
           <mxGeometry height="20" width="475" y="16" as="geometry" />
         </mxCell>
         <mxCell id="CreadorGuardia-metodo-0" connectable="0" parent="CreadorGuardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" vertex="1">
-          <mxGeometry height="12" width="457" x="9" y="43" as="geometry" />
+          <mxGeometry height="12" width="457.0" x="9" y="43" as="geometry" />
         </mxCell>
         <mxCell id="CreadorGuardia-metodo-1" connectable="0" parent="CreadorGuardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ incorporar(nivel: Nivel, datos: dict): None" vertex="1">
-          <mxGeometry height="12" width="457" x="9" y="55" as="geometry" />
+          <mxGeometry height="12" width="457.0" x="9" y="55" as="geometry" />
         </mxCell>
         <mxCell id="Guardia" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="129" width="380" x="765" y="135" as="geometry" />
+          <mxGeometry height="129" width="380" x="745" y="135" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-caja" connectable="0" parent="Guardia" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
           <mxGeometry height="129" width="380" as="geometry" />
@@ -116,40 +104,40 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="Guardia-atributo-0" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="- alerta: bool" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="43" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="43" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-atributo-1" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="- objetivo: tuple" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="55" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="55" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-metodo-0" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ alertar(posicion: tuple): None" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="77" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="77" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-metodo-1" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ dejar_alerta(): None" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="89" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="89" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-metodo-2" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="# perseguir(dt: float): None" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="101" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="101" as="geometry" />
         </mxCell>
         <mxCell id="Guardia-metodo-3" connectable="0" parent="Guardia" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ update(dt: float): None" vertex="1">
-          <mxGeometry height="12" width="362" x="9" y="113" as="geometry" />
+          <mxGeometry height="12" width="362.0" x="9" y="113" as="geometry" />
         </mxCell>
         <mxCell id="CreadorPatrulla" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="49" width="325" x="131.5" y="445" as="geometry" />
+          <mxGeometry height="49" width="365" x="110" y="445" as="geometry" />
         </mxCell>
         <mxCell id="CreadorPatrulla-caja" connectable="0" parent="CreadorPatrulla" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
-          <mxGeometry height="49" width="325" as="geometry" />
+          <mxGeometry height="49" width="365" as="geometry" />
         </mxCell>
         <mxCell id="CreadorPatrulla-cabecera" connectable="0" parent="CreadorPatrulla" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
-          <mxGeometry height="26" width="325" as="geometry" />
+          <mxGeometry height="26" width="365" as="geometry" />
         </mxCell>
         <mxCell id="CreadorPatrulla-nombre" connectable="0" parent="CreadorPatrulla" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="CreadorPatrulla" vertex="1">
-          <mxGeometry height="23" width="325" y="2" as="geometry" />
+          <mxGeometry height="23" width="365" y="2" as="geometry" />
         </mxCell>
         <mxCell id="CreadorPatrulla-metodo-0" connectable="0" parent="CreadorPatrulla" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="32" as="geometry" />
+          <mxGeometry height="12" width="347.0" x="9" y="32" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaPatrulla" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="83" width="325" x="820" y="449" as="geometry" />
+          <mxGeometry height="83" width="325" x="800" y="449" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaPatrulla-caja" connectable="0" parent="GuardiaPatrulla" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
           <mxGeometry height="83" width="325" as="geometry" />
@@ -167,16 +155,16 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="GuardiaPatrulla-atributo-0" connectable="0" parent="GuardiaPatrulla" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="- ruta: list&lt;tuple&gt;" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="32" as="geometry" />
+          <mxGeometry height="12" width="307.0" x="9" y="32" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaPatrulla-atributo-1" connectable="0" parent="GuardiaPatrulla" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="- indice: int" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="44" as="geometry" />
+          <mxGeometry height="12" width="307.0" x="9" y="44" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaPatrulla-metodo-0" connectable="0" parent="GuardiaPatrulla" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ update(dt: float): None" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="66" as="geometry" />
+          <mxGeometry height="12" width="307.0" x="9" y="66" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaCentinela" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="72" width="325" x="823" y="652" as="geometry" />
+          <mxGeometry height="72" width="325" x="800" y="652" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaCentinela-caja" connectable="0" parent="GuardiaCentinela" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
           <mxGeometry height="72" width="325" as="geometry" />
@@ -194,13 +182,13 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="GuardiaCentinela-atributo-0" connectable="0" parent="GuardiaCentinela" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="- origen: tuple" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="32" as="geometry" />
+          <mxGeometry height="12" width="307.0" x="9" y="32" as="geometry" />
         </mxCell>
         <mxCell id="GuardiaCentinela-metodo-0" connectable="0" parent="GuardiaCentinela" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ update(dt: float): None" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="55" as="geometry" />
+          <mxGeometry height="12" width="307.0" x="9" y="55" as="geometry" />
         </mxCell>
         <mxCell id="Nivel" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="49" width="300" x="144" y="342" as="geometry" />
+          <mxGeometry height="49" width="300" x="162" y="342" as="geometry" />
         </mxCell>
         <mxCell id="Nivel-caja" connectable="0" parent="Nivel" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
           <mxGeometry height="49" width="300" as="geometry" />
@@ -212,34 +200,34 @@
           <mxGeometry height="23" width="300" y="2" as="geometry" />
         </mxCell>
         <mxCell id="Nivel-metodo-0" connectable="0" parent="Nivel" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ agregar_guardia(guardia: Guardia): None" vertex="1">
-          <mxGeometry height="12" width="282" x="9" y="32" as="geometry" />
+          <mxGeometry height="12" width="282.0" x="9" y="32" as="geometry" />
         </mxCell>
         <mxCell id="Nivel-nota" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.3;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="Nivel resumido; definición completa en 01." vertex="1">
-          <mxGeometry height="16" width="164" x="121" y="319" as="geometry" />
+          <mxGeometry height="16" width="300" x="162" y="395" as="geometry" />
         </mxCell>
         <mxCell id="nota-0" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=10.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="Procedimiento común de incorporar():" vertex="1">
-          <mxGeometry height="18.5" width="710.551" x="470" y="538" as="geometry" />
+          <mxGeometry height="18" width="300" x="490" y="548" as="geometry" />
         </mxCell>
         <mxCell id="nota-1" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.7;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="1. guardia = self.crear(datos, colisiones)" vertex="1">
-          <mxGeometry height="17.7" width="710.551" x="470" y="561" as="geometry" />
+          <mxGeometry height="18" width="300" x="490" y="571" as="geometry" />
         </mxCell>
         <mxCell id="nota-2" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.7;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="2. nivel.agregar_guardia(guardia)" vertex="1">
-          <mxGeometry height="17.7" width="710.551" x="470" y="585" as="geometry" />
+          <mxGeometry height="18" width="300" x="490" y="595" as="geometry" />
         </mxCell>
         <mxCell id="nota-3" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.1;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="El creador concreto decide la clase del guardia." vertex="1">
-          <mxGeometry height="17.1" width="710.551" x="470" y="609" as="geometry" />
+          <mxGeometry height="18" width="300" x="490" y="619" as="geometry" />
         </mxCell>
         <mxCell id="etiqueta-4" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" value="crear() devuelve" vertex="1">
-          <mxGeometry height="15" width="66" x="605" y="153.5" as="geometry" />
+          <mxGeometry height="15" width="90" x="602" y="150" as="geometry" />
         </mxCell>
         <mxCell id="etiqueta-5" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" value="incorpora al nivel" vertex="1">
-          <mxGeometry height="15" width="70" x="207" y="300" as="geometry" />
+          <mxGeometry height="15" width="90" x="320" y="268" as="geometry" />
         </mxCell>
         <mxCell id="etiqueta-6" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" value="crea" vertex="1">
-          <mxGeometry height="15" width="54" x="596" y="450.5" as="geometry" />
+          <mxGeometry height="15" width="36" x="610" y="450" as="geometry" />
         </mxCell>
         <mxCell id="etiqueta-7" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.8;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;fillColor=#ffffff;" value="crea" vertex="1">
-          <mxGeometry height="15" width="21" x="612.5" y="682.5" as="geometry" />
+          <mxGeometry height="15" width="36" x="610" y="655" as="geometry" />
         </mxCell>
         <mxCell id="separador-pie" edge="1" parent="1" style="edgeStyle=none;endArrow=none;startArrow=none;strokeColor=#333333;strokeWidth=0.8;">
           <mxGeometry relative="1" as="geometry">
@@ -253,44 +241,41 @@
         <mxCell id="estado-del-modelo" connectable="0" parent="1" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=8.2;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="Diseño propuesto para implementar - 19/11/2026" vertex="1">
           <mxGeometry height="15" width="1120" x="32" y="817.89" as="geometry" />
         </mxCell>
-        <mxCell id="wqrs7jeWSi-_YNaWCDgG-5" edge="1" parent="1" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;defaultLabelBackgroundColor=page;labelPadding=0 4;entryX=0.003;entryY=0.295;entryDx=0;entryDy=0;entryPerimeter=0;" target="Guardia" value="">
+        <mxCell id="wqrs7jeWSi-_YNaWCDgG-5" edge="1" parent="1" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;jettySize=0;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.275;entryDx=0;entryDy=0;" target="Guardia" value="" source="CreadorGuardia">
           <mxGeometry relative="1" width="160" as="geometry">
-            <mxPoint x="530" y="175" as="sourcePoint" />
-            <mxPoint x="690" y="175" as="targetPoint" />
+            <mxPoint as="sourcePoint" x="550" y="170.5" />
+            <mxPoint as="targetPoint" x="745" y="170.5" />
+            <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="wqrs7jeWSi-_YNaWCDgG-6" edge="1" parent="1" source="CreadorPatrulla" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;defaultLabelBackgroundColor=page;labelPadding=0 4;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="GuardiaPatrulla" value="">
+        <mxCell id="wqrs7jeWSi-_YNaWCDgG-6" edge="1" parent="1" source="CreadorPatrulla" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;jettySize=0;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.247;entryDx=0;entryDy=0;" target="GuardiaPatrulla" value="">
           <mxGeometry relative="1" width="160" as="geometry">
-            <mxPoint x="380" y="472" as="sourcePoint" />
-            <mxPoint x="616" y="470" as="targetPoint" />
+            <mxPoint as="sourcePoint" x="475" y="469.5" />
+            <mxPoint as="targetPoint" x="800" y="469.5" />
+            <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="wqrs7jeWSi-_YNaWCDgG-7" edge="1" parent="1" source="CreadorCentinela" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;defaultLabelBackgroundColor=page;labelPadding=0 4;entryX=0.001;entryY=0.366;entryDx=0;entryDy=0;entryPerimeter=0;" target="GuardiaCentinela" value="">
+        <mxCell id="wqrs7jeWSi-_YNaWCDgG-7" edge="1" parent="1" source="CreadorCentinela" style="edgeStyle=none;rounded=0;html=0;strokeColor=#333333;strokeWidth=0.9;startArrow=none;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=5 3;jettySize=0;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.313;entryDx=0;entryDy=0;" target="GuardiaCentinela" value="">
           <mxGeometry relative="1" width="160" as="geometry">
-            <mxPoint x="380" y="676" as="sourcePoint" />
-            <mxPoint x="616" y="674" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wqrs7jeWSi-_YNaWCDgG-8" edge="1" parent="1" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;defaultLabelBackgroundColor=page;labelPadding=0 4;entryX=0.001;entryY=0.366;entryDx=0;entryDy=0;entryPerimeter=0;" target="CreadorCentinela" value="">
-          <mxGeometry relative="1" width="160" as="geometry">
-            <mxPoint x="380" y="676" as="sourcePoint" />
-            <mxPoint x="823" y="678" as="targetPoint" />
+            <mxPoint as="sourcePoint" x="475" y="674.5" />
+            <mxPoint as="targetPoint" x="800" y="674.5" />
+            <Array as="points" />
           </mxGeometry>
         </mxCell>
         <mxCell id="CreadorCentinela" parent="1" style="group;html=0;connectable=1;recursiveResize=0;rotatable=0;" value="" vertex="1">
-          <mxGeometry height="49" width="325" x="130" y="650" as="geometry" />
+          <mxGeometry height="49" width="365" x="110" y="650" as="geometry" />
         </mxCell>
         <mxCell id="CreadorCentinela-caja" connectable="0" parent="CreadorCentinela" style="shape=rectangle;fillColor=#ffffff;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
-          <mxGeometry height="49" width="325" as="geometry" />
+          <mxGeometry height="49" width="365" as="geometry" />
         </mxCell>
         <mxCell id="CreadorCentinela-cabecera" connectable="0" parent="CreadorCentinela" style="shape=rectangle;fillColor=#f1f1f1;strokeColor=#333333;strokeWidth=0.8;" value="" vertex="1">
-          <mxGeometry height="26" width="325" as="geometry" />
+          <mxGeometry height="26" width="365" as="geometry" />
         </mxCell>
         <mxCell id="CreadorCentinela-nombre" connectable="0" parent="CreadorCentinela" style="text;html=0;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=11.5;fontStyle=1;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="CreadorCentinela" vertex="1">
-          <mxGeometry height="23" width="325" y="2" as="geometry" />
+          <mxGeometry height="23" width="365" y="2" as="geometry" />
         </mxCell>
         <mxCell id="CreadorCentinela-metodo-0" connectable="0" parent="CreadorCentinela" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontSize=9.4;fontStyle=0;strokeColor=none;fillColor=none;fontColor=#222222;spacing=0;autosize=0;resizable=1;rotatable=0;" value="+ crear(datos: dict, colisiones: SistemaColisiones): Guardia" vertex="1">
-          <mxGeometry height="12" width="307" x="9" y="32" as="geometry" />
+          <mxGeometry height="12" width="347.0" x="9" y="32" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

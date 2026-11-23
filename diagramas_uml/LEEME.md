@@ -2,7 +2,7 @@
 
 Fecha de la propuesta: 19 de noviembre de 2026.
 
-Este modelo describe el diseño que proponemos implementar. El juego descargado sigue usando sus clases anteriores; estos diagramas no certifican que esa refactorización ya exista.
+Este modelo describe el diseño que estamos implementando desde cero en la raíz del proyecto (`Mapa` y `SistemaColisiones` ya están implementados; las demás clases se irán incorporando junto con los sprites de `img/`).
 
 ## Archivos
 
