@@ -199,9 +199,12 @@ class Juego:
         self.__puntaje = Puntaje()
         self.__puntos_inicio_nivel = 0
         self.__vista = vista
+        self.__intro_duracion = 1.6
+        self.__intro_restante = 0.0
         self.iniciar()
 
     def iniciar(self):
+        self.__intro_restante = self.__intro_duracion
         self.__puntaje.reiniciar()
         self.cargar_nivel(1)
         self.__estado_actual = Jugando(self)
@@ -235,6 +238,9 @@ class Juego:
         self.__estado_actual.manejar_evento(evento)
 
     def update(self, dt):
+        if self.__intro_restante > 0:
+            self.__intro_restante = max(0.0, self.__intro_restante - dt)
+            return
         self.__estado_actual.update(dt)
 
     def actualizar_nivel(self, dt):
@@ -317,6 +323,11 @@ class Juego:
 
     def reiniciar_partida(self):
         self.iniciar()
+
+    def get_intro_progreso(self):
+        if self.__intro_restante <= 0:
+            return None
+        return 1.0 - self.__intro_restante / self.__intro_duracion
 
     def get_nivel(self):
         return self.__nivel_actual

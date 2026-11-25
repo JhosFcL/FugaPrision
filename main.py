@@ -14,6 +14,19 @@ def main():
     pygame.display.set_caption("Fuga de la Prisión")
     reloj = pygame.time.Clock()
 
+    musica_por_nivel = {
+        1: "nivel_1_prision.wav",
+        2: "nivel_2_infiltracion.wav",
+        3: "nivel_3_escape.wav",
+    }
+    nivel_con_musica = None
+    try:
+        if not pygame.mixer.get_init():
+            pygame.mixer.init()
+        pygame.mixer.music.set_volume(0.20)
+    except pygame.error:
+        pass
+
     vista = Vista(pantalla)
     juego = Juego(vista)
 
@@ -33,6 +46,16 @@ def main():
             break
 
         juego.update(dt)
+
+        numero_nivel = juego.get_nivel().get_numero()
+        if pygame.mixer.get_init() and numero_nivel != nivel_con_musica:
+            archivo_musica = os.path.join(
+                os.path.dirname(__file__), "audio", musica_por_nivel[numero_nivel]
+            )
+            pygame.mixer.music.load(archivo_musica)
+            pygame.mixer.music.play(-1)
+            nivel_con_musica = numero_nivel
+
         juego.dibujar()
         pygame.display.flip()
 
