@@ -1,0 +1,394 @@
+{
+  "version": 4,
+  "niveles": [
+    {
+      "numero": 1,
+      "nombre": "Pabellón de celdas · Sección 1",
+      "tema": "celda",
+      "audio": "nivel_1_prision.wav",
+      "plano": [
+        "####################",
+        "#......#...........#",
+        "#......#...........#",
+        "#..##..#....####...#",
+        "#..................#",
+        "#..................#",
+        "#####..######..#####",
+        "#..................#",
+        "#......#...........#",
+        "#..##..#....####...#",
+        "#......#...........#",
+        "#......#...........#",
+        "####################"
+      ],
+      "prisionero": [2, 11],
+      "llave": [2, 1],
+      "puerta": [18, 1],
+      "panel": [10, 7],
+      "camaras": [
+        [12, 1, 3, 2]
+      ],
+      "decoraciones": [
+        [0, 4, "ventana"], [0, 9, "ventana"], [19, 4, "ventana"], [19, 9, "ventana"],
+        [7, 1, "barrotes"], [7, 2, "barrotes"], [7, 10, "barrotes"], [7, 11, "barrotes"],
+        [3, 3, "caja_metal"], [4, 3, "barril"], [3, 9, "caja"], [4, 9, "carrito"],
+        [12, 3, "muro_peligro"], [15, 3, "muro_peligro"], [12, 9, "tubo_codo"],
+        [5, 1, "rejilla"], [16, 4, "rejilla"], [9, 10, "rejilla"], [1, 11, "puerta_abierta"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [4, 5],
+          "ruta": [[4, 5], [14, 5]],
+          "velocidad": 108.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [15, 8],
+          "velocidad": 112.0
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "nombre": "Pabellón de celdas · Sección 2",
+      "tema": "celda",
+      "audio": "nivel_1_prision.wav",
+      "plano": [
+        "####################",
+        "#...........#......#",
+        "#..##..###..#..##..#",
+        "#..................#",
+        "#..##..###..#..##..#",
+        "#...........#......#",
+        "####..#######..#####",
+        "#..................#",
+        "#..###......###....#",
+        "#......####........#",
+        "#..##........##....#",
+        "#..................#",
+        "####################"
+      ],
+      "prisionero": [1, 11],
+      "llave": [17, 1],
+      "puerta": [18, 11],
+      "panel": [2, 5],
+      "camaras": [
+        [6, 1, 3, 1],
+        [7, 8, 4, 1]
+      ],
+      "decoraciones": [
+        [0, 3, "ventana"], [0, 8, "ventana"], [19, 3, "ventana"], [19, 8, "ventana"],
+        [12, 1, "barrotes"], [12, 5, "barrotes"],
+        [3, 2, "barril"], [4, 2, "caja"], [15, 2, "caja_metal"], [16, 2, "carrito"],
+        [7, 4, "muro_peligro"], [9, 4, "muro_peligro"], [15, 4, "tubo_codo"],
+        [3, 10, "caja"], [13, 10, "barril"], [14, 10, "caja_metal"],
+        [5, 5, "rejilla"], [14, 7, "rejilla"], [10, 11, "rejilla"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [2, 3],
+          "ruta": [[2, 3], [15, 3]],
+          "velocidad": 112.0
+        },
+        {
+          "tipo": "patrulla",
+          "posicion": [3, 7],
+          "ruta": [[3, 7], [16, 7]],
+          "velocidad": 114.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [12, 10],
+          "velocidad": 116.0
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "nombre": "Lavandería · Sección 1",
+      "tema": "lavanderia",
+      "audio": "nivel_2_infiltracion.wav",
+      "plano": [
+        "####################",
+        "#...........#......#",
+        "#..###..##..#......#",
+        "#...........#..##..#",
+        "#..###.............#",
+        "#......####........#",
+        "#..................#",
+        "####..#####...######",
+        "#..................#",
+        "#..####....####....#",
+        "#..................#",
+        "#......#...........#",
+        "####################"
+      ],
+      "prisionero": [2, 11],
+      "llave": [17, 1],
+      "puerta": [18, 11],
+      "panel": [2, 6],
+      "camaras": [
+        [8, 1, 3, 1],
+        [10, 8, 3, 1]
+      ],
+      "decoraciones": [
+        [0, 3, "ventana"], [0, 9, "ventana"], [19, 3, "ventana"], [19, 9, "ventana"],
+        [2, 0, "alambre"], [17, 0, "alambre"], [6, 0, "tubo_muro"], [13, 0, "tubo_muro"],
+        [3, 2, "objeto"], [4, 2, "objeto_alt"], [5, 2, "caja"],
+        [3, 4, "barril"], [4, 4, "objeto"], [15, 3, "objeto_alt"], [16, 3, "caja"],
+        [7, 5, "barril"], [10, 5, "caja"], [3, 9, "objeto"], [14, 9, "barril"],
+        [5, 1, "rejilla"], [13, 6, "rejilla"], [9, 10, "rejilla"],
+        [4, 6, "papeles"], [16, 8, "papeles"], [7, 8, "marca_suelo"], [15, 11, "lona"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [2, 3],
+          "ruta": [[2, 3], [10, 3]],
+          "velocidad": 114.0
+        },
+        {
+          "tipo": "patrulla",
+          "posicion": [9, 10],
+          "ruta": [[9, 10], [16, 10]],
+          "velocidad": 116.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [15, 5],
+          "velocidad": 118.0
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "nombre": "Lavandería · Sección 2",
+      "tema": "lavanderia",
+      "audio": "nivel_2_infiltracion.wav",
+      "plano": [
+        "####################",
+        "#......#...........#",
+        "#..##..#..###..##..#",
+        "#..................#",
+        "###..####..####..###",
+        "#..................#",
+        "#..###........###..#",
+        "#..................#",
+        "###..####..####..###",
+        "#..................#",
+        "#..##..###..###....#",
+        "#..................#",
+        "####################"
+      ],
+      "prisionero": [1, 11],
+      "llave": [2, 1],
+      "puerta": [18, 1],
+      "panel": [18, 6],
+      "camaras": [
+        [11, 1, 3, 1],
+        [8, 7, 4, 1]
+      ],
+      "decoraciones": [
+        [0, 2, "ventana"], [0, 10, "ventana"], [19, 2, "ventana"], [19, 10, "ventana"],
+        [3, 0, "alambre"], [16, 0, "alambre"], [8, 0, "tubo_muro"], [12, 0, "tubo_muro"],
+        [3, 2, "objeto"], [4, 2, "objeto_alt"], [10, 2, "barril"], [15, 2, "caja"],
+        [3, 6, "objeto"], [4, 6, "barril"], [14, 6, "caja"], [15, 6, "objeto_alt"],
+        [3, 10, "barril"], [8, 10, "objeto"], [13, 10, "caja"],
+        [5, 5, "rejilla"], [14, 5, "rejilla"], [6, 11, "papeles"], [15, 9, "papeles"],
+        [10, 5, "marca_suelo"], [17, 11, "lona"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [2, 3],
+          "ruta": [[2, 3], [17, 3]],
+          "velocidad": 116.0
+        },
+        {
+          "tipo": "patrulla",
+          "posicion": [16, 9],
+          "ruta": [[16, 9], [4, 9]],
+          "velocidad": 118.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [10, 6],
+          "velocidad": 120.0
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "nombre": "Patio de vigilancia · Sección 1",
+      "tema": "patio",
+      "audio": "nivel_3_escape.wav",
+      "plano": [
+        "####################",
+        "#..................#",
+        "#..####..##..####..#",
+        "#..................#",
+        "#.####..####..####.#",
+        "#..................#",
+        "#..##..######..##..#",
+        "#..................#",
+        "#.####..####..####.#",
+        "#..................#",
+        "#..####..##..####..#",
+        "#..................#",
+        "####################"
+      ],
+      "prisionero": [1, 11],
+      "llave": [18, 1],
+      "puerta": [18, 11],
+      "panel": [1, 5],
+      "camaras": [
+        [9, 1, 3, 1],
+        [4, 7, 3, 1],
+        [13, 7, 3, 1]
+      ],
+      "decoraciones": [
+        [0, 3, "ventana"], [0, 9, "ventana"], [19, 3, "ventana"], [19, 9, "ventana"],
+        [2, 0, "tubo_muro"], [17, 0, "tubo_muro"],
+        [3, 2, "barril"], [6, 2, "caja"], [13, 2, "caja"], [16, 2, "barril"],
+        [3, 6, "barril"], [4, 6, "caja"], [15, 6, "caja"], [16, 6, "barril"],
+        [3, 10, "caja"], [16, 10, "barril"],
+        [5, 1, "rejilla"], [14, 1, "rejilla"], [10, 7, "rejilla"], [6, 11, "rejilla"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [3, 3],
+          "ruta": [[3, 3], [15, 3]],
+          "velocidad": 118.0
+        },
+        {
+          "tipo": "patrulla",
+          "posicion": [16, 5],
+          "ruta": [[16, 5], [4, 5]],
+          "velocidad": 120.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [10, 9],
+          "velocidad": 122.0
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "nombre": "Patio de vigilancia · Sección 2",
+      "tema": "patio",
+      "audio": "nivel_3_escape.wav",
+      "plano": [
+        "####################",
+        "#..................#",
+        "#..##...####...##..#",
+        "#..##..........##..#",
+        "#..................#",
+        "#.....##....##.....#",
+        "#..................#",
+        "#.....##....##.....#",
+        "#..................#",
+        "#..##..........##..#",
+        "#..##...####...##..#",
+        "#..................#",
+        "####################"
+      ],
+      "prisionero": [1, 11],
+      "llave": [10, 1],
+      "puerta": [18, 11],
+      "panel": [1, 6],
+      "camaras": [
+        [8, 1, 4, 1],
+        [8, 11, 4, 1]
+      ],
+      "decoraciones": [
+        [0, 4, "ventana"], [0, 8, "ventana"], [19, 4, "ventana"], [19, 8, "ventana"],
+        [3, 0, "tubo_muro"], [16, 0, "tubo_muro"],
+        [3, 2, "barril"], [16, 2, "barril"], [3, 10, "caja"], [16, 10, "caja"],
+        [6, 5, "caja"], [13, 5, "barril"], [6, 7, "barril"], [13, 7, "caja"],
+        [5, 1, "rejilla"], [15, 1, "rejilla"], [10, 4, "rejilla"], [10, 8, "rejilla"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [5, 4],
+          "ruta": [[5, 4], [14, 4]],
+          "velocidad": 122.0
+        },
+        {
+          "tipo": "patrulla",
+          "posicion": [14, 8],
+          "ruta": [[14, 8], [5, 8]],
+          "velocidad": 124.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [10, 6],
+          "velocidad": 124.0
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [16, 6],
+          "velocidad": 120.0
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "nombre": "Arena del Alcaide · ¡Boss Run!",
+      "tema": "arena",
+      "audio": "nivel_3_escape.wav",
+      "es_boss_run": true,
+      "plano": [
+        "####################",
+        "#......#......#....#",
+        "#...#......#.......#",
+        "#......#......#....#",
+        "#..#################",
+        "#....#......#......#",
+        "#........#......#..#",
+        "#....#......#......#",
+        "#################..#",
+        "#.......#......#...#",
+        "#...........#......#",
+        "#.......#..........#",
+        "####################"
+      ],
+      "prisionero": [6, 11],
+      "llave": [7, 6],
+      "puerta": [18, 1],
+      "panel": [1, 5],
+      "camaras": [
+        [13, 9, 2, 1],
+        [10, 1, 2, 1]
+      ],
+      "decoraciones": [
+        [0, 3, "ventana"], [0, 9, "ventana"], [19, 3, "ventana"], [19, 9, "ventana"],
+        [8, 9, "tubo_rojo"], [8, 11, "cajas"], [12, 10, "objeto"], [15, 9, "tubo_rojo"],
+        [16, 6, "cajas"], [12, 5, "tubo_rojo"], [12, 7, "objeto"], [9, 6, "cajas"],
+        [5, 5, "objeto"], [5, 7, "tubo_rojo"],
+        [4, 2, "cajas"], [7, 1, "tubo_rojo"], [7, 3, "objeto"],
+        [11, 2, "cajas"], [14, 1, "objeto"], [14, 3, "tubo_rojo"],
+        [3, 10, "rejilla"], [10, 10, "rejilla"], [14, 6, "rejilla"],
+        [2, 5, "rejilla"], [9, 2, "rejilla"], [16, 2, "rejilla"]
+      ],
+      "guardias": [
+        {
+          "tipo": "patrulla",
+          "posicion": [1, 11],
+          "ruta": [[1, 11], [18, 1]],
+          "velocidad": 146.0,
+          "tamano": [24, 24]
+        },
+        {
+          "tipo": "centinela",
+          "posicion": [18, 3],
+          "velocidad": 98.0
+        }
+      ]
+    }
+  ]
+}
