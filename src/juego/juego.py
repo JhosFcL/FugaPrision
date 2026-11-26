@@ -75,6 +75,46 @@ def _tiene_linea_de_vision(origen, destino, muros):
     return True
 
 
+def _camino_recto_despejado(rect_origen, destino, muros):
+    """Comprueba que todo el cuerpo del personaje pueda avanzar en línea recta sin chocar muros."""
+    dx = destino[0] - rect_origen.centerx
+    dy = destino[1] - rect_origen.centery
+    if abs(dx) < 1 and abs(dy) < 1:
+        return True
+    esquinas = (rect_origen.topleft, rect_origen.topright, rect_origen.bottomleft, rect_origen.bottomright)
+    for px, py in esquinas:
+        fin = (px + dx, py + dy)
+        for muro in muros:
+            if muro.inflate(-2, -2).clipline((px, py), fin):
+                return False
+    return True
+
+
+def _objetivo_navegacion_segura(rect_g, destino_pixel, muros, muros_celdas, cols, filas):
+    """Calcula un punto intermedio libre de colisiones alineando al centro del pasillo antes de girar."""
+    if _camino_recto_despejado(rect_g, destino_pixel, muros):
+        return destino_pixel
+
+    celda_g = (rect_g.centerx // TAMANO_CELDA, rect_g.centery // TAMANO_CELDA)
+    celda_obj = (int(destino_pixel[0]) // TAMANO_CELDA, int(destino_pixel[1]) // TAMANO_CELDA)
+    if celda_g == celda_obj:
+        return destino_pixel
+
+    sig = _siguiente_paso_bfs(celda_g, celda_obj, muros_celdas, cols, filas)
+    centro_actual = _centro_celda(*celda_g)
+    centro_sig = _centro_celda(*sig)
+
+    # Alinear el eje perpendicular al centro de la celda actual antes de doblar (margen > 5 vs parada <= 2)
+    if sig[0] == celda_g[0] and sig[1] != celda_g[1]:
+        if abs(rect_g.centerx - centro_actual[0]) > 5:
+            return (centro_actual[0], rect_g.centery)
+    elif sig[1] == celda_g[1] and sig[0] != celda_g[0]:
+        if abs(rect_g.centery - centro_actual[1]) > 5:
+            return (rect_g.centerx, centro_actual[1])
+
+    return centro_sig
+
+
 def _detecta_en_cono(guardia, destino, muros):
     """Comprueba visión direccional en cono o cercanía inmediata, bloqueada por muros."""
     origen = guardia.get_rect().center
@@ -326,12 +366,10 @@ class Juego:
                     factor = max(factor, 1.18)
 
                 rect_g = guardia.get_rect()
-                if _tiene_linea_de_vision(rect_g.center, rect_preso.center, muros):
-                    guardia.alertar(rect_preso.center, factor_velocidad=factor)
-                else:
-                    celda_g = (rect_g.centerx // TAMANO_CELDA, rect_g.centery // TAMANO_CELDA)
-                    sig = _siguiente_paso_bfs(celda_g, celda_preso, self.__muros_celdas, cols, filas)
-                    guardia.alertar(_centro_celda(*sig), factor_velocidad=factor)
+                punto = _objetivo_navegacion_segura(
+                    rect_g, rect_preso.center, muros, self.__muros_celdas, cols, filas
+                )
+                guardia.alertar(punto, factor_velocidad=factor)
             else:
                 # Escolta centinela del tramo final: solo se alerta si te ve en su cono
                 if _detecta_en_cono(guardia, rect_preso.center, muros):
@@ -341,32 +379,37 @@ class Juego:
     def __guiar_guardia_sigilo(self, guardia, dt, muros, cols, filas):
         clave = id(guardia)
         rect_g = guardia.get_rect()
-        celda_g = (rect_g.centerx // TAMANO_CELDA, rect_g.centery // TAMANO_CELDA)
 
         if clave in self.__persecuciones:
-            celda_obj, pos_obj, restante = self.__persecuciones[clave]
+            _, pos_obj, restante = self.__persecuciones[clave]
             restante -= dt
             if restante <= 0 or math.hypot(pos_obj[0] - rect_g.centerx, pos_obj[1] - rect_g.centery) <= 10:
                 del self.__persecuciones[clave]
                 guardia.dejar_alerta()
             else:
                 self.__persecuciones[clave][2] = restante
-                if _tiene_linea_de_vision(rect_g.center, pos_obj, muros):
-                    guardia.alertar(pos_obj, factor_velocidad=1.24)
-                else:
-                    sig = _siguiente_paso_bfs(celda_g, celda_obj, self.__muros_celdas, cols, filas)
-                    guardia.alertar(_centro_celda(*sig), factor_velocidad=1.24)
+                punto = _objetivo_navegacion_segura(
+                    rect_g, pos_obj, muros, self.__muros_celdas, cols, filas
+                )
+                guardia.alertar(punto, factor_velocidad=1.24)
             return
 
-        # Si un centinela terminó su alerta lejos de su puesto y un muro lo separa, regresa con BFS
+        # Regreso suave sorteando muros: tanto patrullas como centinelas vuelven sin chocarse
         if isinstance(guardia, GuardiaCentinela) and clave in self.__puestos_centinela:
-            puesto = self.__puestos_centinela[clave]
-            centro_puesto = _centro_celda(*puesto)
-            if celda_g != puesto and not _tiene_linea_de_vision(rect_g.center, centro_puesto, muros):
-                sig = _siguiente_paso_bfs(celda_g, puesto, self.__muros_celdas, cols, filas)
-                guardia.alertar(_centro_celda(*sig), factor_velocidad=1.0)
-            else:
-                guardia.dejar_alerta()
+            destino_regreso = _centro_celda(*self.__puestos_centinela[clave])
+        elif isinstance(guardia, GuardiaPatrulla):
+            destino_regreso = guardia.get_destino_patrulla()
+        else:
+            guardia.dejar_alerta()
+            return
+
+        if _camino_recto_despejado(rect_g, destino_regreso, muros):
+            guardia.dejar_alerta()
+        else:
+            punto = _objetivo_navegacion_segura(
+                rect_g, destino_regreso, muros, self.__muros_celdas, cols, filas
+            )
+            guardia.guiar_a(punto)
 
     def actualizar_nivel(self, dt):
         nivel = self.__nivel_actual

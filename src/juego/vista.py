@@ -181,21 +181,62 @@ def _direccion_estable(mx, my, actual="abajo"):
     return "abajo" if my >= 0 else "arriba"
 
 
-def _poligono_cono(origen, mirada, alcance, semiangulo_deg, muros, rayos=11):
-    """Calcula el polígono del cono de linterna recortado por los muros del mapa."""
-    ang_base = math.atan2(mirada[1], mirada[0])
+RADIO_LUZ_MAX = 230
+
+
+def _crear_gradiente_luz(radio, rgb_centro, rgb_borde, alpha_max):
+    """Precalcula un gradiente radial suave para el haz de linterna."""
+    tam = radio * 2
+    surf = pygame.Surface((tam, tam), pygame.SRCALPHA)
+    for r in range(radio, 0, -2):
+        t = 1.0 - r / radio
+        alpha = int(alpha_max * (t ** 1.45))
+        if alpha <= 0:
+            continue
+        cr = round(rgb_borde[0] + (rgb_centro[0] - rgb_borde[0]) * (t ** 1.2))
+        cg = round(rgb_borde[1] + (rgb_centro[1] - rgb_borde[1]) * (t ** 1.2))
+        cb = round(rgb_borde[2] + (rgb_centro[2] - rgb_borde[2]) * (t ** 1.2))
+        pygame.draw.circle(surf, (cr, cg, cb, alpha), (radio, radio), r)
+    return surf
+
+
+def _interpolar_angulo(actual, objetivo, paso_max):
+    """Gira suavemente de un ángulo a otro por el arco más corto."""
+    diff = (objetivo - actual + math.pi) % (2.0 * math.pi) - math.pi
+    if abs(diff) <= paso_max:
+        return objetivo
+    return actual + math.copysign(paso_max, diff)
+
+
+def _poligono_cono(origen, ang_base, alcance, semiangulo_deg, muros, rayos=36):
+    """Calcula un cono de luz nítido recortado exactamente contra muros y esquinas."""
     semi = math.radians(semiangulo_deg)
+    ox, oy = origen
+    bbox = pygame.Rect(ox - alcance, oy - alcance, alcance * 2, alcance * 2)
+    cercanos = [m for m in muros if m.colliderect(bbox)]
+
+    # Rayos uniformes + rayos exactos hacia esquinas visibles de muros cercanos
+    offsets = [-semi + (2.0 * semi * i / rayos) for i in range(rayos + 1)]
+    for muro in cercanos:
+        for ex, ey in (muro.topleft, muro.topright, muro.bottomleft, muro.bottomright):
+            if (ex - ox) ** 2 + (ey - oy) ** 2 <= alcance * alcance:
+                delta = (math.atan2(ey - oy, ex - ox) - ang_base + math.pi) % (2.0 * math.pi) - math.pi
+                if -semi < delta < semi:
+                    offsets.extend((delta - 0.002, delta, delta + 0.002))
+    offsets.sort()
+
     puntos = [origen]
-    for i in range(rayos + 1):
-        ang = ang_base - semi + (2 * semi * i / rayos)
-        fin = (origen[0] + math.cos(ang) * alcance, origen[1] + math.sin(ang) * alcance)
+    alcance_sq = alcance * alcance
+    for off in offsets:
+        ang = ang_base + off
+        fin = (ox + math.cos(ang) * alcance, oy + math.sin(ang) * alcance)
         mejor = fin
-        mejor_d2 = alcance * alcance
-        for muro in muros:
+        mejor_d2 = alcance_sq
+        for muro in cercanos:
             corte = muro.clipline(origen, fin)
             if corte:
                 p = corte[0]
-                d2 = (p[0] - origen[0]) ** 2 + (p[1] - origen[1]) ** 2
+                d2 = (p[0] - ox) ** 2 + (p[1] - oy) ** 2
                 if d2 < mejor_d2:
                     mejor_d2 = d2
                     mejor = p
@@ -224,7 +265,15 @@ class Vista:
             "halo_llave": _cargar_halo(c / "halo_ambar.png", 90, 75),
             "halo_salida": _cargar_halo(c / "halo_verde.png", 140, 175),
             "halo_salida_tenue": _cargar_halo(c / "halo_verde.png", 110, 85),
+            "luces": {
+                "normal": _crear_gradiente_luz(RADIO_LUZ_MAX, (255, 246, 206), (255, 198, 92), 112),
+                "alerta": _crear_gradiente_luz(RADIO_LUZ_MAX, (255, 205, 198), (245, 58, 72), 138),
+                "carga": _crear_gradiente_luz(RADIO_LUZ_MAX, (255, 250, 210), (255, 192, 46), 146),
+                "aturdido": _crear_gradiente_luz(RADIO_LUZ_MAX, (220, 246, 255), (72, 186, 255), 125),
+            },
         }
+        self.__mascara_luz = pygame.Surface((RADIO_LUZ_MAX * 2, RADIO_LUZ_MAX * 2), pygame.SRCALPHA)
+        self.__angulos_luz = {}
         self.__direcciones = {}
         self.__fases_paso = {}
         self.__ultimo_tick = pygame.time.get_ticks() / 1000.0
@@ -250,8 +299,8 @@ class Vista:
         self.__pantalla.fill((13, 21, 31))
         self.__dibujar_encabezado(juego, nivel, config)
         self.__dibujar_mapa(nivel, tiles, decoraciones)
-        self.__dibujar_camaras(nivel, tiles)
-        self.__dibujar_conos_vision(juego, nivel)
+        self.__dibujar_camaras(nivel, tiles, ahora)
+        self.__dibujar_conos_vision(juego, nivel, dt_visual)
         self.__dibujar_objetos(nivel, tiles, ahora, intro_progreso, juego.es_boss_run())
         self.__dibujar_personajes(juego, nivel, ahora, dt_visual, intro_progreso)
 
@@ -457,55 +506,95 @@ class Vista:
             self.__pantalla.blit(halo_lampara, halo_lampara.get_rect(center=(lx, ly)), special_flags=pygame.BLEND_RGB_ADD)
         self.__pantalla.set_clip(None)
 
-    def __dibujar_camaras(self, nivel, tiles):
-        for camara in nivel.get_camaras():
+    def __dibujar_camaras(self, nivel, tiles, tiempo):
+        for indice, camara in enumerate(nivel.get_camaras()):
             zona = self.__a_pantalla(camara.get_zona())
             activa = camara.detectar(camara.get_zona())
 
             capa = pygame.Surface((zona.width, zona.height), pygame.SRCALPHA)
             if activa:
-                capa.fill((241, 184, 79, 58))
+                capa.fill((241, 184, 79, 34))
                 borde = (241, 184, 79)
                 sprite_cam = tiles["camara_activa"]
+                # Línea de escaneo sutil que recorre la zona vigilada
+                progreso_scan = (tiempo * 0.65 + indice * 0.37) % 1.0
+                sy = int(progreso_scan * max(1, zona.height - 2))
+                pygame.draw.line(capa, (255, 226, 138, 120), (2, sy), (zona.width - 3, sy), 1)
             else:
-                capa.fill((120, 136, 154, 22))
-                borde = (110, 126, 144)
+                capa.fill((110, 128, 148, 18))
+                borde = (98, 114, 132)
                 sprite_cam = tiles["camara"]
 
             self.__pantalla.blit(capa, zona.topleft)
-            pygame.draw.rect(self.__pantalla, borde, zona, 1)
-            self.__pantalla.blit(sprite_cam, sprite_cam.get_rect(midtop=(zona.centerx, zona.top + 2)))
+            # Esquinas tácticas tipo visor de seguridad (más limpias que un recuadro grueso)
+            esquina = 8
+            x0, y0, x1, y1 = zona.left, zona.top, zona.right - 1, zona.bottom - 1
+            for (ax, ay), (bx, by), (cx, cy) in (
+                ((x0, y0 + esquina), (x0, y0), (x0 + esquina, y0)),
+                ((x1 - esquina, y0), (x1, y0), (x1, y0 + esquina)),
+                ((x0, y1 - esquina), (x0, y1), (x0 + esquina, y1)),
+                ((x1 - esquina, y1), (x1, y1), (x1, y1 - esquina)),
+            ):
+                pygame.draw.lines(self.__pantalla, borde, False, ((ax, ay), (bx, by), (cx, cy)), 2)
 
-    def __dibujar_conos_vision(self, juego, nivel):
+            cam_rect = sprite_cam.get_rect(midtop=(zona.centerx, zona.top + 2))
+            self.__pantalla.blit(sprite_cam, cam_rect)
+            if activa and int(tiempo * 2.5 + indice) % 2 == 0:
+                pygame.draw.circle(self.__pantalla, (255, 78, 86), (cam_rect.right - 4, cam_rect.top + 6), 3)
+
+    def __dibujar_conos_vision(self, juego, nivel, dt_visual):
         ancho, alto = nivel.get_mapa().get_dimensiones()
-        capa = pygame.Surface((ancho, alto), pygame.SRCALPHA)
+        area = pygame.Rect(ORIGEN[0], ORIGEN[1], ancho, alto)
         muros = nivel.get_mapa().get_muros()
         estado_boss = juego.get_estado_boss()
+        r = RADIO_LUZ_MAX
 
+        self.__pantalla.set_clip(area)
         for guardia in nivel.get_guardias():
+            clave = id(guardia)
             origen = guardia.get_rect().center
-            mirada = guardia.get_mirada()
+            mx, my = guardia.get_mirada()
+            ang_obj = math.atan2(my, mx)
+            if clave in self.__angulos_luz:
+                ang = _interpolar_angulo(self.__angulos_luz[clave], ang_obj, 9.5 * max(dt_visual, 1 / 60))
+            else:
+                ang = ang_obj
+            self.__angulos_luz[clave] = ang
+
             es_alcaide = juego.es_boss_run() and isinstance(guardia, GuardiaPatrulla)
-            alcance = 225 if es_alcaide else ALCANCE_VISION
-            poligono = _poligono_cono(origen, mirada, alcance, SEMIANGULO_VISION_DEG, muros)
+            alcance = min(r, 225 if es_alcaide else ALCANCE_VISION)
+            poligono = _poligono_cono(origen, ang, alcance, SEMIANGULO_VISION_DEG, muros)
+            if len(poligono) < 3:
+                continue
 
             if es_alcaide and estado_boss:
                 st = estado_boss["estado"]
                 if st == "aturdido":
-                    color = (100, 195, 255, 55)
+                    tema_luz, color_foco = "aturdido", (140, 225, 255)
                 elif st == "cargando":
-                    color = (255, 214, 92, 72)
+                    tema_luz, color_foco = "carga", (255, 232, 132)
                 else:
-                    color = (255, 72, 82, 68)
+                    tema_luz, color_foco = "alerta", (255, 115, 120)
             elif guardia.esta_alerta():
-                color = (255, 84, 92, 62)
+                tema_luz, color_foco = "alerta", (255, 120, 125)
             else:
-                color = (255, 215, 115, 38)
+                tema_luz, color_foco = "normal", (255, 238, 178)
 
-            if len(poligono) >= 3:
-                pygame.draw.polygon(capa, color, poligono)
+            # Enmascarar el gradiente radial suave con el polígono exacto de sombras
+            ox, oy = origen
+            locales = [(px - ox + r, py - oy + r) for px, py in poligono]
+            self.__mascara_luz.fill((0, 0, 0, 0))
+            pygame.draw.polygon(self.__mascara_luz, (255, 255, 255, 255), locales)
+            self.__mascara_luz.blit(
+                self.__recursos["luces"][tema_luz], (0, 0), special_flags=pygame.BLEND_RGBA_MIN
+            )
+            self.__pantalla.blit(self.__mascara_luz, (ORIGEN[0] + ox - r, ORIGEN[1] + oy - r))
 
-        self.__pantalla.blit(capa, ORIGEN)
+            # Destello discreto en el foco de la linterna del guardia
+            fx = round(ORIGEN[0] + ox + math.cos(ang) * 9)
+            fy = round(ORIGEN[1] + oy + math.sin(ang) * 9)
+            pygame.draw.circle(self.__pantalla, color_foco, (fx, fy), 3)
+        self.__pantalla.set_clip(None)
 
     def __dibujar_objetos(self, nivel, tiles, tiempo, intro_progreso=None, es_boss_run=False):
         area = pygame.Rect(ORIGEN[0], ORIGEN[1], *nivel.get_mapa().get_dimensiones())

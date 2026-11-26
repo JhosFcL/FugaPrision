@@ -106,6 +106,12 @@ class Guardia(Personaje, ABC):
         self.__objetivo = (posicion[0], posicion[1])
         self.__factor_velocidad = float(factor_velocidad)
 
+    def guiar_a(self, posicion):
+        """Dirige al guardia rodeando muros sin activar el estado visual de alerta."""
+        self.__alerta = False
+        self.__objetivo = (posicion[0], posicion[1])
+        self.__factor_velocidad = 1.0
+
     def dejar_alerta(self):
         self.__alerta = False
         self.__objetivo = None
@@ -115,13 +121,13 @@ class Guardia(Personaje, ABC):
         return self.__alerta
 
     def _perseguir(self, dt):
-        if not self.__alerta or self.__objetivo is None:
+        if self.__objetivo is None:
             return False
 
         rect_antes = self.get_rect()
         dx = self.__objetivo[0] - rect_antes.centerx
         dy = self.__objetivo[1] - rect_antes.centery
-        if math.hypot(dx, dy) <= 6:
+        if math.hypot(dx, dy) <= 2:
             self.dejar_alerta()
             return True
 
@@ -147,6 +153,9 @@ class GuardiaPatrulla(Guardia):
             dy = self.__ruta[1][1] - rect.centery
             self._set_mirada(dx, dy)
 
+    def get_destino_patrulla(self):
+        return self.__ruta[self.__indice]
+
     def update(self, dt):
         if self._perseguir(dt):
             return
@@ -166,16 +175,13 @@ class GuardiaPatrulla(Guardia):
 
 
 class GuardiaCentinela(Guardia):
-    __DIRECCIONES_BARRIDO = ((1.0, 0.0), (0.0, 1.0), (-1.0, 0.0), (0.0, -1.0))
-
     def __init__(self, rect, colisiones, origen=None, velocidad=118.0):
         super().__init__(rect, colisiones, velocidad)
         if origen is None:
             self.__origen = (rect.centerx, rect.centery)
         else:
             self.__origen = (origen[0], origen[1])
-        self.__tiempo_barrido = 0.0
-        self.__indice_barrido = 0
+        self.__angulo_barrido = 0.0
 
     def update(self, dt):
         if self._perseguir(dt):
@@ -189,9 +195,5 @@ class GuardiaCentinela(Guardia):
             return
 
         self._set_en_movimiento(False)
-        self.__tiempo_barrido += max(0.0, dt)
-        if self.__tiempo_barrido >= 1.9:
-            self.__tiempo_barrido = 0.0
-            self.__indice_barrido = (self.__indice_barrido + 1) % len(self.__DIRECCIONES_BARRIDO)
-            vx, vy = self.__DIRECCIONES_BARRIDO[self.__indice_barrido]
-            self._set_mirada(vx, vy)
+        self.__angulo_barrido = (self.__angulo_barrido + 0.72 * max(0.0, dt)) % (2.0 * math.pi)
+        self._set_mirada(math.cos(self.__angulo_barrido), math.sin(self.__angulo_barrido))
